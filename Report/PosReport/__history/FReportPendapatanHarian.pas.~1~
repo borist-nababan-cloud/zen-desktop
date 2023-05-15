@@ -1040,7 +1040,7 @@ begin
       'MAIN_MAIL' + '''');
   qryPayment.Open;
   MailAcc := qryPayment.Fields[0].AsString;
-
+  {
   // IO HANDLER SETTINGS //
   With frmMain.IdSSLIOHandlerSocketOpenSSL1 do
       begin
@@ -1061,7 +1061,7 @@ begin
   frmMain.IdSMTP1.IOHandler := frmMain.IdSSLIOHandlerSocketOpenSSL1;
   frmMain.IdSMTP1.AuthType := satDefault;
   frmMain.IdSMTP1.UseTLS := utUseExplicitTLS;
-
+   }
 
   //IO SETTING ZENFAMILYSPA.COM
   With frmMain.IdSSLIOHandlerSocketOpenSSL1 do
@@ -1126,7 +1126,7 @@ begin
   lTextPart.ContentType := 'text/html';}
 
 
-  //ini buat test github
+
   lTextPart := TIdText.Create(frmMain.IdMessage1.MessageParts);
   lTextPart.Body.Text := memSend.Text;
   lTextPart.ContentType := 'text/html';
