@@ -1,0 +1,61 @@
+{
+  "AppInfo":  
+  {
+    "AppName":"Zen Internal System",
+    "Version":"Alpha 1.0",
+    "Developer":"nababancloud.net",
+    "Release":"2019-11-11Z",
+    "Trademark":"nababancloud.net",
+    "Toolbar":    3,
+    "Accent":    2,
+    "Global":"Caramel",
+    "Component":"Caramel",
+    "OutletID":"115",
+    "OutletName":"Zen Sunda",
+    "OutletPhone":"022",
+    "OutletAddress":"Jl. Sunda",
+    "OutletCity":"Banyuwangi",
+    "OutletProvince":"Jawa Barat",
+    "OutletZipcode":"Jawa Barat",
+    "JudulAtas":"ZEN",
+    "JudulBawah":"Family Reflexology Max",
+    "Footer1":"#think healthy... ZEN",
+    "Footer2":"Comment : SMS/WA 082367867000",
+    "Footer3":"www.zenfamilyspa.com",
+    "MemberDB":"zenfamil_member",
+    "MergerDB":"zencloud_db",
+    "Satjual":"P",
+    "PassCetak":"",
+    "PrinterPos":    2,
+    "PrinterSO":    3,
+    "Pembulatan":    1000,
+    "PassDelete":""  
+  },
+  "LocalDB":  
+  {
+    "HostName":"106?109?97?95?106?102?109?113?114?",
+    "UserName":"112?109?109?114?",
+    "DBName":"96?97?93?113?115?108?98?95?",
+    "Port":"49?49?46?52?",
+    "Password":""  
+  },
+  "ServerDB":  
+  {
+    "HostName":"47?52?51?44?48?48?44?48?50?54?44?47?46?49?",
+    "UserName":"96?99?108?113?115?110?99?112?115?113?99?112?",
+    "DBName":"96?97?93?113?115?108?98?95?",
+    "Port":"48?53?46?53?",
+    "Password":"103?109?81?55?85?95?97?86?100?101?100?117?102?63?117?50?"  
+  },
+  "Database":  
+  {
+    "hrd":"store_db_hrd",
+    "pos":"store_db_pos",
+    "changedb":"N"  
+  },
+  "Login":  
+  {
+    "username":"admin",
+    "password":"cek123"  
+  }
+}

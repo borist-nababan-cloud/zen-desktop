@@ -1,0 +1,1302 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{050039E4-10EF-48D3-9DFF-FC9080BF2339}</ProjectGuid>
+        <ProjectVersion>18.2</ProjectVersion>
+        <FrameworkType>VCL</FrameworkType>
+        <MainSource>ZenSystem.dpr</MainSource>
+        <Base>True</Base>
+        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+        <TargetedPlatforms>3</TargetedPlatforms>
+        <AppType>Application</AppType>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_1)'!=''">
+        <Cfg_1>true</Cfg_1>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+        <Cfg_1_Win32>true</Cfg_1_Win32>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win64)'!=''">
+        <Cfg_1_Win64>true</Cfg_1_Win64>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
+        <Cfg_2>true</Cfg_2>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win64)'!=''">
+        <Cfg_2_Win64>true</Cfg_2_Win64>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base)'!=''">
+        <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
+        <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
+        <DCC_E>false</DCC_E>
+        <DCC_N>false</DCC_N>
+        <DCC_S>false</DCC_S>
+        <DCC_F>false</DCC_F>
+        <DCC_K>false</DCC_K>
+        <DCC_UsePackage>RESTBackendComponents;CloudService;soaprtl;soapmidas;RESTComponents;emsclientfiredac;FireDACIBDriver;emsclient;FireDACCommon;soapserver;FireDACCommonDriver;inet;FireDAC;FireDACSqliteDriver;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
+        <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
+        <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
+        <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
+        <SanitizedProjectName>ZenSystem</SanitizedProjectName>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <DCC_UsePackage>DBXSqliteDriver;dxPSPrVwRibbonRS25;dxRibbonCustomizationFormRS25;DBXDb2Driver;dxSkinOffice2007PinkRS25;tmsdXE10;dxSkinMcSkinRS25;vclactnband;vclFireDAC;cxExportRS25;dxHttpIndyRequestRS25;tethering;dxPScxCommonRS25;FireDACADSDriver;cxPivotGridOLAPRS25;FireDACMSSQLDriver;cxSchedulerGridRS25;vcltouch;dxSkinDarkRoomRS25;dxSkinDarkSideRS25;vcldb;Intraweb;svn;dxGaugeControlRS25;cxLibraryRS25;dxSkinOffice2007SilverRS25;dxSkinscxSchedulerPainterRS25;dxSkinBlackRS25;vclib;dxSkinOffice2007BlueRS25;dxSkinOffice2007BlackRS25;FireDACDBXDriver;tmsexdXE10;clinetsuitedX102;dxSkinVS2010RS25;vclx;dxSkinFoggyRS25;mydac250;dxSpreadSheetConditionalFormattingDialogsRS25;dxSkinSevenRS25;dxSkinSpringTimeRS25;dxTileControlRS25;dxMapControlRS25;dxPDFViewerRS25;dxDockingRS25;VCLRESTComponents;dxSkinsdxNavBarPainterRS25;cxPageControlRS25;dxSkinLilianRS25;dxPSLnksRS25;mydacvcl250;dxWizardControlRS25;dxRichEditControlRS25;vclie;bindengine;dxFireDACServerModeRS25;mydacfmx250;FireDACMySQLDriver;dxSkinOffice2013LightGrayRS25;dxSkinMetropolisRS25;DataSnapClient;dxSkinOffice2016DarkRS25;bindcompdbx;dxSkinBlueprintRS25;dxSkinStardustRS25;DBXSybaseASEDriver;IndyIPServer;dxPSdxLCLnkRS25;dac250;IndySystem;dxSkinOffice2007GreenRS25;tmsxlsdXE10;dsnapcon;dxLayoutControlRS25;dxPSRichEditControlLnkRS25;FireDACMSAccDriver;fmxFireDAC;FireDACInfxDriver;vclimg;dxdbtrRS25;dxPScxTLLnkRS25;emshosting;dxSpreadSheetRS25;dxSkinVisualStudio2013LightRS25;DBXOdbcDriver;FireDACTDataDriver;FMXTee;cxGridRS25;dxSkinTheAsphaltWorldRS25;DbxCommonDriver;dxPScxSchedulerLnkRS25;dxorgcRS25;dxSkinHighContrastRS25;xmlrtl;DataSnapNativeClient;fmxobj;dxPScxGridLnkRS25;rtl;DbxClientDriver;dacvcl250;DBXSybaseASADriver;dxPSCoreRS25;dxmdsRS25;dxSkinOffice2016ColorfulRS25;appanalytics;IndyIPClient;bindcompvcl;dxSkinscxPCPainterRS25;dxThemeRS25;TeeUI;VclSmp;FireDACODBCDriver;DataSnapIndy10ServerTransport;DataSnapProviderClient;FireDACMongoDBDriver;cxVerticalGridRS25;dxtrmdRS25;dxADOServerModeRS25;dxSkinPumpkinRS25;DataSnapServerMidas;dxCoreRS25;cxSchedulerTreeBrowserRS25;dxSkinValentineRS25;DBXInterBaseDriver;dxPSTeeChartRS25;DataSnapFireDAC;svnui;dxSkinOffice2010BlueRS25;dxSkinMoneyTwinsRS25;dxSkinSilverRS25;DBXMSSQLDriver;dxPSdxFCLnkRS25;DatasnapConnectorsFreePascal;dxSkinOffice2013WhiteRS25;bindcompfmx;DBXOracleDriver;inetdb;dxOfficeCoreRS25;FmxTeeUI;emsedge;fmx;fmxdae;dxSkinBlueRS25;dxTabbedMDIRS25;dxBarDBNavRS25;dxPScxPivotGridLnkRS25;dxSkinDevExpressDarkStyleRS25;dbexpress;IndyCore;dxFlowChartRS25;dxSkinsdxDLPainterRS25;dsnap;DataSnapCommon;dxBarRS25;dxPSDBTeeChartRS25;Package1;dxSkinLiquidSkyRS25;dxdborRS25;DataSnapConnectors;dxPScxExtCommonRS25;cxPivotGridRS25;dxPSdxSpreadSheetLnkRS25;dxNavBarRS25;QRWRunDXE10_2_w64;cxSchedulerRibbonStyleEventEditorRS25;dxSkinCoffeeRS25;FireDACOracleDriver;DBXMySQLDriver;DBXFirebirdDriver;FireDACCommonODBC;dxSkinOffice2010SilverRS25;cxTreeListRS25;dxSkinsdxBarPainterRS25;IndyIPCommon;dxSkinLondonLiquidSkyRS25;vcl;dxPScxVGridLnkRS25;dxBarExtItemsRS25;dxSkinsCoreRS25;dxComnRS25;FireDACDb2Driver;dxSkinWhiteprintRS25;dxPSdxDBTVLnkRS25;dxSkinVisualStudio2013BlueRS25;mysqlmon250;sgcWebSocketsD10_2;dxSkinGlassOceansRS25;dxSkinMetropolisDarkRS25;dxSkinOffice2013DarkGrayRS25;dxSkinSharpPlusRS25;TeeDB;dxSkinCaramelRS25;dxServerModeRS25;dxPScxPCProdRS25;FireDACPgDriver;ibmonitor;FireDACASADriver;cxEditorsRS25;dxSkiniMaginaryRS25;ibxpress;Tee;DataSnapServer;ibxbindings;dxPsPrVwAdvRS25;vclwinx;FireDACDSDriver;dxSkinSevenClassicRS25;cxDataRS25;cxTreeListdxBarPopupMenuRS25;CustomIPTransport;vcldsnap;dxPSdxOCLnkRS25;dxSkinSharpRS25;bindcomp;DBXInformixDriver;crcontrols250;cxPivotGridChartRS25;cxSchedulerRS25;dxBarExtDBItemsRS25;dxSkinVisualStudio2013DarkRS25;dxSkinOffice2010BlackRS25;tmswizdXE10;dxDBXServerModeRS25;dxSkinDevExpressStyleRS25;dxGDIPlusRS25;dxPSdxGaugeControlLnkRS25;dxSkinsdxRibbonPainterRS25;dbxcds;adortl;dacfmx250;dxPSdxDBOCLnkRS25;dxRibbonRS25;dsnapxml;dxSpellCheckerRS25;dbrtl;inetdbxpress;IndyProtocols;dxSkinSummer2008RS25;dxPSdxMapControlLnkRS25;dxSkinXmas2008BlueRS25;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+        <BT_BuildType>Debug</BT_BuildType>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <DCC_UsePackage>DBXSqliteDriver;dxPSPrVwRibbonRS25;dxRibbonCustomizationFormRS25;DBXDb2Driver;dxSkinOffice2007PinkRS25;tmsdXE10;dxSkinMcSkinRS25;vclactnband;vclFireDAC;cxExportRS25;dxHttpIndyRequestRS25;tethering;dxPScxCommonRS25;FireDACADSDriver;cxPivotGridOLAPRS25;FireDACMSSQLDriver;cxSchedulerGridRS25;vcltouch;dxSkinDarkRoomRS25;dxSkinDarkSideRS25;vcldb;Intraweb;dxGaugeControlRS25;cxLibraryRS25;dxSkinOffice2007SilverRS25;dxSkinscxSchedulerPainterRS25;dxSkinBlackRS25;vclib;dxSkinOffice2007BlueRS25;dxSkinOffice2007BlackRS25;FireDACDBXDriver;tmsexdXE10;clinetsuitedX102;dxSkinVS2010RS25;vclx;dxSkinFoggyRS25;dxSpreadSheetConditionalFormattingDialogsRS25;dxSkinSevenRS25;dxSkinSpringTimeRS25;dxTileControlRS25;dxMapControlRS25;dxPDFViewerRS25;dxDockingRS25;VCLRESTComponents;dxSkinsdxNavBarPainterRS25;cxPageControlRS25;dxSkinLilianRS25;dxPSLnksRS25;dxWizardControlRS25;dxRichEditControlRS25;vclie;bindengine;dxFireDACServerModeRS25;FireDACMySQLDriver;dxSkinOffice2013LightGrayRS25;dxSkinMetropolisRS25;DataSnapClient;dxSkinOffice2016DarkRS25;bindcompdbx;dxSkinBlueprintRS25;dxSkinStardustRS25;DBXSybaseASEDriver;IndyIPServer;dxPSdxLCLnkRS25;IndySystem;dxSkinOffice2007GreenRS25;dsnapcon;dxLayoutControlRS25;dxPSRichEditControlLnkRS25;FireDACMSAccDriver;fmxFireDAC;FireDACInfxDriver;vclimg;dxdbtrRS25;dxPScxTLLnkRS25;emshosting;dxSpreadSheetRS25;dxSkinVisualStudio2013LightRS25;DBXOdbcDriver;FireDACTDataDriver;FMXTee;cxGridRS25;dxSkinTheAsphaltWorldRS25;DbxCommonDriver;dxPScxSchedulerLnkRS25;dxorgcRS25;dxSkinHighContrastRS25;xmlrtl;DataSnapNativeClient;fmxobj;dxPScxGridLnkRS25;rtl;DbxClientDriver;DBXSybaseASADriver;dxPSCoreRS25;dxmdsRS25;dxSkinOffice2016ColorfulRS25;appanalytics;IndyIPClient;bindcompvcl;dxSkinscxPCPainterRS25;dxThemeRS25;TeeUI;VclSmp;FireDACODBCDriver;DataSnapIndy10ServerTransport;DataSnapProviderClient;FireDACMongoDBDriver;cxVerticalGridRS25;dxtrmdRS25;dxADOServerModeRS25;dxSkinPumpkinRS25;DataSnapServerMidas;dxCoreRS25;cxSchedulerTreeBrowserRS25;dxSkinValentineRS25;DBXInterBaseDriver;dxPSTeeChartRS25;DataSnapFireDAC;dxSkinOffice2010BlueRS25;dxSkinMoneyTwinsRS25;dxSkinSilverRS25;DBXMSSQLDriver;dxPSdxFCLnkRS25;DatasnapConnectorsFreePascal;dxSkinOffice2013WhiteRS25;bindcompfmx;DBXOracleDriver;inetdb;dxOfficeCoreRS25;FmxTeeUI;emsedge;fmx;fmxdae;dxSkinBlueRS25;dxTabbedMDIRS25;dxBarDBNavRS25;dxPScxPivotGridLnkRS25;dxSkinDevExpressDarkStyleRS25;dbexpress;IndyCore;dxFlowChartRS25;dxSkinsdxDLPainterRS25;dsnap;DataSnapCommon;dxBarRS25;dxPSDBTeeChartRS25;dxSkinLiquidSkyRS25;dxdborRS25;DataSnapConnectors;dxPScxExtCommonRS25;cxPivotGridRS25;dxPSdxSpreadSheetLnkRS25;dxNavBarRS25;QRWRunDXE10_2_w64;cxSchedulerRibbonStyleEventEditorRS25;dxSkinCoffeeRS25;FireDACOracleDriver;DBXMySQLDriver;DBXFirebirdDriver;FireDACCommonODBC;dxSkinOffice2010SilverRS25;cxTreeListRS25;dxSkinsdxBarPainterRS25;IndyIPCommon;dxSkinLondonLiquidSkyRS25;vcl;dxPScxVGridLnkRS25;dxBarExtItemsRS25;dxSkinsCoreRS25;dxComnRS25;FireDACDb2Driver;dxSkinWhiteprintRS25;dxPSdxDBTVLnkRS25;dxSkinVisualStudio2013BlueRS25;sgcWebSocketsD10_2;dxSkinGlassOceansRS25;dxSkinMetropolisDarkRS25;dxSkinOffice2013DarkGrayRS25;dxSkinSharpPlusRS25;TeeDB;dxSkinCaramelRS25;dxServerModeRS25;dxPScxPCProdRS25;FireDACPgDriver;ibmonitor;FireDACASADriver;cxEditorsRS25;dxSkiniMaginaryRS25;ibxpress;Tee;DataSnapServer;ibxbindings;dxPsPrVwAdvRS25;vclwinx;FireDACDSDriver;dxSkinSevenClassicRS25;cxDataRS25;cxTreeListdxBarPopupMenuRS25;CustomIPTransport;vcldsnap;dxPSdxOCLnkRS25;dxSkinSharpRS25;bindcomp;DBXInformixDriver;cxPivotGridChartRS25;cxSchedulerRS25;dxBarExtDBItemsRS25;dxSkinVisualStudio2013DarkRS25;dxSkinOffice2010BlackRS25;dxDBXServerModeRS25;dxSkinDevExpressStyleRS25;dxGDIPlusRS25;dxPSdxGaugeControlLnkRS25;dxSkinsdxRibbonPainterRS25;dbxcds;adortl;dxPSdxDBOCLnkRS25;dxRibbonRS25;dsnapxml;dxSpellCheckerRS25;dbrtl;inetdbxpress;IndyProtocols;dxSkinSummer2008RS25;dxPSdxMapControlLnkRS25;dxSkinXmas2008BlueRS25;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
+        <BT_BuildType>Debug</BT_BuildType>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+        <DCC_DebugDCUs>true</DCC_DebugDCUs>
+        <DCC_Optimize>false</DCC_Optimize>
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+        <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
+        <DCC_RemoteDebug>true</DCC_RemoteDebug>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <DCC_RemoteDebug>false</DCC_RemoteDebug>
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <AppEnableHighDPI>true</AppEnableHighDPI>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=Zen Family Spa &amp; Reflexology;FileDescription=$(MSBuildProjectName);FileVersion=1.1.1.2;InternalName=Zen System;LegalCopyright=www.zenfamilyspa.com;LegalTrademarks=borist.nababan@gmail.com;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.1.1.2;Comments=</VerInfo_Keys>
+        <OutputExt>exe</OutputExt>
+        <UWP_DelphiLogo44>D:\BEN\Zen\__NEW BEN SOURCE\_ALL_IN_ONE\All_In_One_Apps\01imgcontainer\Logo40x40.png</UWP_DelphiLogo44>
+        <UWP_DelphiLogo150>D:\BEN\Zen\__NEW BEN SOURCE\_ALL_IN_ONE\All_In_One_Apps\01imgcontainer\Logo150x150.png</UWP_DelphiLogo150>
+        <Icon_MainIcon>ZenSystem_Icon3.ico</Icon_MainIcon>
+        <VerInfo_MinorVer>1</VerInfo_MinorVer>
+        <VerInfo_Release>1</VerInfo_Release>
+        <VerInfo_Build>2</VerInfo_Build>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <AppEnableHighDPI>true</AppEnableHighDPI>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <Icon_MainIcon>KaruniaNewApps_Icon1.ico</Icon_MainIcon>
+        <UWP_DelphiLogo44>D:\BEN\KMR\_New Source\Bengkel\All_In_One_Apps\01imgcontainer\LogoAPPBWA2.png</UWP_DelphiLogo44>
+        <UWP_DelphiLogo150>D:\BEN\KMR\_New Source\Bengkel\All_In_One_Apps\01imgcontainer\LogoAPPBWA.png</UWP_DelphiLogo150>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+        <DCC_DebugInformation>0</DCC_DebugInformation>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <AppEnableHighDPI>true</AppEnableHighDPI>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <Icon_MainIcon>ZenSystem_Icon5.ico</Icon_MainIcon>
+        <UWP_DelphiLogo44>D:\BEN\Zen\__NEW BEN SOURCE\_ALL_IN_ONE\All_In_One_Apps\01imgcontainer\Logo40x40.png</UWP_DelphiLogo44>
+        <UWP_DelphiLogo150>D:\BEN\Zen\__NEW BEN SOURCE\_ALL_IN_ONE\All_In_One_Apps\01imgcontainer\Logo150x150.png</UWP_DelphiLogo150>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <AppEnableHighDPI>true</AppEnableHighDPI>
+    </PropertyGroup>
+    <ItemGroup>
+        <DelphiCompile Include="$(MainSource)">
+            <MainSource>MainSource</MainSource>
+        </DelphiCompile>
+        <DCCReference Include="FWelcome.pas">
+            <Form>frmWelcome</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="FMain.pas">
+            <Form>frmMain</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="uses\uHTTP.pas"/>
+        <DCCReference Include="uses\XSuperJSON.pas"/>
+        <DCCReference Include="uses\XSuperObject.pas"/>
+        <DCCReference Include="uses\FdmDB.pas">
+            <Form>dmDB</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="uses\MainSource.pas"/>
+        <DCCReference Include="uses\FConfigSetup.pas">
+            <Form>frmConfigSetup</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="appconfig\FLogin.pas">
+            <Form>frmLogin</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="appconfig\FPassword.pas">
+            <Form>frmPassword</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="appconfig\FGroupManagement.pas">
+            <Form>frmGroupManagement</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="appconfig\FGroupAccessAdd.pas">
+            <Form>frmGroupAccessAdd</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="appconfig\FUserManagement.pas">
+            <Form>frmUserManagement</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FPresensiManual.pas">
+            <Form>frmPresensiManual</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FMasterDivisi.pas">
+            <Form>frmMasterDivisi</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FMasterKaryawan.pas">
+            <Form>frmMasterKaryawan</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FMasterKaryawanAdd.pas">
+            <Form>frmMasterKaryawanAdd</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FKaryawanOld.pas">
+            <Form>frmKaryawanOld</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FKontrakKerjaUpdate.pas">
+            <Form>frmKontrakKerjaUpdate</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FSaldoCuti.pas">
+            <Form>frmSaldoCuti</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinCuti.pas">
+            <Form>frmIjinCuti</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinCutiCetak.pas">
+            <Form>frmIjinCutiCetak</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinCutiList.pas">
+            <Form>frmIjinCutiList</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FlemburCetak.pas">
+            <Form>frmLemburCetak</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FlemburInput.pas">
+            <Form>frmLemburInput</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FLemburList.pas">
+            <Form>frmLemburList</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinLainCetak.pas">
+            <Form>frmIjinLainCetak</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinTidakMasukInput.pas">
+            <Form>frmIjinTidakMasukInput</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinTMList.pas">
+            <Form>frmIjinTMList</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinTidakMasuk.pas">
+            <Form>frmIjinTidakMasuk</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FRekapHarian.pas">
+            <Form>frmRekapHarian</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FRekapSelectFp.pas">
+            <Form>frmRekapSelectFP</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FPayrollPotongan.pas">
+            <Form>frmPayrollPotongan</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FPayrollTambahan.pas">
+            <Form>frmPayrollTambahan</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FHistoryKontrak.pas">
+            <Form>frmHistoryKontrak</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FPayrollCashInBali.pas">
+            <Form>frmPayrollCashInBali</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinKeluar.pas">
+            <Form>frmIjinKeluar</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinTidakMasukList.pas">
+            <Form>frmIjinTidakMasukList</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FSakitInput.pas">
+            <Form>frmSakitInput</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FRekapHarianNew.pas">
+            <Form>frmRekapHarianNew</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FPayrollCashIn.pas">
+            <Form>frmPayrollCashIn</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FRekapHarianBali.pas">
+            <Form>frmRekapHarianBali</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FPayrollAdminBali.pas">
+            <Form>frmPayrollAdminBali</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FPayrollPotonganBali.pas">
+            <Form>frmPayrollPotonganBali</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FPayrollTambahanBali.pas">
+            <Form>frmPayrollTambahanBali</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FRekapHarianBaru.pas">
+            <Form>frmRekapHarianBaru</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="FpSrc\FKaryawanScanFinger.pas">
+            <Form>frmKaryawanScanFinger</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="FpSrc\FNotes.pas">
+            <Form>frmNotes</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="FpSrc\FRegKaryawan.pas">
+            <Form>frmRegKaryawan</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FMasterKontrak.pas">
+            <Form>frmMasterKontrak</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FMasterKontrakAdd.pas">
+            <Form>frmMasterKontrakAdd</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FKontrakKerjaDetails.pas">
+            <Form>frmKontrakKerjaDetails</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FSaldoCutiGenerate.pas">
+            <Form>frmSaldoCutiGenerate</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinLainList.pas">
+            <Form>frmIjinLainList</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinLainInput.pas">
+            <Form>frmIjinLainInput</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinSakitInput.pas">
+            <Form>frmIjinSakitInput</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinSakitList.pas">
+            <Form>frmIjinSakitList</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinMasukInput.pas">
+            <Form>frmIjinMasukInput</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinMasukList.pas">
+            <Form>frmIjinMasukList</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinPulangList.pas">
+            <Form>frmIjinPulangList</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FIjinPulangInput.pas">
+            <Form>frmIjinPulangInput</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPos.pas">
+            <Form>frmPos</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FMenuTrans.pas">
+            <Form>frmMenuTrans</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FBrowseTrans.pas">
+            <Form>frmBrowseTrans</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FBuyAdditional.pas">
+            <Form>frmBuyAdditional</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPrintSO.pas">
+            <Form>frmPintSO</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FChangeTR.pas">
+            <Form>frmChangeTR</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FChangeRoom.pas">
+            <Form>frmChangeRoom</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPelunasan.pas">
+            <Form>frmPelunasan</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPayment.pas">
+            <Form>frmPayment</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FBuyGC.pas">
+            <Form>frmBuyGC</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FTransRedeem.pas">
+            <Form>frmTransRedeem</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPrintRedeem.pas">
+            <Form>frmPrintRedeem</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPrintProduk.pas">
+            <Form>frmPrintProduk</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="appconfig\FEmpty.pas">
+            <Form>frmEmpty</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="appconfig\FLogo.pas">
+            <Form>frmLogo</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FMerger.pas">
+            <Form>frmMerger</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPayGC.pas">
+            <Form>frmPayGC</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FTransMember.pas">
+            <Form>frmTransMember</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FNewPrintTrans.pas">
+            <Form>frmNewPrintTrans</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FNewMenuTrans.pas">
+            <Form>frmNewMenuTrans</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FSelectTherapist.pas">
+            <Form>frmSelectTherapist</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\master\FPosMainMenu.pas">
+            <Form>frmPosMainMenu</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\master\FPosMainMenuInput.pas">
+            <Form>frmPosMainMenuInput</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPosTransHotel.pas">
+            <Form>frmPosTransHotel</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FBuyProduct.pas">
+            <Form>frmBuyProduct</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\master\FPaketGC.pas">
+            <Form>frmPaketGC</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\master\FSelectGC.pas">
+            <Form>frmSelectGC</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\master\FGiftCertificate.pas">
+            <Form>frmGiftCertificate</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\master\FGiftCertificateMaster.pas">
+            <Form>frmGiftCertificateMaster</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\master\FPaketGCInput.pas">
+            <Form>frmPaketGCInput</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPosReleaseLock.pas">
+            <Form>frmPosReleaseLock</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPosPembayaran.pas">
+            <Form>frmPosPembayaran</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\master\FPosPromoMaster.pas">
+            <Form>frmPosPromoMaster</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPosPembayaranSelect.pas">
+            <Form>frmPosPembayaranSelect</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="appconfig\FMasterPassword.pas">
+            <Form>frmMasterPassword</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPosPembayaranDisc.pas">
+            <Form>frmPosPembayaranDisc</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPosPembayaranPay.pas">
+            <Form>frmPosPembayaranPay</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\master\FPosMasterPayment.pas">
+            <Form>frmPosMasterPayment</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="kasbank\FMasterBank.pas">
+            <Form>frmMasterBank</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="kasbank\FMasterBankAdd.pas">
+            <Form>frmMasterBankAdd</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Report\PosReport\FReportGCMaster.pas">
+            <Form>frmReportGCMaster</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPrintTrans.pas">
+            <Form>frmPrintTrans</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\master\FMemberCari.pas">
+            <Form>frmMemberCari</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\master\FMemberMaster.pas">
+            <Form>frmMemberMaster</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\master\FMemberMasterAdd.pas">
+            <Form>frmMemberMasterAdd</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Report\PosReport\FReportPendapatanBulanan.pas">
+            <Form>frmReportPendapatanBulanan</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Report\PosReport\FReportPosPayment.pas">
+            <Form>frmReportPosPayment</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Report\PosReport\FReportPosMaster.pas">
+            <Form>frmReportPoSMaster</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FTherapisCall2.pas">
+            <Form>frmTherapisCall2</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FMasterReportVariable.pas">
+            <Form>frmMasterReportVariable</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FReportPeriode.pas">
+            <Form>frmReportPeriode</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FPayrollPeriode.pas">
+            <Form>frmPayrollPeriode</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FTherapistReport.pas">
+            <Form>frmTherapistReport</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FTherapisStart.pas">
+            <Form>frmTherapisStart</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FTherapistStatus.pas">
+            <Form>frmTherapistStatus</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FTherapisCall.pas">
+            <Form>frmTherapisCall</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FLaporanTherapistReport.pas">
+            <Form>frmLaporanTherapistReport</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Report\PosReport\FReportPendapatanHarian.pas">
+            <Form>frmReportPendapatanHarian</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FReejectGuest.pas">
+            <Form>frmRejectGuest</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPosTransMain.pas">
+            <Form>frmPosTransMain</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPosTransMainDetails.pas">
+            <Form>frmPosTransMainDetails</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FMemberHistory.pas">
+            <Form>frmMemberHistory</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Report\PosReport\FRepTopRequest.pas">
+            <Form>frmRepTopRequest</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FTHRCutOff.pas">
+            <Form>frmTHRCutOff</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FRekapHarianOld.pas">
+            <Form>frmRekapHarianOld</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FMasterShift.pas">
+            <Form>frmMasterShift</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FMasterShiftAdd.pas">
+            <Form>frmMasterShiftAdd</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FPayrollAdmin.pas">
+            <Form>frmPayrollAdmin</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FJadwalAll.pas">
+            <Form>frmJadwalAll</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FJadwalOutlet.pas">
+            <Form>frmJadwalOutlet</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FJadwalOutletAdd.pas">
+            <Form>frmJadwalOutletAdd</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FJadwalOutletChange.pas">
+            <Form>frmJadwalOutletChange</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FJadwalTetap.pas">
+            <Form>frmJadwalTetap</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FJadwalTetapAdd.pas">
+            <Form>frmJadwalTetapAdd</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FRepPotongan.pas">
+            <Form>frmRepPotongan</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FReportPayroll.pas">
+            <Form>frmReportPayroll</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FReportKontrakBerjalan.pas">
+            <Form>frmReportKontrakBerjalan</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FRepTambahan.pas">
+            <Form>frmRepTambahan</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FRepPayrollDetails.pas">
+            <Form>frmRepPayrollDetails</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FReportOtherPayroll.pas">
+            <Form>frmReportOtherPayroll</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FCetakKomisi.pas">
+            <Form>frmCetakKomisi</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FCetakPayroll.pas">
+            <Form>frmCetakPayroll</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FReportCashIn.pas">
+            <Form>frmReportCashIn</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FReportSakit.pas">
+            <Form>frmReportSakit</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FReportAbsenManual.pas">
+            <Form>frmReportAbsenManual</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FReportRekapAbsen.pas">
+            <Form>frmLapRekapAbsen</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FReportLembur.pas">
+            <Form>frmReportLembur</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FReportCuti.pas">
+            <Form>frmReportCuti</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Report\PosReport\FReportVoid.pas">
+            <Form>frmReportVoid</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Report\PosReport\FReportDayli.pas">
+            <Form>frmReportDayli</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FLiburNasional.pas">
+            <Form>frmLiburNasional</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FRegistrationDrivers.pas">
+            <Form>frmRegistrationDrivers</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FDrivers.pas">
+            <Form>frmDrivers</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FTHRPerhitungan.pas">
+            <Form>frmTHRPerhitungan</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FTHRParameter.pas">
+            <Form>frmTHRParameter</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FTHRReport.pas">
+            <Form>frmTHRReport</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FDriverSelectTrans.pas">
+            <Form>frmDriverSelectTrans</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPrintDriversTrans.pas">
+            <Form>frmPintDriversTrans</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Delphi.Personality.12</Borland.Personality>
+        <Borland.ProjectType>Application</Borland.ProjectType>
+        <BorlandProject>
+            <Delphi.Personality>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDS)\lib\TMS Aurelius\TMS Busines Core Library\packages\bpl\Win32\dcltmsbcl250.bpl">File d:\program files\embarcardero\studio\19.0\lib\TMS Aurelius\TMS Busines Core Library\packages\bpl\Win32\dcltmsbcl250.bpl not found</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                </Excluded_Packages>
+                <Source>
+                    <Source Name="MainSource">ZenSystem.dpr</Source>
+                </Source>
+            </Delphi.Personality>
+            <Deployment Version="3">
+                <DeployFile LocalName="01imgcontainer\LogoAPPBWA.png" Configuration="Debug" Class="UWP_DelphiLogo150">
+                    <Platform Name="Win64">
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo150x150.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="01imgcontainer\LogoAPPBWA2.png" Configuration="Debug" Class="UWP_DelphiLogo44">
+                    <Platform Name="Win64">
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo44x44.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="01imgcontainer\LogoAPPBWA2.png" Configuration="Debug" Class="UWP_DelphiLogo44">
+                    <Platform Name="Win32">
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo44x44.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="01imgcontainer\LogoAPPBWA.png" Configuration="Debug" Class="UWP_DelphiLogo150">
+                    <Platform Name="Win32">
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo150x150.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="01imgcontainer\Logo40x40.png" Configuration="Debug" Class="UWP_DelphiLogo44">
+                    <Platform Name="Win32">
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo44x44.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="01imgcontainer\Logo40x40.png" Configuration="Release" Class="UWP_DelphiLogo44">
+                    <Platform Name="Win32">
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo44x44.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win32\Debug\ZenSystem.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>ZenSystem.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="d:\program files\embarcardero\studio\19.0\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png" Configuration="Debug" Class="UWP_DelphiLogo44">
+                    <Platform Name="Win32">
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo44x44.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="d:\program files\embarcardero\studio\19.0\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png" Configuration="Debug" Class="UWP_DelphiLogo150">
+                    <Platform Name="Win32">
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo150x150.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="01imgcontainer\Logo150x150.png" Configuration="Debug" Class="UWP_DelphiLogo150">
+                    <Platform Name="Win32">
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo150x150.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="01imgcontainer\Logo150x150.png" Configuration="Release" Class="UWP_DelphiLogo150">
+                    <Platform Name="Win32">
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo150x150.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployClass Name="AdditionalDebugSymbols">
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidClassesDexFile">
+                    <Platform Name="Android">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidGDBServer">
+                    <Platform Name="Android">
+                        <RemoteDir>library\lib\armeabi-v7a</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidLibnativeArmeabiFile">
+                    <Platform Name="Android">
+                        <RemoteDir>library\lib\armeabi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidLibnativeMipsFile">
+                    <Platform Name="Android">
+                        <RemoteDir>library\lib\mips</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidServiceOutput">
+                    <Platform Name="Android">
+                        <RemoteDir>library\lib\armeabi-v7a</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidSplashImageDef">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidSplashStyles">
+                    <Platform Name="Android">
+                        <RemoteDir>res\values</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_DefaultAppIcon">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_LauncherIcon144">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-xxhdpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_LauncherIcon36">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-ldpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_LauncherIcon48">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-mdpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_LauncherIcon72">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-hdpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_LauncherIcon96">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-xhdpi</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_SplashImage426">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-small</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_SplashImage470">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-normal</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_SplashImage640">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-large</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="Android_SplashImage960">
+                    <Platform Name="Android">
+                        <RemoteDir>res\drawable-xlarge</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="DebugSymbols">
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="DependencyFramework">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                        <Extensions>.framework</Extensions>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="iOSDevice32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Required="true" Name="DependencyPackage">
+                    <Platform Name="iOSDevice32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.bpl</Extensions>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="File">
+                    <Platform Name="Android">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice32">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\Resources\StartUp\</RemoteDir>
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_Launch1024">
+                    <Platform Name="iOSDevice32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_Launch1536">
+                    <Platform Name="iOSDevice32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_Launch2048">
+                    <Platform Name="iOSDevice32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_Launch768">
+                    <Platform Name="iOSDevice32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Launch320">
+                    <Platform Name="iOSDevice32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Launch640">
+                    <Platform Name="iOSDevice32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPhone_Launch640x1136">
+                    <Platform Name="iOSDevice32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectAndroidManifest">
+                    <Platform Name="Android">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceDebug">
+                    <Platform Name="iOSDevice32">
+                        <RemoteDir>..\$(PROJECTNAME).app.dSYM\Contents\Resources\DWARF</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).app.dSYM\Contents\Resources\DWARF</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules">
+                    <Platform Name="iOSDevice32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSEntitlements">
+                    <Platform Name="iOSDevice32">
+                        <RemoteDir>..\</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSInfoPList">
+                    <Platform Name="iOSDevice32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSResource">
+                    <Platform Name="iOSDevice32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectOSXEntitlements">
+                    <Platform Name="OSX32">
+                        <RemoteDir>..\</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectOSXInfoPList">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectOSXResource">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\Resources</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Required="true" Name="ProjectOutput">
+                    <Platform Name="Android">
+                        <RemoteDir>library\lib\armeabi-v7a</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Linux64">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectUWPManifest">
+                    <Platform Name="Win32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Win64">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="UWP_DelphiLogo150">
+                    <Platform Name="Win32">
+                        <RemoteDir>Assets</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Win64">
+                        <RemoteDir>Assets</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="UWP_DelphiLogo44">
+                    <Platform Name="Win32">
+                        <RemoteDir>Assets</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Win64">
+                        <RemoteDir>Assets</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
+            </Deployment>
+            <Platforms>
+                <Platform value="Win32">True</Platform>
+                <Platform value="Win64">True</Platform>
+            </Platforms>
+        </BorlandProject>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
+    <Import Project="$(MSBuildProjectName).deployproj" Condition="Exists('$(MSBuildProjectName).deployproj')"/>
+</Project>

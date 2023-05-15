@@ -1,0 +1,46 @@
+Black
+Blue
+BluePrint
+Caramel
+Money Twins
+Lilian
+TheAsphaltWorld
+iMaginary
+Coffee
+LiquidSky
+LondonLiquidSky
+GlassOceans
+Stardust
+Xmas2008Blue
+Valentine
+McSkin
+Summer2008
+Pumpkin
+DarkSide
+Springtime
+Darkroom
+Foggy
+HighContrast
+Seven
+SevenClassic
+Sharp
+Sharp Plus
+DevExpress Style
+Office2007Blue
+Office2007Black
+Office2007Silver
+Office2007Green
+Office2007Pink
+Office2010Blue
+Office2010Black
+Office2010Silver
+Office2013White
+Office2013DarkGray
+Office2013LightGray
+Office2016Colorful
+Office2016Dark
+VisualStudio2013Blue
+VisualStudio2013Dark
+VisualStudio2013Light
+VS2010
+Whiteprint
