@@ -294,16 +294,20 @@ begin
 end;
 
 procedure TfrmNewMenuTrans.edNamaMenuKeyPress(Sender: TObject; var Key: Char);
+var
+   jSonItem : XSuperObject.ISuperObject;
+   strCkHappy : String;
+   hargaMenu : Double;
 begin
    if (key = #13) then
      begin
        qryMenu2.Close;
        qryMenu2.SQL.Clear;
-       qryMenu2.SQL.Add('select menu_id, harga, lama, disc_hh, disc_normal, harga_hh, harga_normal from ' +
+       qryMenu2.SQL.Add('select menu_id, harga, lama, disc_hh, disc_normal, harga_hh, harga_normal, notes  from ' +
             'main_menu where menu_id = ''' + VarToStr(edNamaMenu.EditValue) + '''');
        qryMenu2.Open;
-
-
+       jSonItem := XSuperobject.SO(qryMenu2.Fields[7].AsString);
+       strCkHappy := jSonItem.S['ckHappy'];
        edLama.EditValue := qryMenu2.Fields[2].AsInteger;
        edHarga.EditValue := qryMenu2.Fields[1].AsFloat;
        if (PACKETHH = True) then
@@ -311,7 +315,12 @@ begin
            edDiscount.EditValue := qryMenu2.Fields[3].AsFloat;
            edNett.EditValue := qryMenu2.Fields[5].AsFloat;
          end
-       else if (PACKETHH = False) then
+       else if ((PACKETHH = False) AND (strCkHappy = 'Y')) then
+         begin
+           ShowMessage('Menu ini hanya dapat dipilih pada paket Happy Hour Only !!');
+           edNamaMenu.Clear;
+         end
+       else if ((PACKETHH = False) AND (strCkHappy = 'N')) then
          begin
            edDiscount.EditValue := qryMenu2.Fields[4].AsFloat;
            edNett.EditValue := qryMenu2.Fields[6].AsFloat;
@@ -324,14 +333,18 @@ end;
 
 procedure TfrmNewMenuTrans.edNamaMenuPropertiesEditValueChanged(
   Sender: TObject);
+var
+   jSonItem : XSuperObject.ISuperObject;
+   strCkHappy : String;
+   hargaMenu : Double;
 begin
        qryMenu2.Close;
        qryMenu2.SQL.Clear;
-       qryMenu2.SQL.Add('select menu_id, harga, lama, disc_hh, disc_normal, harga_hh, harga_normal from ' +
+       qryMenu2.SQL.Add('select menu_id, harga, lama, disc_hh, disc_normal, harga_hh, harga_normal, notes  from ' +
             'main_menu where menu_id = ''' + VarToStr(edNamaMenu.EditValue) + '''');
        qryMenu2.Open;
-
-
+       jSonItem := XSuperobject.SO(qryMenu2.Fields[7].AsString);
+       strCkHappy := jSonItem.S['ckHappy'];
        edLama.EditValue := qryMenu2.Fields[2].AsInteger;
        edHarga.EditValue := qryMenu2.Fields[1].AsFloat;
        if (PACKETHH = True) then
@@ -339,7 +352,12 @@ begin
            edDiscount.EditValue := qryMenu2.Fields[3].AsFloat;
            edNett.EditValue := qryMenu2.Fields[5].AsFloat;
          end
-       else if (PACKETHH = False) then
+       else if ((PACKETHH = False) AND (strCkHappy = 'Y')) then
+         begin
+           ShowMessage('Menu ini hanya dapat dipilih pada paket Happy Hour Only !!');
+           edNamaMenu.Clear;
+         end
+       else if ((PACKETHH = False) AND (strCkHappy = 'N')) then
          begin
            edDiscount.EditValue := qryMenu2.Fields[4].AsFloat;
            edNett.EditValue := qryMenu2.Fields[6].AsFloat;

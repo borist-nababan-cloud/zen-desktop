@@ -24,22 +24,21 @@ uses
   cxDataStorage, cxEdit, cxNavigator, Data.DB, cxDBData, cxGridCustomTableView,
   cxGridTableView, cxGridDBTableView, cxGridLevel, cxClasses, cxGridCustomView,
   cxGrid, DBAccess, MyAccess, MemDS, Vcl.StdCtrls, cxTextEdit, Vcl.Menus,
-  cxButtons, cxCalc, AdvMenus, strUtils, cxCheckBox, cxCalendar;
+  cxButtons, cxCalc, AdvMenus, strUtils, cxCheckBox, cxCalendar,
+  dxBarBuiltInMenu, cxPC, cxContainer, cxDropDownEdit, cxMaskEdit, cxLabel,
+  Vcl.ExtCtrls;
 
 type
   TfrmPosMainMenu = class(TForm)
-    qryList: TMyQuery;
-    dsQryList: TMyDataSource;
-    gtbList: TcxGridDBTableView;
-    cxGrid1Level1: TcxGridLevel;
-    cxGrid1: TcxGrid;
+    pgControl: TcxPageControl;
+    PgMain: TcxTabSheet;
     Label1: TLabel;
-    btnNew: TcxButton;
     memStruktur: TMemo;
-    gtbListmenu_id: TcxGridDBColumn;
+    cxGrid1: TcxGrid;
+    gtbList: TcxGridDBTableView;
+    gtbListnama_menu: TcxGridDBColumn;
     gtbListtype_menu: TcxGridDBColumn;
     gtbListjenis_jasa_id: TcxGridDBColumn;
-    gtbListnama_menu: TcxGridDBColumn;
     gtbListharga: TcxGridDBColumn;
     gtbListlama: TcxGridDBColumn;
     gtbListdisc_hh: TcxGridDBColumn;
@@ -48,16 +47,57 @@ type
     gtbListharga_normal: TcxGridDBColumn;
     gtbListnotes: TcxGridDBColumn;
     gtbListaktif: TcxGridDBColumn;
+    gtbListmenu_id: TcxGridDBColumn;
     gtbListlastuser: TcxGridDBColumn;
     gtbListlasteditdate: TcxGridDBColumn;
     gtbListColumn1: TcxGridDBColumn;
+    cxGrid1Level1: TcxGridLevel;
+    btnNew: TcxButton;
     cxButton1: TcxButton;
+    cxButton2: TcxButton;
+    btnRefresh: TcxButton;
+    qryList: TMyQuery;
+    dsQryList: TMyDataSource;
     pmImport: TAdvPopupMenu;
     Jasa1: TMenuItem;
     Produk1: TMenuItem;
     Additional1: TMenuItem;
-    cxButton2: TcxButton;
-    btnRefresh: TcxButton;
+    pgInput: TcxTabSheet;
+    Label2: TLabel;
+    rbType: TRadioGroup;
+    cxLabel1: TcxLabel;
+    edKode: TcxTextEdit;
+    edJenis: TcxComboBox;
+    cxLabel2: TcxLabel;
+    cxLabel3: TcxLabel;
+    cxLabel4: TcxLabel;
+    cxLabel5: TcxLabel;
+    edNamaMenu: TcxTextEdit;
+    edHargaUtama: TcxCalcEdit;
+    cxLabel6: TcxLabel;
+    cxLabel7: TcxLabel;
+    edLama: TcxCalcEdit;
+    cxLabel8: TcxLabel;
+    edDiscHH: TcxCalcEdit;
+    cxLabel9: TcxLabel;
+    edHargaHH: TcxCalcEdit;
+    cxLabel10: TcxLabel;
+    edDiscNormal: TcxCalcEdit;
+    cxLabel11: TcxLabel;
+    edHargaNormal: TcxCalcEdit;
+    ckKeterangan: TcxCheckBox;
+    edKeterangan: TcxTextEdit;
+    cxLabel12: TcxLabel;
+    ckAktif: TcxCheckBox;
+    btnSimpan: TcxButton;
+    cxButton3: TcxButton;
+    ckBaverage: TcxCheckBox;
+    cdRedeem: TcxCheckBox;
+    ckDiscount: TcxCheckBox;
+    ckHappyHour: TcxCheckBox;
+    GroupBox1: TGroupBox;
+    rbKomisi: TRadioGroup;
+    edKomisi: TcxCalcEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Jasa1Click(Sender: TObject);
@@ -68,6 +108,17 @@ type
     procedure btnRefreshClick(Sender: TObject);
     procedure cxButton2Click(Sender: TObject);
     procedure btnNewClick(Sender: TObject);
+    procedure btnSimpanClick(Sender: TObject);
+    procedure edJenisFocusChanged(Sender: TObject);
+    procedure edNamaMenuFocusChanged(Sender: TObject);
+    procedure edHargaUtamaFocusChanged(Sender: TObject);
+    procedure edLamaFocusChanged(Sender: TObject);
+    procedure edDiscHHFocusChanged(Sender: TObject);
+    procedure edDiscNormalFocusChanged(Sender: TObject);
+    procedure edKeteranganFocusChanged(Sender: TObject);
+    procedure edDiscHHPropertiesEditValueChanged(Sender: TObject);
+    procedure edDiscNormalPropertiesEditValueChanged(Sender: TObject);
+    procedure cxButton3Click(Sender: TObject);
   private
     { Private declarations }
     qryExec, qryMenu1, qryMenu2, qryMenu3 : TMyQuery;
@@ -75,6 +126,7 @@ type
     { Public declarations }
     function CreateNewID : String;
     function GenerateJson(strJson : String) : TArray<String>;
+    procedure HitungUlang;
   end;
 
 var
@@ -149,7 +201,7 @@ end;
 
 procedure TfrmPosMainMenu.btnNewClick(Sender: TObject);
 begin
-  Application.CreateForm(TfrmPosMainMenuInput, frmPosMainMenuInput);
+    {Application.CreateForm(TfrmPosMainMenuInput, frmPosMainMenuInput);
     frmPosMainMenuInput.FormStyle := fsNormal;
     frmPosMainMenuInput.Height := 480;
     frmPosMainMenuInput.Width := 660;
@@ -158,13 +210,112 @@ begin
     frmPosMainMenuInput.edJenis.ItemIndex := 1;
     frmPosMainMenuInput.ckKeterangan.Checked := False;
     frmPosMainMenuInput.ckAktif.Checked := True;
-    frmPosMainMenuInput.Show;
+    frmPosMainMenuInput.Show; }
+    edKode.Text := '';
+    edJenis.Text := '';
+    edNamaMenu.Text := '';
+    edHargaUtama.EditValue := 0;
+    edLama.EditValue := 0;
+    edDiscHH.EditValue := 0;
+    edDiscNormal.EditValue := 0;
+    edHargaHH.EditValue := 0;
+    edHargaNormal.EditValue := 0;
+    edKeterangan.Text := '';
+    ckKeterangan.Checked := False;
+    ckBaverage.Checked := False;
+    ckAktif.Checked := False;
+    ckHappyHour.Checked := False;
+    rbKomisi.ItemIndex := 0;
+    edKomisi.EditValue := 0;
+    pgControl.ActivePage := pgInput;
 end;
 
 procedure TfrmPosMainMenu.btnRefreshClick(Sender: TObject);
 begin
    qryList.Refresh;
    gtbList.DataController.Refresh;
+end;
+
+procedure TfrmPosMainMenu.btnSimpanClick(Sender: TObject);
+var
+  strJson, typeMenu, typeJasa : String;
+  jSonItem : XSuperObject.ISuperObject;
+begin
+     HitungUlang;
+   case rbType.ItemIndex of
+      0 : begin
+             typeMenu := 'BJ';
+             typeJasa := edJenis.Text;
+          end;
+      1 : begin
+            typeMenu := 'BA';
+            typeJasa := edJenis.Text;
+          end;
+      2 : begin
+            typeMenu := 'BP';
+            typeJasa := 'PR';
+          end;
+      3 : begin
+            typeMenu := 'BG';
+            typeJasa := 'GC'
+          end;
+   end;
+   jSonItem :=  XSuperObject.SO('{}');
+   jSonItem.S['keterangan'] := edKeterangan.Text;
+   jSonItem.S['cetak'] := vartostr(ckKeterangan.EditValue);
+   jSonItem.S['isbaverage'] := vartostr(ckBaverage.EditValue);
+   jSonItem.I['typeKomisi'] := rbKomisi.ItemIndex;
+   jSonItem.F['valueKomisi'] := edKomisi.EditValue;
+   jSonItem.S['ckHappy'] := vartostr(ckHappyHour.EditValue);
+   strJson := jSonItem.AsJSON(False, False);
+   if (edKode.Text = '') then
+    begin
+      edKode.Text := frmPosMainMenu.CreateNewID;
+      qryExec.SQL.Clear;
+      qryExec.SQL.Add('insert into main_menu values(' +
+                    '''' + edKode.Text + ''',' +
+                    '''' + typeMenu + ''',' +
+                    '''' + typeJasa + ''',' +
+                    QuotedStr(edNamaMenu.Text) + ',' +
+                    '''' + FloatToStr(edHargaUtama.EditValue) + ''',' +
+                    '''' + IntToStr(edLama.EditValue) + ''','  +
+                    '''' + FloatToStr(edDiscHH.EditValue) + ''',' +
+                    '''' + FloatToStr(edDiscNormal.EditValue) + ''',' +
+                    '''' + FloatToStr(edHargaHH.EditValue) + ''',' +
+                    '''' + FloatToStr(edHargaNormal.EditValue) + ''',' +
+                    QuotedStr(strJson) + ',' +
+                    '''' + VarToStr(ckAktif.EditValue) + ''',' +
+                    '''' + frmMain.USERAPPS + ''',' +
+                    '''' + FormatDateTime('yyyy-MM-dd hh:mm:ss', Now) + ''');');
+            qryExec.ExecSQL;
+      frmPosMainMenu.btnRefresh.Click;
+      frmPosMainMenu.gtbList.DataController.Search.Locate(frmPosMainMenu.gtbListmenu_id.Index, edKode.Text);
+      ShowMessage('Update Data Finish');
+    end
+   else if (edKode.Text <> '') then
+    begin
+      qryExec.SQL.Clear;
+      qryExec.SQL.Add('update main_menu set ' +
+                    'type_menu = ''' + typeMenu + ''',' +
+                    'jenis_jasa_id = ''' + typeJasa + ''',' +
+                    'nama_menu = ' + QuotedStr(edNamaMenu.Text) + ',' +
+                    'harga = ''' + FloatToStr(edHargaUtama.EditValue) + ''',' +
+                    'lama = ''' + IntToStr(edLama.EditValue) + ''','  +
+                    'disc_hh = ''' + FloatToStr(edDiscHH.EditValue) + ''',' +
+                    'disc_normal = ''' + FloatToStr(edDiscNormal.EditValue) + ''',' +
+                    'harga_hh = ''' + FloatToStr(edHargaHH.EditValue) + ''',' +
+                    'harga_normal = ''' + FloatToStr(edHargaNormal.EditValue) + ''',' +
+                    'notes = ' + QuotedStr(strJson) + ',' +
+                    'aktif = ''' + VarToStr(ckAktif.EditValue) + ''',' +
+                    'lastuser = ''' + frmMain.USERAPPS + ''',' +
+                    'lasteditdate = ''' + FormatDateTime('yyyy-MM-dd hh:mm:ss', Now) + ''' ' +
+                    'where menu_id = ''' + edKode.Text + '''');
+            qryExec.ExecSQL;
+      frmPosMainMenu.btnRefresh.Click;
+      frmPosMainMenu.gtbList.DataController.Search.Locate(frmPosMainMenu.gtbListmenu_id.Index, edKode.Text);
+      ShowMessage('Update Data Finish');
+    end;
+    pgControl.ActivePage := PgMain;
 end;
 
 function TfrmPosMainMenu.CreateNewID;
@@ -198,10 +349,13 @@ end;
 
 procedure TfrmPosMainMenu.cxButton2Click(Sender: TObject);
 var
-  kodeItem, isCetak, keterangan, isbaverage : String;
-  recSel : Integer;
+  kodeItem, Cetak, keterangan, isbaverage, strCkHappy : String;
+  recSel, typeKomisi : Integer;
+
+  valueKomisi : Double;
   //lsJson : TStringList;
   jSonItem : XSuperObject.ISuperObject;
+
 begin
     recSel := gtbList.DataController.GetFocusedRecordIndex;
     if (recSel < 0) then Exit;
@@ -230,37 +384,86 @@ begin
       begin
         isbaverage := 'N';
       end;
-    isCetak := jSonItem.S['cetak'];
+    Cetak := jSonItem.S['cetak'];
     keterangan := jSonItem.S['keterangan'];
+    typeKomisi := jSonItem.I['typeKomisi'];
+    valueKomisi := jSonItem.F['valueKomisi'];
+    strCkHappy := jSonItem.S['ckHappy'];
     //lsJson.Free;
-    Application.CreateForm(TfrmPosMainMenuInput, frmPosMainMenuInput);
-    frmPosMainMenuInput.FormStyle := fsNormal;
-    frmPosMainMenuInput.Height := 480;
-    frmPosMainMenuInput.Width := 660;
-    frmPosMainMenuInput.Position := poDesktopCenter;
-    with frmPosMainMenuInput do
-      begin
-        if (qryMenu1.Fields[1].AsString = 'BJ') then rbType.ItemIndex := 0
-        else if (qryMenu1.Fields[1].AsString = 'BA') then rbType.ItemIndex := 1
-        else if (qryMenu1.Fields[1].AsString = 'BP') then rbType.ItemIndex := 2
-        else if (qryMenu1.Fields[1].AsString = 'BG') then rbType.ItemIndex := 3
-        else rbType.ItemIndex := 2;
+    if (qryMenu1.Fields[1].AsString = 'BJ') then rbType.ItemIndex := 0
+    else if (qryMenu1.Fields[1].AsString = 'BA') then rbType.ItemIndex := 1
+    else if (qryMenu1.Fields[1].AsString = 'BP') then rbType.ItemIndex := 2
+    else if (qryMenu1.Fields[1].AsString = 'BG') then rbType.ItemIndex := 3
+    else rbType.ItemIndex := 2;
 
-        edKode.Text := kodeItem;
-        edJenis.Text := qryMenu1.Fields[2].AsString;
-        edNamaMenu.Text := qryMenu1.Fields[3].AsString;
-        edHargaUtama.EditValue := qryMenu1.Fields[4].AsFloat;
-        edLama.EditValue := qryMenu1.Fields[5].AsInteger;
-        edDiscHH.EditValue := qryMenu1.Fields[6].AsFloat;
-        edDiscNormal.EditValue := qryMenu1.Fields[7].AsFloat;
-        edHargaHH.EditValue := qryMenu1.Fields[8].AsFloat;
-        edHargaNormal.EditValue := qryMenu1.Fields[9].AsFloat;
-        edKeterangan.Text := keterangan;
-        ckKeterangan.EditValue := isCetak;
-        ckBaverage.EditValue := isbaverage;
-        ckAktif.EditValue := qryMenu1.Fields[11].AsString;
-      end;
-   frmPosMainMenuInput.Show;
+    edKode.Text := kodeItem;
+    edJenis.Text := qryMenu1.Fields[2].AsString;
+    edNamaMenu.Text := qryMenu1.Fields[3].AsString;
+    edHargaUtama.EditValue := qryMenu1.Fields[4].AsFloat;
+    edLama.EditValue := qryMenu1.Fields[5].AsInteger;
+    edDiscHH.EditValue := qryMenu1.Fields[6].AsFloat;
+    edDiscNormal.EditValue := qryMenu1.Fields[7].AsFloat;
+    edHargaHH.EditValue := qryMenu1.Fields[8].AsFloat;
+    edHargaNormal.EditValue := qryMenu1.Fields[9].AsFloat;
+    edKeterangan.Text := keterangan;
+    ckKeterangan.EditValue := Cetak;
+    ckBaverage.EditValue := isbaverage;
+    rbType.ItemIndex := typeKomisi;
+    edKomisi.EditValue := valueKomisi;
+    ckHappyHour.EditValue := strCkHappy;
+    ckAktif.EditValue := qryMenu1.Fields[11].AsString;
+    pgControl.ActivePage := pgInput;
+end;
+
+procedure TfrmPosMainMenu.cxButton3Click(Sender: TObject);
+begin
+     pgControl.ActivePage := PgMain;
+end;
+
+procedure TfrmPosMainMenu.edDiscHHFocusChanged(Sender: TObject);
+begin
+     HitungUlang;
+end;
+
+procedure TfrmPosMainMenu.edDiscHHPropertiesEditValueChanged(Sender: TObject);
+begin
+     HitungUlang;
+end;
+
+procedure TfrmPosMainMenu.edDiscNormalFocusChanged(Sender: TObject);
+begin
+     HitungUlang;
+end;
+
+procedure TfrmPosMainMenu.edDiscNormalPropertiesEditValueChanged(
+  Sender: TObject);
+begin
+     HitungUlang;
+end;
+
+procedure TfrmPosMainMenu.edHargaUtamaFocusChanged(Sender: TObject);
+begin
+     HitungUlang;
+end;
+
+procedure TfrmPosMainMenu.edJenisFocusChanged(Sender: TObject);
+begin
+     HitungUlang;
+end;
+
+procedure TfrmPosMainMenu.edKeteranganFocusChanged(Sender: TObject);
+begin
+     HitungUlang;
+end;
+
+procedure TfrmPosMainMenu.edLamaFocusChanged(Sender: TObject);
+begin
+     HitungUlang;
+end;
+
+procedure TfrmPosMainMenu.edNamaMenuFocusChanged(Sender: TObject);
+begin
+     HitungUlang;
 end;
 
 procedure TfrmPosMainMenu.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -310,6 +513,8 @@ begin
     //qryList.Active := True;
     qryList.Active := True;
     gtbList.DataController.Refresh;
+    pgControl.ActivePage := PgMain;
+    pgControl.HideTabs := True;
 end;
 
 procedure TfrmPosMainMenu.gtbListColumn1GetDataText(
@@ -319,6 +524,12 @@ begin
    else if (AText = 'BJ') then AText := 'Jasa'
    else if (AText = 'BA') then AText := 'Additional'
    else if (AText = 'BG') then AText := 'Gift Certificate';
+end;
+
+procedure TfrmPosMainMenu.HitungUlang;
+begin
+     edHargaHH.EditValue := edHargaUtama.EditValue - (edHargaUtama.EditValue * edDiscHH.EditValue / 100);
+   edHargaNormal.EditValue := edHargaUtama.EditValue - (edHargaUtama.EditValue * edDiscNormal.EditValue / 100);
 end;
 
 procedure TfrmPosMainMenu.Jasa1Click(Sender: TObject);

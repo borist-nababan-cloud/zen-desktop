@@ -309,6 +309,7 @@ object frmReportCuti: TfrmReportCuti
     OnClick = Button2Click
   end
   object qryAbsen: TMyQuery
+    Connection = dmDB.dbInternal
     SQL.Strings = (
       
         'SELECT kodekaryawan, idkaryawan, nomorcuti, tglpengajuan, tangga' +
@@ -346,6 +347,7 @@ object frmReportCuti: TfrmReportCuti
   end
   object tblDivisi: TMyTable
     TableName = 'departemen'
+    Connection = dmDB.dbInternal
     Left = 492
     Top = 36
   end

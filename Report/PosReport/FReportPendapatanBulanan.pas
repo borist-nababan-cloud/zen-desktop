@@ -90,6 +90,12 @@ implementation
 
 uses FdmDB, FMain;
 
+function GetAccessToken(ClientID, ClientSecret, RedirectURI: string): string;
+begin
+  // Implement OAuth2 flow to get access token using ClientID, ClientSecret, and RedirectURI
+  // ...
+end;
+
 procedure TfrmReportPendapatanBulanan.Button1Click(Sender: TObject);
 begin
   CreateCharts;
@@ -294,12 +300,13 @@ begin
    tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, FormatFloat('#,#', qryPayment.Fields[1].AsFloat));
    tvreport.DataController.PostEditingData;
    tvreport.DataController.Post(True);
-   //memoPayment.Lines.Add('Tot. Exchange' + #9#9 + FormatFloat('#,#', qryPayment.Fields[2].AsFloat));
-   recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
-   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, 'Exchange');
-   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, FormatFloat('#,#', qryPayment.Fields[2].AsFloat));
-   tvreport.DataController.PostEditingData;
-   tvreport.DataController.Post(True);
+
+//   recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
+//   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, 'Exchange');
+//   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, FormatFloat('#,#', qryPayment.Fields[2].AsFloat));
+//   tvreport.DataController.PostEditingData;
+//   tvreport.DataController.Post(True);
+
    subtotal := qryPayment.Fields[0].AsFloat - qryPayment.Fields[2].AsFloat;
    recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
    tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, 'TOTAL CASH');
@@ -314,7 +321,8 @@ begin
    tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, '****');
    tvreport.DataController.PostEditingData;
    tvreport.DataController.Post(True);
-
+   //------------------------------------------------------------------------------
+//   ShowMessage(FormatDateTime('yyyy-MM-dd', tglAwal) + ' - ' + FormatDateTime('yyyy-MM-dd', tglAkhir));
    qryPayment.Close;
    qryPayment.SQL.Clear;
    qryPayment.SQL.Add('select kodepayment1, kodebank1, sum(vpayment1), ' +
@@ -328,7 +336,7 @@ begin
    qryPayment.First;
    for i := 0 to qryPayment.RecordCount -1 do
       begin
-         keterangan := qryPayment.Fields[3].AsString + ' ' + qryPayment.Fields[1].AsString;
+         keterangan := '#1# ' + qryPayment.Fields[3].AsString + ' ' + qryPayment.Fields[1].AsString;
          recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
          tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, keterangan);
          tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, FormatFloat('#,#', qryPayment.Fields[2].AsFloat));
@@ -337,6 +345,32 @@ begin
          qryPayment.Next;
          Application.ProcessMessages;
       end;
+
+   //-----------------------------------------------------------------------------------------
+   qryPayment.Close;
+   qryPayment.SQL.Clear;
+   qryPayment.SQL.Add('select kodepayment2, kodebank2, sum(vpayment2), ' +
+              '(SELECT pos_master_payment.namapayment from pos_master_payment ' +
+              'where pos_master_payment.kodepayment = trans_payment_detail.kodepayment2) ' +
+              'as nama_payment from trans_payment_detail where tanggal >= ' +
+              QuotedStr(FormatDateTime('yyyy-MM-dd', tglAwal)) +
+              ' AND tanggal <= ' + QuotedStr(FormatDateTime('yyyy-MM-dd', tglAkhir)) +
+              ' AND vpayment2 > 0 GROUP BY kodepayment2, kodebank2');
+   qryPayment.Open;
+   qryPayment.First;
+   for i := 0 to qryPayment.RecordCount -1 do
+      begin
+         keterangan := '#2# ' + qryPayment.Fields[3].AsString + ' ' + qryPayment.Fields[1].AsString;
+         recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
+         tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, keterangan);
+         tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, FormatFloat('#,#', qryPayment.Fields[2].AsFloat));
+         tvreport.DataController.PostEditingData;
+         tvreport.DataController.Post(True);
+         qryPayment.Next;
+         Application.ProcessMessages;
+      end;
+
+   //-----------------------------------------------------------------------------------------
    qryPayment.Close;
    qryPayment.SQL.Clear;
    qryPayment.SQL.Add('select sum(vredeem) from trans_payment_detail ' +
@@ -375,10 +409,29 @@ begin
    qryPayment.First;
    for i := 0 to qryPayment.RecordCount - 1 do
      begin
-         keterangan := 'DISC ' + qryPayment.Fields[2].AsString;
+         keterangan := 'PROMO ' + qryPayment.Fields[2].AsString;
          recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
          tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, keterangan);
          tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, FormatFloat('#,#', qryPayment.Fields[1].AsFloat));
+         tvreport.DataController.PostEditingData;
+         tvreport.DataController.Post(True);
+         qryPayment.Next;
+         Application.ProcessMessages;
+     end;
+
+   qryPayment.Close;
+   qryPayment.SQL.Clear;
+   qryPayment.SQL.Add('select sum(vdisc) from trans_payment_detail where tanggal >= ' +
+        QuotedStr(FormatDateTime('yyyy-MM-dd', tglAwal)) +
+        ' AND tanggal <= ' + QuotedStr(FormatDateTime('yyyy-MM-dd', tglAkhir)));
+   qryPayment.Open;
+   qryPayment.First;
+   for i := 0 to qryPayment.RecordCount - 1 do
+     begin
+         keterangan := 'DISC ';
+         recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
+         tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, keterangan);
+         tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, FormatFloat('#,#', qryPayment.Fields[0].AsFloat));
          tvreport.DataController.PostEditingData;
          tvreport.DataController.Post(True);
          qryPayment.Next;
@@ -391,7 +444,7 @@ procedure TfrmReportPendapatanBulanan.CariSummary;
 var
   qrySum1, qrySum2, qrySum3 : TMyQuery;
   subtotal,  byReq, totBM, totRF, totTrans, rasioTR, totBave, totNonBave,
-  rpBM, rpRF: Double;
+  rpBM, rpRF, qtyRoomRF, qtyRoomBM, qtyRF, qtyBM, ratioRP_RF, ratioRP_BM, ratioRoom_RF, ratioRoom_BM: Double;
   i, cntTR, cntHari, totFm, totML : Integer;
   tglStart, tglEnd : TDate;
   keterangan, typeJasa, strReq, isBaverage : String;
@@ -448,7 +501,7 @@ begin
        ''' AND trans_type_id = ''' + 'BJ' + '''');
     qrySum1.Open;
 
-    memSend.Lines.Add('<tr><td>1.</td><td>Total Jasa </td><td align="right">' + FormatFloat('#,#', qrySum1.Fields[0].AsFloat) + '</td></tr>');
+    memSend.Lines.Add('<tr><td>1.</td><td>Total Jasa </td><td align="right" text-align= "right">' + FormatFloat('#,#', qrySum1.Fields[0].AsFloat) + '</td></tr>');
 
     qrySum1.Close;
     qrySum1.SQL.Clear;
@@ -456,7 +509,7 @@ begin
        FormatDateTime('yyyy-MM-dd', tglAwal) + ''' AND tanggal <= ''' + FormatDateTime('yyyy-MM-dd', tglAkhir) +
        ''' AND trans_type_id = ''' + 'BA' + '''');
     qrySum1.Open;
-    memSend.Lines.Add('<tr><td>2.</td><td>Total Additional </td><td align="right">' + FormatFloat('#,#', qrySum1.Fields[0].AsFloat) + '</td></tr>');
+    memSend.Lines.Add('<tr><td>2.</td><td>Total Additional </td><td align="right" text-align= "right">' + FormatFloat('#,#', qrySum1.Fields[0].AsFloat) + '</td></tr>');
 
     qrySum3.Close;
     qrySum3.SQL.Clear;
@@ -475,10 +528,11 @@ begin
         else if (qrySum3.Fields[3].AsString = 'BM') then rpBM := rpBM + qrySum3.Fields[2].AsFloat;
         qrySum3.Next;
       end;
-    memSend.Lines.Add('<tr><td></td><td>Total RF </td><td align="right">' + FormatFloat('#,#', rpRF) + '</td></tr>');
-    memSend.Lines.Add('<tr><td></td><td>Total BM </td><td align="right">' + FormatFloat('#,#', rpBM) + '</td></tr>');
-
-    memSend.Lines.Add('<tr><td>3.</td><td> Product </td><td align="right">' + '' + '</td></tr>');
+    memSend.Lines.Add('<tr><td></td><td>Total RF </td><td align="right" text-align= "right">' + FormatFloat('#,#', rpRF) + '</td></tr>');
+    memSend.Lines.Add('<tr><td></td><td>Total BM </td><td align="right" text-align= "right">' + FormatFloat('#,#', rpBM) + '</td></tr>');
+//    memNotes.Lines.Add('Rupiah RF = ' + FormatFloat('#,#', rpRF));
+//    memNotes.Lines.Add('Rupiah BM = ' + FormatFloat('#,#', rpBM));
+    memSend.Lines.Add('<tr><td>3.</td><td> Product </td><td align="right" text-align= "right">' + '' + '</td></tr>');
     qrySum2.Close;
     qrySum2.SQL.Clear;
     qrySum2.SQL.Add('select trans_detail.produk_jasa_id ,sum(trans_detail.subtotal) ' +
@@ -514,15 +568,15 @@ begin
             end;
           qrySum2.Next;
       end;
-    memSend.Lines.Add('<tr><td> </td><td>Baverage </td><td align="right">' + FormatFloat('#,#', totBave) + '</td></tr>');
-    memSend.Lines.Add('<tr><td> </td><td>Non Baverage </td><td align="right">' + FormatFloat('#,#', totNonBave) + '</td></tr>');
+    memSend.Lines.Add('<tr><td> </td><td>Baverage </td><td align="right" text-align= "right">' + FormatFloat('#,#', totBave) + '</td></tr>');
+    memSend.Lines.Add('<tr><td> </td><td>Non Baverage </td><td align="right" text-align= "right">' + FormatFloat('#,#', totNonBave) + '</td></tr>');
     qrySum1.Close;
     qrySum1.SQL.Clear;
     qrySum1.SQL.Add('select sum(subtotal) from trans_detail where tanggal >= ''' +
        FormatDateTime('yyyy-MM-dd', tglAwal) + ''' AND tanggal <= ''' + FormatDateTime('yyyy-MM-dd', tglAkhir) +
        ''' AND trans_type_id = ''' + 'BP' + '''');
     qrySum1.Open;
-    memSend.Lines.Add('<tr><td></td><td align="right">Total Product </td><td align="right">' + FormatFloat('#,#', qrySum1.Fields[0].AsFloat) + '</td></tr>');
+    memSend.Lines.Add('<tr><td></td><td align="right">Total Product </td><td align="right" text-align= "right">' + FormatFloat('#,#', qrySum1.Fields[0].AsFloat) + '</td></tr>');
 
     qrySum1.Close;
     qrySum1.SQL.Clear;
@@ -530,14 +584,14 @@ begin
        FormatDateTime('yyyy-MM-dd', tglAwal) + ''' AND tanggal <= ''' + FormatDateTime('yyyy-MM-dd', tglAkhir) +
        ''' AND trans_type_id = ''' + 'BG' + '''');
     qrySum1.Open;
-    memSend.Lines.Add('<tr><td>4.</td><td>Total GC </td><td align="right">' + FormatFloat('#,#', qrySum1.Fields[0].AsFloat) + '</td></tr>');
+    memSend.Lines.Add('<tr><td>4.</td><td>Total GC </td><td align="right" text-align= "right">' + FormatFloat('#,#', qrySum1.Fields[0].AsFloat) + '</td></tr>');
 
     qrySum1.Close;
     qrySum1.SQL.Clear;
     qrySum1.SQL.Add('select sum(subtotal) from trans_detail where tanggal >= ''' +
        FormatDateTime('yyyy-MM-dd', tglAwal) + ''' AND tanggal <= ''' + FormatDateTime('yyyy-MM-dd', tglAkhir) + '''');
     qrySum1.Open;
-    memSend.Lines.Add('<tr><td colspan="2"><strong>Total</strong></td><td align="right"><strong>' + FormatFloat('#,#', qrySum1.Fields[0].AsFloat) + '</strong></td></tr>');
+    memSend.Lines.Add('<tr><td colspan="2"><strong>Total</strong></td><td align="right" text-align= "right"><strong>' + FormatFloat('#,#', qrySum1.Fields[0].AsFloat) + '</strong></td></tr>');
 
    qrySum1.Close;
    qrySum1.SQL.Clear;
@@ -550,25 +604,55 @@ begin
        ''' AND trans_master.promo = ''' + 'F' +
        ''' GROUP BY trans_master.therapist_id ORDER BY jumlah ASC');
    qrySum1.Open;
+   totRF := 0;
+   totBM := 0;
+   qtyRF := 0;
+   qtyBM := 0;
    qrySum1.First;
    for i := 0 to qrySum1.RecordCount -1 do
      begin
        if (qrySum1.Fields[2].AsString = 'TR') then
          begin
            totRF := totRF + qrySum1.Fields[1].AsFloat;
+           qtyRF := qtyRF + 1;
          end
        else if (qrySum1.Fields[2].AsString = 'TB') then
          begin
            totBM := totBM + qrySum1.Fields[1].AsFloat;
+           qtyBM := qtyBM + 1;
          end;
        qrySum1.Next;
      end;
+   qrySum3.Close;
+  qrySum3.SQL.Clear;
+  qrySum3.SQL.Add('select trans_master.room_id, ' +
+                 '(select ruangan.jenis_jasa from ruangan where ruangan.ruangan_id = trans_master.room_id) as type_jasa ' +
+                 'from trans_master where trans_master.tanggal >= ''' + FormatDateTime('yyyy-MM-dd', tglAwal) +
+                 ''' AND trans_master.tanggal <= ''' + FormatDateTime('yyyy-MM-dd', tglAkhir) +
+                 ''' GROUP BY trans_master.room_id ORDER BY type_jasa ASC');
+
+  qrySum3.Open;
+  qrySum3.First;
+  qtyRoomRF := 0;
+  qtyRoomBM := 0;
+  for i := 0 to qrySum3.RecordCount - 1 do
+     begin
+       if (qrySum3.Fields[1].AsString = 'RF') then qtyRoomRF := qtyRoomRF + 1
+       else if (qrySum3.Fields[1].AsString = 'BM') then qtyRoomBM := qtyRoomBM + 1;
+       qrySum3.Next;
+     end;
+
+//   memNotes.Lines.Add('Jumlah Available Room RF = ' + FormatFloat('#,#', qtyRoomRF));
+//   memNotes.Lines.Add('Jumlah Available RooM BM = ' + FormatFloat('#,#', qtyRoomBM));
 
    cntTR := qrySum1.RecordCount;
    cntHari := DaysBetween(tglAwal, tglAkhir);
    memSend.Lines.Add('<tr><td colspan="3">Therapist & Menu Report</td></tr>');
-   memSend.Lines.Add('<tr><td>1.</td><td>Total RF </td><td align="right">' + FormatFloat('#,#', totRF) + '</td></tr>');
-   memSend.Lines.Add('<tr><td>2.</td><td>Total BM </td><td align="right">' + FormatFloat('#,#', totBM) + '</td></tr>');
+   memSend.Lines.Add('<tr><td>1.</td><td>Total RF </td><td align="right" text-align= "right">' + FormatFloat('#,#', totRF) + '</td></tr>');
+   memSend.Lines.Add('<tr><td>2.</td><td>Total BM </td><td align="right" text-align= "right">' + FormatFloat('#,#', totBM) + '</td></tr>');
+
+//   memNotes.Lines.Add('Jumlah Available TR RF = ' + FormatFloat('#,#', qtyRF));
+//   memNotes.Lines.Add('Jumlah Available TR BM = ' + FormatFloat('#,#', qtyBM));
 
    qrySum2.Close;
    qrySum2.SQL.Clear;
@@ -581,15 +665,44 @@ begin
    qrySum2.Open;
    totTrans := qrySum2.Fields[0].AsFloat;
    rasioTR := totTrans / cntTR / cntHari;
-   memSend.Lines.Add('<tr><td>3.</td><td>Therapist Ratio </td><td align="right">' + FormatFloat('#,#.0', rasioTR) + '</td></tr>');
+   if ((qtyRoomRF > 0) OR (rpRF > 0) OR (qtyRF > 0)) then
+       begin
+            ratioRoom_RF := rpRF / qtyRoomRF;
+            ratioRP_RF := rpRF / qtyRF;
+       end
+   else if ((qtyRoomRF <= 0) OR (rpRF <= 0) OR (qtyRF <= 0)) then
+       begin
+            ratioRoom_RF := 0;
+            ratioRP_RF := 0;
+       end;
+
+
+   ratioRoom_BM := rpBM / qtyRoomBM;
+
+   ratioRP_BM := rpRF / qtyBM;
+
+   {memNotes.Lines.Add('Produktifitas Rp : Room RF ' + FormatFloat('#,#.0', ratioRoom_RF));
+   memNotes.Lines.Add('Produktifitas Rp : Room BM ' + FormatFloat('#,#.0', ratioRoom_BM));
+
+   memNotes.Lines.Add('Produktifitas Rp : TR RF ' + FormatFloat('#,#.0', ratioRP_RF));
+   memNotes.Lines.Add('Produktifitas Rp : TR BM ' + FormatFloat('#,#.0', ratioRP_BM));}
+
+
+
+   memSend.Lines.Add('<tr><td>3.</td><td>Therapist Ratio </td><td align="right" text-align= "right">' + FormatFloat('#,#.0', rasioTR) + '</td></tr>');
+   memSend.Lines.Add('<tr><td>-</td><td>Produktifitas Rp : Room RF </td><td align="right" text-align= "right">' + FormatFloat('#,#.0', ratioRoom_RF) + '</td></tr>');
+   memSend.Lines.Add('<tr><td>-</td><td>Produktifitas Rp : Room BM </td><td align="right" text-align= "right">' + FormatFloat('#,#.0', ratioRoom_BM) + '</td></tr>');
+
+   memSend.Lines.Add('<tr><td>-</td><td>Produktifitas Rp : TR RF </td><td align="right" text-align= "right">' + FormatFloat('#,#.0', ratioRP_RF) + '</td></tr>');
+   memSend.Lines.Add('<tr><td>-</td><td>Produktifitas Rp : TR BM </td><td align="right" text-align= "right">' + FormatFloat('#,#.0', ratioRP_BM) + '</td></tr>');
 
   qrySum1.First;
   keterangan := 'Fewest Handled guests [' + qrySum1.Fields[0].AsString + ']';
-  memSend.Lines.Add('<tr><td>3.</td><td> ' + keterangan + ' </td><td align="right">' + FormatFloat('#,#', qrySum1.Fields[1].AsFloat) + '</td></tr>');
+  memSend.Lines.Add('<tr><td>4.</td><td> ' + keterangan + ' </td><td align="right" text-align= "right">' + FormatFloat('#,#', qrySum1.Fields[1].AsFloat) + '</td></tr>');
 
   qrySum1.Last;
   keterangan := 'Most Handled guests [' + qrySum1.Fields[0].AsString + ']';
-  memSend.Lines.Add('<tr><td>4.</td><td> ' + keterangan + ' </td><td align="right">' + FormatFloat('#,#', qrySum1.Fields[1].AsFloat) + '</td></tr>');
+  memSend.Lines.Add('<tr><td>5.</td><td> ' + keterangan + ' </td><td align="right" text-align= "right">' + FormatFloat('#,#', qrySum1.Fields[1].AsFloat) + '</td></tr>');
 
    qrySum2.Close;
    qrySum2.SQL.Clear;
@@ -603,12 +716,12 @@ begin
    qrySum2.Open;
    qrySum2.Last;
    keterangan := 'Best Seller Jasa [ ' + TitleCase(qrySum2.Fields[0].AsString) + ' | Qty : ' + FormatFloat('#,#', qrySum2.Fields[2].AsFloat) + ' ]';
-   memSend.Lines.Add('<tr><td>5.</td><td> ' + keterangan + ' </td><td align="right">' + FormatFloat('#,#', qrySum2.Fields[1].AsFloat) + '</td></tr>');
+   memSend.Lines.Add('<tr><td>6.</td><td> ' + keterangan + ' </td><td align="right" text-align= "right">' + FormatFloat('#,#', qrySum2.Fields[1].AsFloat) + '</td></tr>');
 
    qrySum2.First;
    keterangan := 'Fewest Seller Jasa [ ' + TitleCase(qrySum2.Fields[0].AsString) + ' | Qty : ' + FormatFloat('#,#', qrySum2.Fields[2].AsFloat)+ ' ]';
-   memSend.Lines.Add('<tr><td>6.</td><td> ' + keterangan + ' </td><td align="right">' + FormatFloat('#,#', qrySum2.Fields[1].AsFloat) + '</td></tr>');
-   memSend.Lines.Add('<tr><td>7.</td><td>Guest Count By Gender </td><td align="right"></td></tr>');
+   memSend.Lines.Add('<tr><td>7.</td><td> ' + keterangan + ' </td><td align="right" text-align= "right">' + FormatFloat('#,#', qrySum2.Fields[1].AsFloat) + '</td></tr>');
+   memSend.Lines.Add('<tr><td>8.</td><td>Guest Count By Gender </td><td align="right" text-align= "right"></td></tr>');
    qrySum1.Close;
    qrySum1.SQL.Clear;
    qrySum1.SQL.Add('select trans_master.gender,count(trans_master.gender) as grandtotal ' +
@@ -625,10 +738,10 @@ begin
      begin
        if (qrySum1.Fields[0].AsString = 'F') then keterangan := 'Female'
        else if (qrySum1.Fields[0].AsString = 'M') then keterangan := 'Male';
-       memSend.Lines.Add('<tr><td></td><td> ' + keterangan + ' </td><td align="right">' + FormatFloat('#,#', qrySum1.Fields[1].AsFloat) + '</td></tr>');
+       memSend.Lines.Add('<tr><td></td><td> ' + keterangan + ' </td><td align="right" text-align= "right">' + FormatFloat('#,#', qrySum1.Fields[1].AsFloat) + '</td></tr>');
        qrySum1.Next;
      end;
-   memSend.Lines.Add('<tr><td>8.</td><td>Rejected Guest</td><td align="right"></td></tr>');
+   memSend.Lines.Add('<tr><td>9.</td><td>Rejected Guest</td><td align="right"></td></tr>');
    qrySum1.Close;
    qrySum1.SQL.Clear;
    qrySum1.SQL.Add('select trans_reject.jenis_jasa, count(trans_reject.jenis_jasa) as jumlah ' +
@@ -642,16 +755,16 @@ begin
           begin
              qrySum1.First;
              keterangan := 'Guests ' + qrySum1.Fields[0].AsString;
-             memSend.Lines.Add('<tr><td></td><td>'+ keterangan +'</td><td>' + FormatFloat('#,#', qrySum1.Fields[1].AsFloat) + '</td></tr>');
+             memSend.Lines.Add('<tr><td></td><td>'+ keterangan +'</td><td align="right" text-align= "right">' + FormatFloat('#,#', qrySum1.Fields[1].AsFloat) + '</td></tr>');
              qrySum1.Last;
              keterangan := 'Guests ' + qrySum1.Fields[0].AsString;
-             memSend.Lines.Add('<tr><td></td><td>'+ keterangan +'</td><td>' + FormatFloat('#,#', qrySum1.Fields[1].AsFloat) + '</td></tr>');
+             memSend.Lines.Add('<tr><td></td><td>'+ keterangan +'</td><td align="right" text-align= "right">' + FormatFloat('#,#', qrySum1.Fields[1].AsFloat) + '</td></tr>');
           end
         else if (qrySum1.RecordCount <= 1) then
           begin
              qrySum1.First;
              keterangan := 'Guests ' + qrySum1.Fields[0].AsString;
-             memSend.Lines.Add('<tr><td></td><td>'+ keterangan +'</td><td>' + FormatFloat('#,#', qrySum1.Fields[1].AsFloat) + '</td></tr>');
+             memSend.Lines.Add('<tr><td></td><td>'+ keterangan +'</td><td align="right" text-align= "right">' + FormatFloat('#,#', qrySum1.Fields[1].AsFloat) + '</td></tr>');
           end;
      end
    else if (NOT qrySum1.IsEmpty) then
@@ -678,7 +791,7 @@ procedure TfrmReportPendapatanBulanan.cxButton1Click(Sender: TObject);
 var
   i, noUrut, recSel, intTahun, intBulan : Integer;
   keterangan1, keterangan2 : String;
-  GrandPenjualan, totBm, totRF, totGC, totProd : Double;
+  GrandPenjualan, totBm, totRF, totGC, totProd, qtyRoomRF, qtyRoomBM : Double;
 begin
   intTahun := StrToInt(edYear.Text);
   intBulan := StrToInt(edMonth.Text);
@@ -1001,6 +1114,8 @@ var
    Attachmentfile: TIdAttachmentFile;
    lsBody : TStringList;
 begin
+   //AccessToken := GetAccessToken('<removed-client-id>', '<removed-client-secret>', 'https://developers.google.com/oauthplayground');
+
    ConfigDir := ExtractFilePath(Application.ExeName);
    namaFile := ConfigDir + 'report\' + FormatDateTime('yyyyMMdd', tglAwal) + FormatDateTime('dd', tglAkhir) + '.pdf';
    PrintGrid.ExportToPDF(namaFile, False, nil);
@@ -1041,40 +1156,82 @@ begin
       end;
       }
   //IO SETTING ZENFAMILYSPA.COM
-  With frmMain.IdSSLIOHandlerSocketOpenSSL1 do
-      begin
-        Destination := 'mail.zenfamilyspa.com:2080';
-        //https://mail.zenfamilyspa.com:2080
-        Host := 'mail.zenfamilyspa.com';
-        MaxLineAction := maException;
-        Port := 26;
-        SSLOptions.Method := sslvTLSv1;
-        SSLOptions.Mode := sslmUnassigned;
-        SSLOptions.VerifyMode := [];
-        SSLOptions.VerifyDepth := 0;
-      end;
+//  With frmMain.IdSSLIOHandlerSocketOpenSSL1 do
+//      begin
+//        {Destination := 'srv149.niagahoster.com:2096';
+//        Host := 'srv149.niagahoster.com:2096';
+//        MaxLineAction := maException;
+//        Port := 587;
+////        SSLOptions.Method := [sslvTLSv1, sslvTLSv1_1, sslvTLSv1_2];
+////        SSLOptions.ver
+//        SSLOptions.Mode := sslmUnassigned;
+//        SSLOptions.VerifyMode := [];
+//        SSLOptions.VerifyDepth := 0;}
+////        new
+//        Destination := 'srv149.niagahoster.com:2096';
+//        Host := 'srv149.niagahoster.com:2096';
+//        MaxLineAction := maException;
+//        Port := 587;
+////        SSLOptions.Method := [sslvTLSv1, sslvTLSv1_1, sslvTLSv1_2];
+//        //SSLOptions.Method := ssl
+//        SSLOptions.Mode := sslmBoth;
+//        SSLOptions.VerifyMode := [];
+//        SSLOptions.VerifyDepth := 0;
+//      end;
   //
   //SETTING SMTP COMPONENT mail.zenfamilyspa.com //
 
-  frmMain.IdSMTP1.Host := 'mail.zenfamilyspa.com';
-  frmMain.IdSMTP1.Port := 26;
-  frmMain.IdSMTP1.Username := MailAcc; // please change to your gmail address //
-  frmMain.IdSMTP1.Password := MailPass;
-  frmMain.IdSMTP1.IOHandler := frmMain.IdSSLIOHandlerSocketOpenSSL1;
-  frmMain.IdSMTP1.AuthType := satDefault;
-  frmMain.IdSMTP1.UseTLS := utUseExplicitTLS;
-  {
-
-  SETTING SMTP COMPONENT DATA //
-
-  frmMain.IdSMTP1.Host := 'smtp.gmail.com';
+  {frmMain.IdSMTP1.Host := 'mail.zenfamilyspa.com';
   frmMain.IdSMTP1.Port := 587;
   frmMain.IdSMTP1.Username := MailAcc; // please change to your gmail address //
   frmMain.IdSMTP1.Password := MailPass;
   frmMain.IdSMTP1.IOHandler := frmMain.IdSSLIOHandlerSocketOpenSSL1;
   frmMain.IdSMTP1.AuthType := satDefault;
+  frmMain.IdSMTP1.UseTLS := utUseRequireTLS;}
+
+
+
+  //END-SETTING SMTP COMPONENT mail.zenfamilyspa.com //
+
+
+   //SETTING SMTP COMPONENT google mail //
+
+  frmMain.IdSMTP1.Host := 'smtp.gmail.com';
+  frmMain.IdSMTP1.Port := 587;
+  frmMain.IdSMTP1.Username := 'support@zenfamilyspa.id'; // please change to your gmail address //
+  frmMain.IdSMTP1.Password := 'tdbzlxfdfmepfbeb';
+  frmMain.IdSMTP1.IOHandler := frmMain.IdSSLIOHandlerSocketOpenSSL1;
+  frmMain.IdSMTP1.AuthType := satDefault;
   frmMain.IdSMTP1.UseTLS := utUseExplicitTLS;
-  }
+  With frmMain.IdSSLIOHandlerSocketOpenSSL1 do
+      begin
+
+        MaxLineAction := maException;
+        Port := 587;
+        SSLOptions.Method := sslvTLSv1_2;;
+        SSLOptions.Mode := sslmClient;
+        SSLOptions.VerifyMode := [];
+        SSLOptions.VerifyDepth := 0;
+      end;
+
+
+  //END-SETTING SMTP COMPONENT google mail //
+
+  {
+
+//  SETTING SMTP COMPONENT DATA //
+//
+//  frmMain.IdSMTP1.Host := 'smtp.gmail.com';
+//  frmMain.IdSMTP1.Port := 587;
+//  frmMain.IdSMTP1.Username := MailAcc; // please change to your gmail address //
+//  frmMain.IdSMTP1.Password := MailPass;
+//  frmMain.IdSMTP1.IOHandler := frmMain.IdSSLIOHandlerSocketOpenSSL1;
+//  frmMain.IdSMTP1.AuthType := satDefault;
+//  frmMain.IdSMTP1.UseTLS := utUseExplicitTLS;
+//  }
+
+
+
   // SETTING email MESSAGE DATA //
   frmMain.IdMessage1.Clear;
   qryCari.Close;

@@ -24,7 +24,6 @@ type
     lblAlamat1: TQRLabel;
     lblAlamat2: TQRLabel;
     lblNamaMenu: TQRMemo;
-    lblTanggal: TQRLabel;
     QRLabel1: TQRLabel;
     QRLabel2: TQRLabel;
     QRLabel3: TQRLabel;
@@ -32,6 +31,7 @@ type
     lblFooter1: TQRLabel;
     lblFooter2: TQRLabel;
     lblFooter3: TQRLabel;
+    lblTanggal: TQRLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }

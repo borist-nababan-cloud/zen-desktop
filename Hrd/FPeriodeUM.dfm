@@ -1,6 +1,7 @@
 object frmPeriodeUM: TfrmPeriodeUM
   Left = 0
   Top = 0
+  Caption = 'PERIODE UM x 3'
   ClientHeight = 489
   ClientWidth = 705
   Color = clMoneyGreen
@@ -19,25 +20,6 @@ object frmPeriodeUM: TfrmPeriodeUM
     489)
   PixelsPerInch = 96
   TextHeight = 16
-  object lblJudulForm: TLabel
-    Left = 0
-    Top = 0
-    Width = 704
-    Height = 26
-    Anchors = [akLeft, akTop, akRight]
-    AutoSize = False
-    Caption = '  PERIODE UM'
-    Color = clBlue
-    Font.Charset = ANSI_CHARSET
-    Font.Color = clWhite
-    Font.Height = -21
-    Font.Name = 'Calibri'
-    Font.Style = [fsBold]
-    ParentColor = False
-    ParentFont = False
-    Transparent = False
-    ExplicitWidth = 821
-  end
   object Label1: TLabel
     Left = 8
     Top = 44
@@ -197,7 +179,7 @@ object frmPeriodeUM: TfrmPeriodeUM
     OnClick = btnDeleteClick
   end
   object qryList: TMyQuery
-    Connection = DMDB.StoreDB
+    Connection = dmDB.dbInternal
     SQL.Strings = (
       'select * from ben_payroll_tgl_um3 where payrollperiode = '#39'X'#39)
     Left = 348

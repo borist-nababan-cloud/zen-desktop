@@ -391,15 +391,15 @@ object frmPosTransMain: TfrmPosTransMain
       GridView = tbDetails
     end
   end
-  object cxLabel1: TcxLabel
+  object lblNamaPaket: TcxLabel
     Left = 8
     Top = 32
     Caption = 'Happy Hour '
     Transparent = True
   end
   object lblActivePacket: TcxLabel
-    Left = 8
-    Top = 56
+    Left = 96
+    Top = 32
     Caption = 'Active Packet '
     Transparent = True
   end

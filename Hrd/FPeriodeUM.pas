@@ -28,7 +28,6 @@ uses
 
 type
   TfrmPeriodeUM = class(TForm)
-    lblJudulForm: TLabel;
     memStruktur: TMemo;
     Label1: TLabel;
     edPeriode: TComboBox;
@@ -59,7 +58,7 @@ type
     procedure btnDeleteClick(Sender: TObject);
   private
     { Private declarations }
-    qryPeriode1, qryPeriode2 : TMyQuery;
+    qryPeriode1, qryPeriode2, qryExec : TMyQuery;
     procedure RefreshGrid;
   public
     { Public declarations }
@@ -72,7 +71,7 @@ implementation
 
 {$R *.dfm}
 
-uses FdmDB, FMenuMain;
+uses FdmDB, FMain;
 
 procedure TfrmPeriodeUM.RefreshGrid;
 begin
@@ -91,7 +90,7 @@ var
 begin
   nHari := DaysBetween(edStart.Date, edEnd.Date);
   tglPeriode := edStart.Date;
-  DMDB.qryExec.SQL.Clear;
+  qryExec.SQL.Clear;
   for i := 0 to nHari do
     begin
       qryPeriode1.Close;
@@ -102,26 +101,26 @@ begin
       qryPeriode1.Open;
       if (qryPeriode1.IsEmpty) then
         begin
-          DMDB.qryExec.SQL.Add('insert into ben_payroll_tgl_um3 values(' +
+          qryExec.SQL.Add('insert into ben_payroll_tgl_um3 values(' +
              '''' + '' + ''',' +
              '''' + edPeriode.Text + ''',' +
              '''' + FormatDateTime('yyyy-MM-dd', tglPeriode) + ''',' +
              '''' + IntToStr(edVariable.EditValue) + ''',' +
              '''' + '' + ''',' +
-             QuotedStr(frmMenuMain.USERAPP) + ',' +
+             QuotedStr(frmMain.USERAPPS) + ',' +
              '''' + FormatDateTime('yyyy-MM-dd hh:mm:ss', Now) + ''');');
         end
       else if (NOT qryPeriode1.IsEmpty) then
         begin
-          DMDB.qryExec.SQL.Add('update ben_payroll_tgl_um3 set ' +
+          qryExec.SQL.Add('update ben_payroll_tgl_um3 set ' +
              'vuangmakan = ''' + IntToStr(edVariable.EditValue) + ''',' +
-             'lastedituser = ' + QuotedStr(frmMenuMain.USERAPP) + ',' +
+             'lastedituser = ' + QuotedStr(frmMain.USERAPPS) + ',' +
              'lasteditdate = ''' + FormatDateTime('yyyy-MM-dd hh:mm:ss', Now) + ''' ' +
              'where autonum = ''' + IntToStr(qryPeriode1.Fields[0].AsInteger) + ''';');
         end;
       tglPeriode := IncDay(tglPeriode, 1);
     end;
-    DMDB.qryExec.ExecSQL;
+    qryExec.ExecSQL;
     RefreshGrid;
     ShowMessage('Insert Data Finish !');
 end;
@@ -133,11 +132,11 @@ var
 begin
   recSelect := gtbList.DataController.GetFocusedRecordIndex;
   tglDelete := VarToDateTime(gtbList.DataController.GetValue(recSelect, gtbListtanggal.Index));
-  DMDB.qryExec.SQL.Clear;
-  DMDB.qryExec.SQL.Add('delete from ben_payroll_tgl_um3 where ' +
+  qryExec.SQL.Clear;
+  qryExec.SQL.Add('delete from ben_payroll_tgl_um3 where ' +
      'payrollperiode = ''' + edPeriode.Text + ''' ' +
      'AND tanggal = ''' + FormatDateTime('yyyy-MM-dd', tglDelete) + '''');
-  DMDB.qryExec.ExecSQL;
+  qryExec.ExecSQL;
   RefreshGrid;
   ShowMessage('Deleting Selected Finish');
 end;
@@ -161,27 +160,27 @@ begin
   edStart.Date := Date;
   edEnd.Date := Date;
   qryPeriode1 := TMyQuery.Create(Self);
-  qryPeriode1.Connection := DMDB.StoreDB;
+  qryPeriode1.Connection := DMDB.dbInternal;
   qryPeriode1.SQL.Add('select * from temptable');
   qryPeriode1.Active := True;
 
   qryPeriode2 := TMyQuery.Create(Self);
-  qryPeriode2.Connection := DMDB.StoreDB;
+  qryPeriode2.Connection := DMDB.dbInternal;
   qryPeriode2.SQL.Add('select * from temptable');
   qryPeriode2.Active := True;
 
-  qryPeriode1.Close;
+  {qryPeriode1.Close;
   qryPeriode1.SQL.Clear;
   qryPeriode1.SQL.Add('SELECT * FROM information_schema.tables ' +
-      'WHERE table_schema = ' + QuotedStr(frmMenuMain.DBNAME) +
+      'WHERE table_schema = ' + QuotedStr(frmMain.DBNAME) +
     'AND table_name = ' + QuotedStr('ben_payroll_tgl_um3'));
   qryPeriode1.Open;
   if (qryPeriode1.IsEmpty) then
   begin
-    DMDB.qryExec.SQL.Clear;
-    DMDB.qryExec.SQL.Add(memStruktur.Text);
-    DMDB.qryExec.ExecSQL;
-  end;
+    qryExec.SQL.Clear;
+    qryExec.SQL.Add(memStruktur.Text);
+    qryExec.ExecSQL;
+  end;}
 
   qryPeriode2.Close;
   qryPeriode2.SQL.Clear;

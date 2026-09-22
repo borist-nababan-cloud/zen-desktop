@@ -2,8 +2,8 @@ object frmReportPendapatanHarian: TfrmReportPendapatanHarian
   Left = 0
   Top = 0
   Caption = '  PoS Report Pendapatan Harian'
-  ClientHeight = 576
-  ClientWidth = 1067
+  ClientHeight = 575
+  ClientWidth = 1057
   Color = clMoneyGreen
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,14 +14,14 @@ object frmReportPendapatanHarian: TfrmReportPendapatanHarian
   OnClose = FormClose
   OnCreate = FormCreate
   DesignSize = (
-    1067
-    576)
+    1057
+    575)
   PixelsPerInch = 96
   TextHeight = 16
   object lblJudulAtas: TLabel
     Left = 8
     Top = 4
-    Width = 1051
+    Width = 1041
     Height = 26
     Anchors = [akLeft, akTop, akRight]
     AutoSize = False
@@ -45,7 +45,7 @@ object frmReportPendapatanHarian: TfrmReportPendapatanHarian
     Caption = 'Server Time'
   end
   object lblTanggal: TLabel
-    Left = 1002
+    Left = 992
     Top = 39
     Width = 57
     Height = 19
@@ -61,18 +61,19 @@ object frmReportPendapatanHarian: TfrmReportPendapatanHarian
     ExplicitLeft = 961
   end
   object memSend: TMemo
-    Left = 494
+    Left = 484
     Top = 73
     Width = 565
-    Height = 370
+    Height = 376
     Anchors = [akTop, akRight, akBottom]
     ReadOnly = True
     ScrollBars = ssBoth
     TabOrder = 4
+    Visible = False
   end
   object cxButton1: TcxButton
     Left = 8
-    Top = 507
+    Top = 506
     Width = 137
     Height = 61
     Anchors = [akLeft, akBottom]
@@ -91,8 +92,8 @@ object frmReportPendapatanHarian: TfrmReportPendapatanHarian
   object cxGrid1: TcxGrid
     Left = 16
     Top = 73
-    Width = 459
-    Height = 424
+    Width = 449
+    Height = 423
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 2
     object tvreport: TcxGridTableView
@@ -130,9 +131,9 @@ object frmReportPendapatanHarian: TfrmReportPendapatanHarian
     end
   end
   object cxButton2: TcxButton
-    Left = 151
-    Top = 507
-    Width = 166
+    Left = 160
+    Top = 506
+    Width = 305
     Height = 61
     Anchors = [akLeft, akBottom]
     Caption = 'Send Mail'
@@ -140,25 +141,15 @@ object frmReportPendapatanHarian: TfrmReportPendapatanHarian
     OnClick = cxButton2Click
   end
   object memNotes: TMemo
-    Left = 494
-    Top = 448
+    Left = 484
+    Top = 96
     Width = 561
-    Height = 120
+    Height = 471
     Anchors = [akTop, akRight, akBottom]
     Lines.Strings = (
       'Reception Notes :')
     ScrollBars = ssBoth
     TabOrder = 5
-  end
-  object cxButton3: TcxButton
-    Left = 331
-    Top = 507
-    Width = 118
-    Height = 61
-    Anchors = [akLeft, akBottom]
-    Caption = 'Send Mail'
-    TabOrder = 6
-    OnClick = cxButton3Click
   end
   object PrintGrid: TdxComponentPrinter
     CurrentLink = PrintGridLink1
@@ -181,29 +172,12 @@ object frmReportPendapatanHarian: TfrmReportPendapatanHarian
       PrinterPage.PageSize.Y = 11700
       PrinterPage._dxMeasurementUnits_ = 0
       PrinterPage._dxLastMU_ = 1
-      ReportDocument.CreationDate = 45058.063589814820000000
+      ReportDocument.CreationDate = 45072.961171550920000000
       TimeFormat = 0
       OptionsOnEveryPage.Caption = False
       OptionsSize.AutoWidth = True
       OptionsView.Caption = False
       BuiltInReportLink = True
     end
-  end
-  object clSmtp1: TclSmtp
-    Port = 465
-    UseTLS = ctAutomatic
-    MailAgent = 'Clever Internet Suite'
-    Left = 644
-    Top = 224
-  end
-  object clMailMessage1: TclMailMessage
-    ToList = <>
-    CCList = <>
-    BCCList = <>
-    Date = 45058.016274629630000000
-    CharSet = 'iso-8859-1'
-    ContentType = 'text/plain'
-    Left = 800
-    Top = 388
   end
 end

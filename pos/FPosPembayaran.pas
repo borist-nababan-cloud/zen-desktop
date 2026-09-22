@@ -25,15 +25,17 @@ uses
   cxGridTableView, cxGridCustomView, cxClasses, cxGridLevel, cxGrid,
   cxContainer, cxGroupBox, Vcl.Menus, cxButtons, cxDropDownEdit, cxLookupEdit,
   cxDBLookupEdit, cxDBLookupComboBox, cxMaskEdit, Data.DB, DBAccess, MyAccess,
-  MemDS, MainSource, dxBevel, cxLabel, WinInet, strUtils, Printers;
+  MemDS, MainSource, dxBevel, cxLabel, WinInet, strUtils, Printers,
+  dxBarBuiltInMenu, cxPC;
 
 const
    InputBoxMessage = WM_USER + 200;
 
 type
   TfrmPosPembayaran = class(TForm)
-    Label1: TLabel;
-    cxGrid1Level1: TcxGridLevel;
+    tabControl: TcxPageControl;
+    tabMain: TcxTabSheet;
+    Label12: TLabel;
     cxGrid1: TcxGrid;
     tvPembayaran: TcxGridTableView;
     tvPembayaranTransID: TcxGridColumn;
@@ -43,31 +45,40 @@ type
     tvPembayaranSubtotal: TcxGridColumn;
     tvPembayaranDetails: TcxGridColumn;
     tvPembayaranHarga: TcxGridColumn;
+    tvPembayaranIDTrans: TcxGridColumn;
+    cxGrid1Level1: TcxGridLevel;
     cxGroupBox1: TcxGroupBox;
-    btnFind: TcxButton;
     Label2: TLabel;
-    qryPromo: TMyQuery;
-    dsQryPromo: TMyDataSource;
     Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    dxBevel1: TdxBevel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    lblNoKartu: TLabel;
+    lblKodeMember: TLabel;
     edSubtotal: TcxCalcEdit;
     edPromo: TcxLookupComboBox;
     edPromoRef: TcxTextEdit;
-    Label4: TLabel;
     edDiscPromo: TcxCalcEdit;
-    Label5: TLabel;
     edDiscPurpose: TcxCalcEdit;
     cxButton1: TcxButton;
     btnClearDisc: TcxButton;
     edPurpose: TcxTextEdit;
-    Label6: TLabel;
-    Label7: TLabel;
     edGrandTotal: TcxCalcEdit;
-    Label8: TLabel;
-    cxButton3: TcxButton;
-    tvPembayaranIDTrans: TcxGridColumn;
     btnClearPromo: TcxButton;
     btnSetPayment: TcxButton;
-    dxBevel1: TdxBevel;
+    edScan: TcxTextEdit;
+    btnLoadMember: TcxButton;
+    edMemberNama: TcxTextEdit;
+    edMemberPoint: TcxCalcEdit;
+    cxButton2: TcxButton;
+    btnFind: TcxButton;
+    cxButton3: TcxButton;
     edJasa: TcxCalcEdit;
     edProduk: TcxCalcEdit;
     edAdditional: TcxCalcEdit;
@@ -76,17 +87,13 @@ type
     cxLabel2: TcxLabel;
     cxLabel3: TcxLabel;
     cxLabel4: TcxLabel;
-    Label9: TLabel;
-    edScan: TcxTextEdit;
-    btnLoadMember: TcxButton;
-    Label10: TLabel;
-    edMemberNama: TcxTextEdit;
-    edMemberPoint: TcxCalcEdit;
-    Label11: TLabel;
-    lblNoKartu: TLabel;
-    lblKodeMember: TLabel;
-    Label12: TLabel;
     cbPrinterPos: TComboBox;
+    qryPromo: TMyQuery;
+    dsQryPromo: TMyDataSource;
+    lblNotif: TLabel;
+    tabJSON: TcxTabSheet;
+    memHasil: TMemo;
+    cxButton4: TcxButton;
     procedure cxButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -96,16 +103,20 @@ type
     procedure btnClearPromoClick(Sender: TObject);
     procedure btnClearDiscClick(Sender: TObject);
     procedure btnSetPaymentClick(Sender: TObject);
-    procedure btnLoadMemberClick(Sender: TObject);
     procedure tvPembayaranTcxGridDataControllerTcxDataSummaryFooterSummaryItems0GetText(
       Sender: TcxDataSummaryItem; const AValue: Variant; AIsFooter: Boolean;
       var AText: string);
     procedure edScanKeyPress(Sender: TObject; var Key: Char);
+    procedure cxButton4Click(Sender: TObject);
+    procedure cxButton2Click(Sender: TObject);
+    procedure btnLoadMemberClick(Sender: TObject);
   private
     { Private declarations }
     qryFind, qryCari, qryExec : TMyQuery;
     function CekInternet : Boolean;
     procedure InputBoxSetPasswordChar(var Msg: TMessage); message InputBoxMessage;
+    procedure CekMemberLama;
+    procedure CekMemberBaru;
   public
     { Public declarations }
     procedure HitungTypeMenu;
@@ -118,7 +129,8 @@ implementation
 
 {$R *.dfm}
 
-uses FMain, FdmDB, FPosPembayaranSelect, FPosPembayaranDisc, FPosPembayaranPay;
+uses FMain, FdmDB, FPosPembayaranSelect, FPosPembayaranDisc, FPosPembayaranPay,
+  XSuperJSON, XSuperObject;
 
 procedure TfrmPosPembayaran.btnClearDiscClick(Sender: TObject);
 begin
@@ -169,77 +181,17 @@ end;
 
 procedure TfrmPosPembayaran.btnLoadMemberClick(Sender: TObject);
 var
-  qryServerCari : TMyQuery;
-  dbMember : TMyConnection;
+   panjang : Integer;
 begin
-   if (edScan.Text = '') then Exit;
-   if (edDiscPromo.EditValue > 0) then
-     begin
-       ShowMessage('Customer Promo Tidak Dapat scan member !');
-       edScan.Clear;
-       lblKodeMember.Caption := '';
-       lblNoKartu.Caption := '';
-       Exit;
-     end;
-   if (edDiscPurpose.EditValue > 0) then
-     begin
-       ShowMessage('Customer dengan Additional Discount Tidak Dapat scan member !');
-       edScan.Clear;
-       lblKodeMember.Caption := '';
-       lblNoKartu.Caption := '';
-       Exit;
-     end;
-
-   //dbMember.Connected := False;
-   if (CekInternet = False) then
-     begin
-       ShowMessage('No Internet Connection !');
-       edScan.Clear;
-       lblKodeMember.Caption := '';
-       lblNoKartu.Caption := '';
-       Exit;
-     end;
-   lblKodeMember.Caption := edScan.Text;
-   lblNoKartu.Caption := UpperCase(LeftStr(edScan.Text, 7));
-   dbMember := TMyConnection.Create(nil);
-   dbMember.Server := frmMain.SERVER_DBHOST;
-   dbMember.Database := frmMain.MEMBERDBNAME;
-   dbMember.Username := frmMain.SERVER_DBUSER;
-   dbMember.Password := frmMain.SERVER_DBPASS;
-   dbMember.Port := StrToInt(frmMain.SERVER_DBPORT);
-   try
-        dbMember.Connected := True;
-     Except
-       on E : Exception do
-       ShowMessage('Sorry Database Not Ready !!');
-     end;
-   if (dbMember.Connected = True) then
-     begin
-       qryServerCari := TMyQuery.Create(Self);
-       qryServerCari.Connection := dbMember;
-       qryServerCari.SQL.Add('select id_members, nama_lengkap, tot_point, no_kartu from members ' +
-           'where id_members = ''' + edScan.Text + '''');
-       qryServerCari.Active := true;
-       qryServerCari.Open;
-       if (qryServerCari.IsEmpty) then
-         begin
-           ShowMessage('Data Member Tidak Ditemukan !!');
-           lblNoKartu.Caption := '';
-           lblKodeMember.Caption := '';
-           Exit;
-         end
-       else if (NOT qryServerCari.IsEmpty) then
-         begin
-           edMemberNama.Text := qryServerCari.Fields[1].AsString;
-           edMemberPoint.EditValue := qryServerCari.Fields[2].AsFloat;
-           lblNoKartu.Caption := qryServerCari.Fields[3].AsString;
-           lblKodeMember.Caption := qryServerCari.Fields[0].AsString;
-         end;
-       qryServerCari.Free;
-       dbMember.Disconnect;
-       dbMember.Free;
-     end;
-
+     panjang := Length(edScan.Text);
+     if (panjang <= 15) then
+        begin
+             CekMemberLama;
+        end
+     else if (panjang > 15) then
+        begin
+             CekMemberBaru;
+        end;
 end;
 
 procedure TfrmPosPembayaran.btnSetPaymentClick(Sender: TObject);
@@ -297,6 +249,184 @@ begin
    result := (InternetGetConnectedState(nil, 0));
 end;
 
+procedure TfrmPosPembayaran.CekMemberBaru;
+var
+   jsVal, jsData, jsRoot, jsResponse : XSuperObject.ISuperObject;
+   strJSON, idMember, NamaDepan, NamaBelakang, noHape, email : String;
+   jsArray : ISuperArray;
+   jmlhPoint : Double;
+begin
+    dmDB.vClient.BaseURL := 'https://member.zenfamilyspa.net/api/members?filters[idmember][$eq]=' + edScan.Text;
+    lblNotif.Caption := 'https://member.zenfamilyspa.net/api/members?filters[idmember][$eq]=' + edScan.Text;
+    try
+       dmDB.vRequest.Execute;
+       jsVal := XSuperObject.SO(dmDB.vResponse.Content);
+    except on E: Exception do
+        begin
+          ShowMessage('There was an error: ' + E.Message);
+          lblNotif.Caption := 'There was an error';
+          Exit;
+        end;
+    end;
+     lblNotif.Caption := lblNotif.Caption + ' # ' + dmDB.vResponse.StatusText;
+     jsArray := jsVal.AsObject.A['data'];
+     if (jsArray.Length <= 0) then
+        begin
+          ShowMessage('Data Member Tidak Ada');
+          lblNotif.Caption := 'Data Member ' + edScan.Text + ' Tidak Ditemukan';
+        end
+     else if (jsArray.Length > 0) then
+        begin
+             jsData := jsArray.O[0];
+
+             jsRoot := jsData.O['attributes'];
+             strJSON := jsRoot.AsJSON(True,True);
+             memHasil.Lines.Add('Root Object');
+             memHasil.Lines.Add(strJSON);
+             idMember := jsRoot.S['idmember'];
+             NamaDepan := jsRoot.S['namadepan'];
+             NamaBelakang := jsRoot.S['namabelakang'];
+             memHasil.Lines.Add('--------------------------------');
+             memHasil.Lines.Add('ID Member = ' + idMember);
+             memHasil.Lines.Add('Nama Depan = ' + NamaDepan);
+             memHasil.Lines.Add('Nama Belakang = ' + NamaBelakang);
+             lblKodeMember.Caption := idMember;
+             edMemberNama.Text := NamaDepan + ' ' + NamaBelakang;
+        end;
+        //cek point member
+        try
+           lblNotif.Caption :=  'https://member.zenfamilyspa.net/api/pointmembers?filters[idmember][$eq]=' + edScan.Text;
+           dmDB.vClient.BaseURL := 'https://member.zenfamilyspa.net/api/pointmembers?filters[idmember][$eq]=' + edScan.Text;
+           dmDB.vRequest.Execute;
+           jsVal := XSuperObject.SO(dmDB.vResponse.Content);
+        except on E: Exception do
+            begin
+              ShowMessage('There was an error: ' + E.Message);
+              lblNotif.Caption := 'There was an error';
+              Exit;
+            end;
+        end;
+         lblNotif.Caption := lblNotif.Caption + ' # ' + dmDB.vResponse.StatusText;
+         jsArray := jsVal.AsObject.A['data'];
+         if (jsArray.Length <= 0) then
+            begin
+
+              //insert into point members
+              try
+                 dmDB.vClient.BaseURL := 'https://member.zenfamilyspa.net/api/pointmembers';
+                 jsVal := XSuperObject.SO('{}');
+                 jsData := XSuperObject.SO('{}');
+                 jsData.S['idmember'] := edScan.Text;
+                 jsData.F['point'] := 0;
+                 jsVal.O['data'] := jsData;
+                 strJSON := jsVal.AsJSON(True,True);
+                 dmDB.vPOST.Params[1].Value := jsVal.AsJSON(false, false);
+                 dmDB.vPOST.Execute;
+                 lblNotif.Caption :=  'POST : https://member.zenfamilyspa.net/api/pointmembers';
+                 jsResponse := XSuperObject.SO(dmDB.vResponse.Content);
+                 strJSON := jsResponse.AsJSON(True,True);
+                 lblNotif.Caption := lblNotif.Caption + ' # ' + dmDB.vResponse.StatusText;
+              except on E: Exception do
+                  begin
+                    ShowMessage('There was an error: ' + E.Message);
+                    lblNotif.Caption := 'There was an error';
+                    Exit;
+                  end;
+
+              end;
+
+              edMemberPoint.EditValue := 0;
+              lblKodeMember.Caption := idMember;
+            end
+         else if (jsArray.Length >= 0) then
+            begin
+               jsData := jsArray.O[0];
+               jsRoot := jsData.O['attributes'];
+               strJSON := jsRoot.AsJSON(True,True);
+               idMember := jsRoot.S['idmember'];
+               jmlhPoint := jsRoot.F['point'];
+               memHasil.Lines.Add('------------------');
+               memHasil.Lines.Add('Total Point = ' + FormatFloat('#,#', jmlhPoint));
+               edMemberPoint.EditValue := jmlhPoint;
+               lblKodeMember.Caption := idMember;
+            end;
+
+end;
+
+procedure TfrmPosPembayaran.CekMemberLama;
+var
+  qryServerCari : TMyQuery;
+  dbMember : TMyConnection;
+begin
+     if (edScan.Text = '') then Exit;
+     if (edDiscPromo.EditValue > 0) then
+       begin
+         ShowMessage('Customer Promo Tidak Dapat scan member !');
+         edScan.Clear;
+         lblKodeMember.Caption := '';
+         lblNoKartu.Caption := '';
+         Exit;
+       end;
+     if (edDiscPurpose.EditValue > 0) then
+       begin
+         ShowMessage('Customer dengan Additional Discount Tidak Dapat scan member !');
+         edScan.Clear;
+         lblKodeMember.Caption := '';
+         lblNoKartu.Caption := '';
+         Exit;
+       end;
+
+     //dbMember.Connected := False;
+     if (CekInternet = False) then
+       begin
+         ShowMessage('No Internet Connection !');
+         edScan.Clear;
+         lblKodeMember.Caption := '';
+         lblNoKartu.Caption := '';
+         Exit;
+       end;
+     lblKodeMember.Caption := edScan.Text;
+     lblNoKartu.Caption := UpperCase(LeftStr(edScan.Text, 7));
+     dbMember := TMyConnection.Create(nil);
+     dbMember.Server := frmMain.SERVER_DBHOST;
+     dbMember.Database := frmMain.MEMBERDBNAME;
+     dbMember.Username := frmMain.SERVER_DBUSER;
+     dbMember.Password := frmMain.SERVER_DBPASS;
+     dbMember.Port := StrToInt(frmMain.SERVER_DBPORT);
+     try
+          dbMember.Connected := True;
+       Except
+         on E : Exception do
+         ShowMessage('Sorry Database Not Ready !!');
+       end;
+     if (dbMember.Connected = True) then
+       begin
+         qryServerCari := TMyQuery.Create(Self);
+         qryServerCari.Connection := dbMember;
+         qryServerCari.SQL.Add('select id_members, nama_lengkap, tot_point, no_kartu from members ' +
+             'where id_members = ''' + edScan.Text + '''');
+         qryServerCari.Active := true;
+         qryServerCari.Open;
+         if (qryServerCari.IsEmpty) then
+           begin
+             ShowMessage('Data Member Tidak Ditemukan !!');
+             lblNoKartu.Caption := '';
+             lblKodeMember.Caption := '';
+             Exit;
+           end
+         else if (NOT qryServerCari.IsEmpty) then
+           begin
+             edMemberNama.Text := qryServerCari.Fields[1].AsString;
+             edMemberPoint.EditValue := qryServerCari.Fields[2].AsFloat;
+             lblNoKartu.Caption := qryServerCari.Fields[3].AsString;
+             lblKodeMember.Caption := qryServerCari.Fields[0].AsString;
+           end;
+         qryServerCari.Free;
+         dbMember.Disconnect;
+         dbMember.Free;
+       end;
+end;
+
 procedure TfrmPosPembayaran.cxButton1Click(Sender: TObject);
 var
    vPass, strSama : String;
@@ -327,6 +457,11 @@ begin
      begin
        ShowMessage('Passord did not match');
      end;
+end;
+
+procedure TfrmPosPembayaran.cxButton2Click(Sender: TObject);
+begin
+     tabControl.ActivePage := tabJSON;
 end;
 
 procedure TfrmPosPembayaran.cxButton3Click(Sender: TObject);
@@ -369,6 +504,11 @@ begin
        //tvPembayaran.DataController.DeleteRecord(recSel);
      end;
    HitungTypeMenu;
+end;
+
+procedure TfrmPosPembayaran.cxButton4Click(Sender: TObject);
+begin
+     tabControl.ActivePage := tabMain;
 end;
 
 procedure TfrmPosPembayaran.edPromoPropertiesEditValueChanged(Sender: TObject);
@@ -515,8 +655,23 @@ begin
 end;
 
 procedure TfrmPosPembayaran.edScanKeyPress(Sender: TObject; var Key: Char);
+var
+   panjang : Integer;
 begin
-   if (key = #13) then btnLoadMember.Click;
+   if (key = #13) then
+      begin
+           panjang := Length(edScan.Text);
+           if (panjang <= 14) then
+              begin
+                   CekMemberLama;
+              end
+           else if (panjang > 14) then
+              begin
+                   CekMemberBaru;
+              end;
+
+      end;
+
    
 end;
 
@@ -552,6 +707,8 @@ begin
    lblNoKartu.Caption := '';
    cbPrinterPos.Items := Printer.Printers;
    cbPrinterPos.ItemIndex := frmMain.IDXPOSPRINTER;
+   tabControl.ActivePage := tabMain;
+   tabControl.HideTabs := True;
 end;
 
 procedure TfrmPosPembayaran.HitungTypeMenu;

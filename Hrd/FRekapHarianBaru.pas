@@ -27,7 +27,7 @@ uses
   dxSkinSharpPlus, dxSkinTheAsphaltWorld, dxSkinVisualStudio2013Blue,
   dxSkinVisualStudio2013Dark, dxSkinVisualStudio2013Light, dxSkinVS2010,
   dxSkinWhiteprint, cxNavigator, Vcl.ComCtrls, dxCore, cxDateUtils,
-  dxBarBuiltInMenu, MemDS, MyAccess;
+  dxBarBuiltInMenu, MemDS, MyAccess, XSuperJSON, XSuperObject;
 
 type
   TfrmRekapHarianBaru = class(TForm)
@@ -152,6 +152,7 @@ type
     procedure CariJadwalTetap;
     procedure CariFinger;
     procedure CariKomisi;
+    procedure CariKomisibaru;
     procedure CariCuti;
     procedure CariLain;
     procedure CariLembur;
@@ -314,6 +315,81 @@ begin
           end;
        qryRek3.Next;
      end;
+end;
+
+procedure TfrmRekapHarianBaru.CariKomisibaru;
+var
+   valueKomisi, nSubtotal, varKomisi : Double;
+   z, x, y, typeKomisi : Integer;
+   kodeItem, mstrTransID : String;
+   qryKomisi1, qryKomisi2, qryKomisi3 : TMyQuery;
+   jSonItem : XSuperObject.ISuperObject;
+begin
+  ShowMessage('Komisi Baru on New');
+  KOMISITOT := 0;
+  nSubtotal := 0;
+  qryKomisi1 := TMyQuery.Create(Self);
+  qryKomisi1.Connection := DMDB.dbInternal;
+  qryKomisi1.SQL.Add('select * from temptable');
+  qryKomisi1.Active := true;
+
+  qryKomisi2 := TMyQuery.Create(Self);
+  qryKomisi2.Connection := DMDB.dbInternal;
+  qryKomisi2.SQL.Add('select * from temptable');
+  qryKomisi2.Active := true;
+
+  qryKomisi3 := TMyQuery.Create(Self);
+  qryKomisi3.Connection := DMDB.dbInternal;
+  qryKomisi3.SQL.Add('select * from temptable');
+  qryKomisi3.Active := true;
+
+
+  qryKomisi1.Close;
+  qryKomisi1.SQL.Clear;
+  qryKomisi1.SQL.Add('select trans_master.trans_id FROM trans_master WHERE trans_master.tanggal = ''' +
+  FormatDateTime('yyyy-MM-dd', TANGGALCARI) + ''' AND trans_master.status_trans = ''' +
+  'PAID' + ''' AND trans_master.therapist_id = ''' + IDFINGER + ''' ORDER BY trans_master.trans_id ASC');
+  qryKomisi1.Open;
+  qryKomisi1.First;
+  for x := 0 to qryKomisi1.RecordCount - 1 do
+      begin
+        mstrTransID := qryKomisi1.Fields[0].AsString;
+        qryKomisi2.Close;
+        qryKomisi2.SQL.Clear;
+        qryKomisi2.SQL.Add('select trans_detail.id_trans, trans_detail.trans_type_id ,trans_detail.produk_jasa_id, trans_detail.subtotal, ' +
+            '(select main_menu.notes from main_menu where main_menu.menu_id = trans_detail.produk_jasa_id) as notes ' +
+            'from trans_detail where id_trans = ''' + mstrTransID + '''');
+        qryKomisi2.Open;
+        qryKomisi2.First;
+        for z := 0 to qryKomisi2.RecordCount -1 do
+            begin
+                 jSonItem := XSuperobject.SO(qryKomisi2.Fields[4].AsString);
+                 typeKomisi := jSonItem.I['typeKomisi'];
+                 valueKomisi := jSonItem.F['valueKomisi'];
+                 if (valueKomisi > 0) then
+                   begin
+                        if (typeKomisi = 0) then
+                           begin
+                                nSubtotal := qryKomisi2.Fields[3].AsFloat;
+                                varKomisi := nSubtotal * valueKomisi / 100;
+                                KOMISITOT := KOMISITOT + varKomisi;
+                           end
+                        else if (typeKomisi = 1) then
+                           begin
+                                KOMISITOT := KOMISITOT + valueKomisi;
+                           end;
+                   end
+                 else if (valueKomisi <= 0) then
+                   begin
+                        KOMISITOT := KOMISITOT + 0;
+                   end;
+                qryKomisi2.Next;
+            end;
+          qryKomisi1.Next;
+      end;
+  qryKomisi1.Free;
+  qryKomisi2.Free;
+  qryKomisi3.Free;
 end;
 
 procedure TfrmRekapHarianBaru.CariResultLama(NIK: string; nRecord: Integer);
@@ -742,7 +818,7 @@ begin
            CariFPKeluar(FingerID, nRecord);
            CariIjin(NIK, nRecord);
            CariLiburNasional(NIK, nRecord);
-           CariKomisiBali(NIK, nRecord);
+//           CariKomisiBali(NIK, nRecord);
            CariResultLama(NIK, nRecord);
            Application.ProcessMessages;
         end
@@ -1855,7 +1931,7 @@ begin
                FormatDateTime('yyyy-MM-dd', tglend) + '''');
        qryRek2.Open;
        qryRek2.First;
-       qryExec.SQL.Clear;
+
        for y := 0 to qryRek2.RecordCount - 1 do
           begin
             fpreal := qryRek2.Fields[0].AsDateTime + qryRek2.Fields[1].AsDateTime;
@@ -1867,7 +1943,7 @@ begin
             qryRek3.Open;
             if (qryRek3.IsEmpty) then
               begin
-
+                qryExec.SQL.Clear;
                 qryExec.SQL.Add('insert into absen_harian_merge values(' +
                     '''' + '' + ''',' +
                     '''' + IDKARYAWAN + ''',' +
@@ -1875,10 +1951,11 @@ begin
                     '''' + FormatDateTime('yyyy-MM-dd', qryRek2.Fields[0].AsDateTime) + ''',' +
                     '''' + FormatDateTime('yyyy-MM-dd hh:mm:ss', fpreal) + ''',' +
                     '''' + '' + ''');');
+                qryExec.ExecSQL;
               end;
             qryRek2.Next;
           end;
-       qryExec.ExecSQL;
+
 
        CreateListCariAbsen(IDKARYAWAN, NAMA, IDFINGER, DIVISI);
 
@@ -1939,7 +2016,7 @@ begin
                FormatDateTime('yyyy-MM-dd', tglend) + '''');
        qryRek2.Open;
        qryRek2.First;
-       qryExec.SQL.Clear;
+
        for y := 0 to qryRek2.RecordCount - 1 do
           begin
             fpreal := qryRek2.Fields[0].AsDateTime + qryRek2.Fields[1].AsDateTime;
@@ -1951,7 +2028,7 @@ begin
             qryRek3.Open;
             if (qryRek3.IsEmpty) then
               begin
-
+                qryExec.SQL.Clear;
                 qryExec.SQL.Add('insert into absen_harian_merge values(' +
                     '''' + '' + ''',' +
                     '''' + IDKARYAWAN + ''',' +
@@ -1959,10 +2036,11 @@ begin
                     '''' + FormatDateTime('yyyy-MM-dd', qryRek2.Fields[0].AsDateTime) + ''',' +
                     '''' + FormatDateTime('yyyy-MM-dd hh:mm:ss', fpreal) + ''',' +
                     '''' + '' + ''');');
+                qryExec.ExecSQL;
               end;
             qryRek2.Next;
           end;
-       qryExec.ExecSQL;
+
        CreateListCariAbsen(IDKARYAWAN, NAMA, IDFINGER, DIVISI);
        //CariAbsenHarian;
        //ShowMessage('2');
@@ -2273,7 +2351,7 @@ begin
       gtvRekap.DataController.SetValue(NEWREC, gtvRekapKomisi.Index, 0);
       //ShowMessage('1A');
       TANGGALCARI := nHari;
-      CariKomisi;
+      CariKomisibaru;
       CariUMX3;
       //ShowMessage('1B');
 //----------------------------------------------------------------------------------------------------------
@@ -2814,6 +2892,7 @@ var
   tglstart, tglend : TDate;
   fpreal : TDateTime;
 begin
+//   ShowMessage('By Divisi 1');
    recCount := gtvRekap.DataController.RecordCount;
    if (recCount > 0) then
      begin
@@ -2832,6 +2911,7 @@ begin
        'jadwaltetap, kodejadwal, kodekontrak from ben_hrd_karyawan_info where departemen = ''' +
        vartostr(edDepartemen.EditValue) + ''' and active = ''' + 'Y' + '''');
    qryRek1.Open;
+//   ShowMessage('By Divisi 2');
    prog1.Properties.Max := qryRek1.RecordCount - 1;
    for i := 0 to qryRek1.RecordCount - 1 do
      begin
@@ -2855,8 +2935,9 @@ begin
                FormatDateTime('yyyy-MM-dd', tglstart) + ''' AND absen_harian.tanggal <= ''' +
                FormatDateTime('yyyy-MM-dd', tglend) + '''');
        qryRek2.Open;
+//       ShowMessage('By Divisi 3');
        qryRek2.First;
-       qryExec.SQL.Clear;
+
        for y := 0 to qryRek2.RecordCount - 1 do
           begin
             fpreal := qryRek2.Fields[0].AsDateTime + qryRek2.Fields[1].AsDateTime;
@@ -2866,9 +2947,10 @@ begin
                 'kodekaryawan = ''' + IDKARYAWAN + ''' and fpreal = ''' +
                 FormatDateTime('yyyy-MM-dd hh:mm:ss', qryRek2.Fields[0].AsDateTime) + '''');
             qryRek3.Open;
+//            ShowMessage('By Divisi 4');
             if (qryRek3.IsEmpty) then
               begin
-
+                qryExec.SQL.Clear;
                 qryExec.SQL.Add('insert into absen_harian_merge values(' +
                     '''' + '' + ''',' +
                     '''' + IDKARYAWAN + ''',' +
@@ -2876,10 +2958,11 @@ begin
                     '''' + FormatDateTime('yyyy-MM-dd', qryRek2.Fields[0].AsDateTime) + ''',' +
                     '''' + FormatDateTime('yyyy-MM-dd hh:mm:ss', fpreal) + ''',' +
                     '''' + '' + ''');');
+                qryExec.ExecSQL;
               end;
             qryRek2.Next;
           end;
-       qryExec.ExecSQL;
+
        CreateListCariAbsen(IDKARYAWAN, NAMA, IDFINGER, DIVISI);
        //CariAbsenHarian;
 

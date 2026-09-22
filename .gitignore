@@ -1,0 +1,27 @@
+# Directories to ignore
+Win32/
+docs/
+__recovery/
+imgcontainer/
+01imgcontainer/
+__history/
+.antigraviy/
+
+# Sensitive data and configuration files
+.env
+*.sql
+*.md
+*.ini
+Win32/Debug/listoutlet.json
+Win32/Debug/config.json
+
+# Delphi generated files and compiled binaries
+*.dcu
+*.local
+*.identcache
+*.stat
+*.exe
+*.dll
+*.ddp
+*.~*
+*.dsk

@@ -120,6 +120,7 @@ begin
    edEnd.Time := Time;
    edKeterangan.Clear;
    edQuickSearch.SetFocus;
+   lblNoLembur.Caption := '';
 end;
 
 procedure TfrmLemburInput.CetakData;
@@ -152,36 +153,40 @@ begin
         ShowMessage('Keterangan masih kosong !!');
         Exit;
       end;
-   qryLembur2.Close;
-   qryLembur2.SQL.Clear;
-   qryLembur2.SQL.Add('select count(tanggal) from ben_presensi_lembur where MONTH(ben_presensi_lembur.tanggal) = MONTH(CURRENT_DATE)');
-   qryLembur2.Open;
-   lastNumb := qryLembur2.Fields[0].AsInteger;
-   NewNumb := lastNumb + 1;
-   case Length(IntToStr(NewNumb)) of
-      1 : strNewNumb := '00' + IntToStr(NewNumb);
-      2 : strNewNumb := '0' + IntToStr(NewNumb);
-      3 : strNewNumb := IntToStr(NewNumb);
-   end;
-   qryLembur1.Close;
-   qryLembur1.SQL.Clear;
-   qryLembur1.SQL.Add('select jadwaltetap from ben_hrd_karyawan_info ' +
-       'where kodekaryawan = ''' + edKode.Text + '''');
-   qryLembur1.Open;
-   TJadwal := qryLembur1.Fields[0].AsString;
-   jMasuk := edTglMasuk.Date + edJmasuk.Time;
-   jKeluar := edTglKeluar.Date + edJKeluar.Time;
-   lemStart := edTglLemburStart.Date + edStart.Time;
-   lemEnd := edTglLemburEnd.Date + edEnd.Time;
-   noLembur := 'L.' + frmMain.APP_OUTLETID + '.' + FormatDateTime('MMyy', edTglLembur.Date) + '.' + strNewNumb;
-   lblNoLembur.Caption := noLembur;
-   qryLembur1.Close;
-   qryLembur1.SQL.Clear;
-   qryLembur1.SQL.Add('select nomorlembur from ben_presensi_lembur where tanggal = ''' +
-       FormatDateTime('yyyy-MM-dd', edTglLembur.Date) + ''' AND kodekaryawan = ''' +
-       edKode.Text + '''');
-   qryLembur1.Open;
-   tagPresensi := 'OT';
+     noLembur := '';
+     qryLembur2.Close;
+     qryLembur2.SQL.Clear;
+     qryLembur2.SQL.Add('select count(tanggal) from ben_presensi_lembur where MONTH(ben_presensi_lembur.tanggal) = MONTH(CURRENT_DATE)');
+     qryLembur2.Open;
+     lastNumb := qryLembur2.Fields[0].AsInteger;
+     NewNumb := lastNumb + 1;
+     case Length(IntToStr(NewNumb)) of
+        1 : strNewNumb := '0000' + IntToStr(NewNumb);
+        2 : strNewNumb := '000' + IntToStr(NewNumb);
+        3 : strNewNumb := '00' + IntToStr(NewNumb);
+        4 : strNewNumb := '0' + IntToStr(NewNumb);
+        5 : strNewNumb := IntToStr(NewNumb);
+     end;
+     qryLembur1.Close;
+     qryLembur1.SQL.Clear;
+     qryLembur1.SQL.Add('select jadwaltetap from ben_hrd_karyawan_info ' +
+         'where kodekaryawan = ''' + edKode.Text + '''');
+     qryLembur1.Open;
+     TJadwal := qryLembur1.Fields[0].AsString;
+     jMasuk := edTglMasuk.Date + edJmasuk.Time;
+     jKeluar := edTglKeluar.Date + edJKeluar.Time;
+     lemStart := edTglLemburStart.Date + edStart.Time;
+     lemEnd := edTglLemburEnd.Date + edEnd.Time;
+     noLembur := 'L.' + frmMain.APP_OUTLETID + '.' + FormatDateTime('MMyy', edTglLembur.Date) + FormatDateTime('hhmmss', time) + '.' + strNewNumb;
+     lblNoLembur.Caption := noLembur;
+
+     qryLembur1.Close;
+     qryLembur1.SQL.Clear;
+     qryLembur1.SQL.Add('select nomorlembur from ben_presensi_lembur where tanggal = ''' +
+         FormatDateTime('yyyy-MM-dd', edTglLembur.Date) + ''' AND kodekaryawan = ''' +
+         edKode.Text + '''');
+     qryLembur1.Open;
+     tagPresensi := 'OT';
 
    {close here}
    if (edLama.EditValue >= 4) then
@@ -276,9 +281,32 @@ begin
    else if (NOT qryLembur1.IsEmpty) then
      begin
        ShowMessage('Data sudah ada, Proses akan mengupdate data sebelumnya');
-       lblNoLembur.Caption := qryLembur1.Fields[0].AsString;
+       qryLembur1.Close;
+       {qryLembur1.SQL.Clear;
+       qryLembur1.SQL.Add('select nomorlembur from ben_presensi_lembur where tanggal = ''' +
+           FormatDateTime('yyyy-MM-dd', edTglLembur.Date) + ''' AND kodekaryawan = ''' +
+           edKode.Text + '''');
+       qryLembur1.Open;}
+       noLembur := '';
+       qryLembur2.Close;
+       qryLembur2.SQL.Clear;
+       qryLembur2.SQL.Add('select count(tanggal) from ben_presensi_lembur where MONTH(ben_presensi_lembur.tanggal) = MONTH(CURRENT_DATE)');
+       qryLembur2.Open;
+       lastNumb := qryLembur2.Fields[0].AsInteger;
+       NewNumb := lastNumb + 1;
+       case Length(IntToStr(NewNumb)) of
+          1 : strNewNumb := '0000' + IntToStr(NewNumb);
+          2 : strNewNumb := '000' + IntToStr(NewNumb);
+          3 : strNewNumb := '00' + IntToStr(NewNumb);
+          4 : strNewNumb := '0' + IntToStr(NewNumb);
+          5 : strNewNumb := IntToStr(NewNumb);
+       end;
+       //lblNoLembur.Caption := qryLembur1.Fields[0].AsString;
+       noLembur := 'L.' + frmMain.APP_OUTLETID + '.' + FormatDateTime('MMyy', edTglLembur.Date) + FormatDateTime('hhmmss', time) + '.' + strNewNumb;
+       lblNoLembur.Caption := noLembur;
        qryExec.SQL.Clear;
        qryExec.SQL.Add('update ben_presensi_lembur set ' +
+           'nomorlembur = ''' + noLembur + ''',' +
            'keterangan = ' + QuotedStr(edKeterangan.Text) + ',' +
            'jstart = ''' + FormatDateTime('hh:mm:ss', edStart.Time) + ''',' +
            'jend = ''' + FormatDateTime('hh:mm:ss', edEnd.Time) + ''',' +
@@ -291,7 +319,9 @@ begin
            'jumlah = ''' + FloatToStr(edLama.EditValue) + ''',' +
            'lastedituser = ''' + frmMain.USERAPPS + ''',' +
            'lasteditdate = ''' + FormatDateTime('yyyy-MM-dd hh:mm:ss', Now) + ''' ' +
-           'where nomorlembur = ''' + qryLembur1.Fields[0].AsString + ''';');
+           'where tanggal = ''' +
+           FormatDateTime('yyyy-MM-dd', edTglLembur.Date) + ''' AND kodekaryawan = ''' +
+           edKode.Text + ''';');
 
        {strSync := 'update ben_presensi_lembur set ' +
            'keterangan = ' + QuotedStr(edKeterangan.Text) + ',' +
@@ -325,7 +355,7 @@ begin
                'AND tglmasuk = ''' + FormatDateTime('yyyy-MM-dd', edTglMasuk.Date) + ''';');
          end;
 
-       qryExec.ExecSQL;
+        qryExec.ExecSQL;
         frmLemburList.qryList.Active := False;
         Sleep(100);
         frmLemburList.qryList.Active := True;

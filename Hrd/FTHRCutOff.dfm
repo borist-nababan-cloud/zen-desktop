@@ -1,6 +1,7 @@
 object frmTHRCutOff: TfrmTHRCutOff
   Left = 0
   Top = 0
+  Caption = 'Cut Off Periode THR'
   ClientHeight = 350
   ClientWidth = 615
   Color = clMoneyGreen
@@ -167,6 +168,7 @@ object frmTHRCutOff: TfrmTHRCutOff
     OnClick = btnSetInaktifClick
   end
   object qryList: TMyQuery
+    Connection = dmDB.dbInternal
     SQL.Strings = (
       'select * from ben_thr_periode where aktif = '#39'Y'#39)
     Left = 560

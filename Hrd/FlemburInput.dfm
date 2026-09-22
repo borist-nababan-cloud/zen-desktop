@@ -177,8 +177,8 @@ object frmLemburInput: TfrmLemburInput
     Width = 257
   end
   object btnFind: TButton
-    Left = 400
-    Top = 111
+    Left = 415
+    Top = 108
     Width = 75
     Height = 55
     Caption = 'Search'

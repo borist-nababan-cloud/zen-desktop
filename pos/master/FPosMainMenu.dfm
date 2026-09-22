@@ -2,8 +2,8 @@ object frmPosMainMenu: TfrmPosMainMenu
   Left = 0
   Top = 0
   Caption = '  Main Menu PoS '
-  ClientHeight = 474
-  ClientWidth = 1007
+  ClientHeight = 595
+  ClientWidth = 1179
   Color = clMoneyGreen
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,274 +14,622 @@ object frmPosMainMenu: TfrmPosMainMenu
   OnClose = FormClose
   OnCreate = FormCreate
   DesignSize = (
-    1007
-    474)
+    1179
+    595)
   PixelsPerInch = 96
   TextHeight = 16
-  object Label1: TLabel
+  object pgControl: TcxPageControl
     Left = 8
-    Top = 4
-    Width = 991
-    Height = 26
-    Anchors = [akLeft, akTop, akRight]
-    AutoSize = False
-    Caption = '  List Main Menu PoS'
-    Color = clBlue
-    Font.Charset = ANSI_CHARSET
-    Font.Color = clWhite
-    Font.Height = -21
-    Font.Name = 'Calibri'
-    Font.Style = [fsBold]
-    ParentColor = False
-    ParentFont = False
-    Transparent = False
-  end
-  object memStruktur: TMemo
-    Left = 814
-    Top = 385
-    Width = 185
-    Height = 89
-    Lines.Strings = (
-      'CREATE TABLE `main_menu` ('
-      '  `menu_id` varchar(50) NOT NULL DEFAULT '#39'(NONE)'#39','
-      '  `type_menu` char(2) DEFAULT '#39'BJ'#39','
-      '  `jenis_jasa_id` char(2) NOT NULL DEFAULT '#39'NN'#39','
-      '  `nama_menu` varchar(100) NOT NULL DEFAULT '#39'(NONE)'#39','
-      '  `harga` double NOT NULL DEFAULT 0,'
-      '  `lama` int(3) NOT NULL DEFAULT 0,'
-      '  `disc_hh` double NOT NULL DEFAULT 0,'
-      '  `disc_normal` double DEFAULT NULL,'
-      '  `harga_hh` double NOT NULL DEFAULT 0,'
-      '  `harga_normal` double NOT NULL DEFAULT 0,'
-      '  `notes` text DEFAULT NULL,'
-      '  `aktif` varchar(255) NOT NULL DEFAULT '#39'Y'#39','
-      '  `lastuser` varchar(255) DEFAULT NULL,'
-      
-        '  `lasteditdate` datetime NOT NULL DEFAULT '#39'2019-01-01 01:01:01'#39 +
-        ','
-      '  PRIMARY KEY (`menu_id`),'
-      '  KEY `Jenis_Jasa_ID` (`jenis_jasa_id`)'
-      ') ENGINE=MyISAM DEFAULT CHARSET=latin1;')
-    ScrollBars = ssBoth
-    TabOrder = 2
-    Visible = False
-  end
-  object cxGrid1: TcxGrid
-    Left = 8
-    Top = 36
-    Width = 991
-    Height = 387
+    Top = 8
+    Width = 1163
+    Height = 579
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
-    object gtbList: TcxGridDBTableView
-      Navigator.Buttons.CustomButtons = <>
-      DataController.DataSource = dsQryList
-      DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoGroupsAlwaysExpanded]
-      DataController.Summary.DefaultGroupSummaryItems = <>
-      DataController.Summary.FooterSummaryItems = <>
-      DataController.Summary.SummaryGroups = <>
-      OptionsBehavior.IncSearch = True
-      OptionsBehavior.ImmediateEditor = False
-      OptionsData.Deleting = False
-      OptionsData.DeletingConfirmation = False
-      OptionsData.Inserting = False
-      OptionsView.Footer = True
-      OptionsView.Indicator = True
-      object gtbListnama_menu: TcxGridDBColumn
-        Caption = 'Nama Menu'
-        DataBinding.FieldName = 'nama_menu'
-        PropertiesClassName = 'TcxTextEditProperties'
-        Properties.ReadOnly = True
-        Width = 250
+    Properties.ActivePage = pgInput
+    Properties.CustomButtons.Buttons = <>
+    ClientRectBottom = 576
+    ClientRectLeft = 2
+    ClientRectRight = 1160
+    ClientRectTop = 30
+    object PgMain: TcxTabSheet
+      Caption = 'PgMain'
+      ImageIndex = 0
+      DesignSize = (
+        1158
+        546)
+      object Label1: TLabel
+        Left = 8
+        Top = 4
+        Width = 1147
+        Height = 26
+        Anchors = [akLeft, akTop, akRight]
+        AutoSize = False
+        Caption = '  List Main Menu PoS'
+        Color = clBlue
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWhite
+        Font.Height = -21
+        Font.Name = 'Calibri'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        Transparent = False
       end
-      object gtbListtype_menu: TcxGridDBColumn
-        Caption = 'Type Menu'
-        DataBinding.FieldName = 'type_menu'
-        PropertiesClassName = 'TcxTextEditProperties'
-        Properties.ReadOnly = True
-        Width = 100
-      end
-      object gtbListjenis_jasa_id: TcxGridDBColumn
-        Caption = 'Jenis Menu'
-        DataBinding.FieldName = 'jenis_jasa_id'
-        PropertiesClassName = 'TcxTextEditProperties'
-        Properties.ReadOnly = True
-        Width = 100
-      end
-      object gtbListharga: TcxGridDBColumn
-        Caption = 'Harga Menu'
-        DataBinding.FieldName = 'harga'
-        PropertiesClassName = 'TcxCalcEditProperties'
-        Properties.ReadOnly = True
-        Properties.UseThousandSeparator = True
-        Width = 100
-      end
-      object gtbListlama: TcxGridDBColumn
-        Caption = 'Waktu'
-        DataBinding.FieldName = 'lama'
-        PropertiesClassName = 'TcxCalcEditProperties'
-        Properties.ReadOnly = True
-        Properties.UseThousandSeparator = True
-        Width = 100
-      end
-      object gtbListdisc_hh: TcxGridDBColumn
-        Caption = 'Disc HH'
-        DataBinding.FieldName = 'disc_hh'
-        PropertiesClassName = 'TcxCalcEditProperties'
-        Properties.ReadOnly = True
-        Properties.UseThousandSeparator = True
-        Width = 100
-      end
-      object gtbListdisc_normal: TcxGridDBColumn
-        Caption = 'Disc Normal'
-        DataBinding.FieldName = 'disc_normal'
-        PropertiesClassName = 'TcxCalcEditProperties'
-        Properties.ReadOnly = True
-        Properties.UseThousandSeparator = True
-        Width = 100
-      end
-      object gtbListharga_hh: TcxGridDBColumn
-        Caption = 'Harga HH'
-        DataBinding.FieldName = 'harga_hh'
-        PropertiesClassName = 'TcxCalcEditProperties'
-        Properties.ReadOnly = True
-        Properties.UseThousandSeparator = True
-        Width = 100
-      end
-      object gtbListharga_normal: TcxGridDBColumn
-        Caption = 'Harga Normal'
-        DataBinding.FieldName = 'harga_normal'
-        PropertiesClassName = 'TcxCalcEditProperties'
-        Properties.ReadOnly = True
-        Properties.UseThousandSeparator = True
-        Width = 100
-      end
-      object gtbListnotes: TcxGridDBColumn
-        Caption = 'Keterangan'
-        DataBinding.FieldName = 'notes'
-        PropertiesClassName = 'TcxTextEditProperties'
-        Properties.ReadOnly = True
+      object memStruktur: TMemo
+        Left = 814
+        Top = 385
+        Width = 185
+        Height = 89
+        Lines.Strings = (
+          'CREATE TABLE `main_menu` ('
+          '  `menu_id` varchar(50) NOT NULL DEFAULT '#39'(NONE)'#39','
+          '  `type_menu` char(2) DEFAULT '#39'BJ'#39','
+          '  `jenis_jasa_id` char(2) NOT NULL DEFAULT '#39'NN'#39','
+          '  `nama_menu` varchar(100) NOT NULL DEFAULT '#39'(NONE)'#39','
+          '  `harga` double NOT NULL DEFAULT 0,'
+          '  `lama` int(3) NOT NULL DEFAULT 0,'
+          '  `disc_hh` double NOT NULL DEFAULT 0,'
+          '  `disc_normal` double DEFAULT NULL,'
+          '  `harga_hh` double NOT NULL DEFAULT 0,'
+          '  `harga_normal` double NOT NULL DEFAULT 0,'
+          '  `notes` text DEFAULT NULL,'
+          '  `aktif` varchar(255) NOT NULL DEFAULT '#39'Y'#39','
+          '  `lastuser` varchar(255) DEFAULT NULL,'
+          
+            '  `lasteditdate` datetime NOT NULL DEFAULT '#39'2019-01-01 01:01:01'#39 +
+            ','
+          '  PRIMARY KEY (`menu_id`),'
+          '  KEY `Jenis_Jasa_ID` (`jenis_jasa_id`)'
+          ') ENGINE=MyISAM DEFAULT CHARSET=latin1;')
+        ScrollBars = ssBoth
+        TabOrder = 0
         Visible = False
-        Width = 100
       end
-      object gtbListaktif: TcxGridDBColumn
-        Caption = 'Aktif'
-        DataBinding.FieldName = 'aktif'
-        PropertiesClassName = 'TcxCheckBoxProperties'
-        Properties.ReadOnly = True
-        Properties.ValueChecked = 'Y'
-        Properties.ValueUnchecked = 'N'
-        Width = 100
+      object cxGrid1: TcxGrid
+        Left = 8
+        Top = 36
+        Width = 1147
+        Height = 442
+        Anchors = [akLeft, akTop, akRight, akBottom]
+        TabOrder = 1
+        object gtbList: TcxGridDBTableView
+          Navigator.Buttons.CustomButtons = <>
+          DataController.DataSource = dsQryList
+          DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoGroupsAlwaysExpanded]
+          DataController.Summary.DefaultGroupSummaryItems = <>
+          DataController.Summary.FooterSummaryItems = <>
+          DataController.Summary.SummaryGroups = <>
+          OptionsBehavior.IncSearch = True
+          OptionsBehavior.ImmediateEditor = False
+          OptionsData.Deleting = False
+          OptionsData.DeletingConfirmation = False
+          OptionsData.Inserting = False
+          OptionsView.Footer = True
+          OptionsView.Indicator = True
+          object gtbListnama_menu: TcxGridDBColumn
+            Caption = 'Nama Menu'
+            DataBinding.FieldName = 'nama_menu'
+            PropertiesClassName = 'TcxTextEditProperties'
+            Properties.ReadOnly = True
+            Width = 250
+          end
+          object gtbListtype_menu: TcxGridDBColumn
+            Caption = 'Type Menu'
+            DataBinding.FieldName = 'type_menu'
+            PropertiesClassName = 'TcxTextEditProperties'
+            Properties.ReadOnly = True
+            Width = 100
+          end
+          object gtbListjenis_jasa_id: TcxGridDBColumn
+            Caption = 'Jenis Menu'
+            DataBinding.FieldName = 'jenis_jasa_id'
+            PropertiesClassName = 'TcxTextEditProperties'
+            Properties.ReadOnly = True
+            Width = 100
+          end
+          object gtbListharga: TcxGridDBColumn
+            Caption = 'Harga Menu'
+            DataBinding.FieldName = 'harga'
+            PropertiesClassName = 'TcxCalcEditProperties'
+            Properties.ReadOnly = True
+            Properties.UseThousandSeparator = True
+            Width = 100
+          end
+          object gtbListlama: TcxGridDBColumn
+            Caption = 'Waktu'
+            DataBinding.FieldName = 'lama'
+            PropertiesClassName = 'TcxCalcEditProperties'
+            Properties.ReadOnly = True
+            Properties.UseThousandSeparator = True
+            Width = 100
+          end
+          object gtbListdisc_hh: TcxGridDBColumn
+            Caption = 'Disc HH'
+            DataBinding.FieldName = 'disc_hh'
+            PropertiesClassName = 'TcxCalcEditProperties'
+            Properties.ReadOnly = True
+            Properties.UseThousandSeparator = True
+            Width = 100
+          end
+          object gtbListdisc_normal: TcxGridDBColumn
+            Caption = 'Disc Normal'
+            DataBinding.FieldName = 'disc_normal'
+            PropertiesClassName = 'TcxCalcEditProperties'
+            Properties.ReadOnly = True
+            Properties.UseThousandSeparator = True
+            Width = 100
+          end
+          object gtbListharga_hh: TcxGridDBColumn
+            Caption = 'Harga HH'
+            DataBinding.FieldName = 'harga_hh'
+            PropertiesClassName = 'TcxCalcEditProperties'
+            Properties.ReadOnly = True
+            Properties.UseThousandSeparator = True
+            Width = 100
+          end
+          object gtbListharga_normal: TcxGridDBColumn
+            Caption = 'Harga Normal'
+            DataBinding.FieldName = 'harga_normal'
+            PropertiesClassName = 'TcxCalcEditProperties'
+            Properties.ReadOnly = True
+            Properties.UseThousandSeparator = True
+            Width = 100
+          end
+          object gtbListnotes: TcxGridDBColumn
+            Caption = 'Keterangan'
+            DataBinding.FieldName = 'notes'
+            PropertiesClassName = 'TcxTextEditProperties'
+            Properties.ReadOnly = True
+            Visible = False
+            Width = 100
+          end
+          object gtbListaktif: TcxGridDBColumn
+            Caption = 'Aktif'
+            DataBinding.FieldName = 'aktif'
+            PropertiesClassName = 'TcxCheckBoxProperties'
+            Properties.ReadOnly = True
+            Properties.ValueChecked = 'Y'
+            Properties.ValueUnchecked = 'N'
+            Width = 100
+          end
+          object gtbListmenu_id: TcxGridDBColumn
+            Caption = 'Kode Menu'
+            DataBinding.FieldName = 'menu_id'
+            PropertiesClassName = 'TcxTextEditProperties'
+            Properties.ReadOnly = True
+            Width = 100
+          end
+          object gtbListlastuser: TcxGridDBColumn
+            Caption = 'User Edit'
+            DataBinding.FieldName = 'lastuser'
+            PropertiesClassName = 'TcxTextEditProperties'
+            Properties.ReadOnly = True
+            Width = 100
+          end
+          object gtbListlasteditdate: TcxGridDBColumn
+            Caption = 'Date Edit'
+            DataBinding.FieldName = 'lasteditdate'
+            PropertiesClassName = 'TcxDateEditProperties'
+            Properties.ReadOnly = True
+            Width = 100
+          end
+          object gtbListColumn1: TcxGridDBColumn
+            Caption = 'Type Menu'
+            DataBinding.FieldName = 'type_menu'
+            PropertiesClassName = 'TcxTextEditProperties'
+            Properties.ReadOnly = True
+            Visible = False
+            GroupIndex = 0
+          end
+        end
+        object cxGrid1Level1: TcxGridLevel
+          GridView = gtbList
+        end
       end
-      object gtbListmenu_id: TcxGridDBColumn
+      object btnNew: TcxButton
+        Left = 124
+        Top = 484
+        Width = 93
+        Height = 37
+        Anchors = [akLeft, akBottom]
+        Caption = 'New Menu'
+        TabOrder = 2
+        OnClick = btnNewClick
+      end
+      object cxButton1: TcxButton
+        Left = 898
+        Top = 484
+        Width = 93
+        Height = 37
+        Anchors = [akRight, akBottom]
+        Caption = 'Import'
+        DropDownMenu = pmImport
+        Kind = cxbkOfficeDropDown
+        TabOrder = 3
+      end
+      object cxButton2: TcxButton
+        Left = 236
+        Top = 484
+        Width = 93
+        Height = 37
+        Anchors = [akLeft, akBottom]
+        Caption = 'Edit Selected'
+        TabOrder = 4
+        OnClick = cxButton2Click
+      end
+      object btnRefresh: TcxButton
+        Left = 8
+        Top = 484
+        Width = 93
+        Height = 37
+        Anchors = [akLeft, akBottom]
+        Caption = 'Refresh'
+        OptionsImage.Glyph.Data = {
+          36040000424D3604000000000000360000002800000010000000100000000100
+          2000000000000004000000000000000000000000000000000000000000000000
+          000000000000000000000000000000000000000000330000002F000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          000000000000000000000000000000000033008B49FF008246F1000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000033008743FFA1E2D5FF239A60FF000000330000
+          0033000000330000003300000022000000000000000000000000000000000000
+          00000000000000000033008743FF93DCC9FF1ACAADFF00B68EFF009658FF0097
+          5BFF008B4AFF008945FF005B30B9000000330000000000000000000000000000
+          000000000000008A48FF81DBC2FF14CEA9FF00C499FF57DBC1FF56DCC3FF56DD
+          C4FF56DEC5FF56DCC4FF44C19AFF008B4AFF0000003300000000000000000000
+          000000000000008A48FF6FD7B8FF12D5A9FF00CD9BFF00CE9DFF00D1A0FF00D2
+          A1FF00D1A0FF00D1A0FF1DD8AEFF2FCCA3FF018A49FF0000001E000000000000
+          00000000000000000000008744FF5FD1ACFF11DDAAFF00CA90FF008B49FF0087
+          45FF009C5EFF00A568FF00C48AFF04DDA8FF16BA83FF01532DAA000000000000
+          0033000000330000001A00000000008846FF4ED3A9FF129155FF000000000000
+          002D00000033004B2889008043F000B578FF00D89FFF008B4BFF00000000008D
+          4DFF008B4BFF004626990000002C0000001400592FA2008D4CFF00000000007B
+          42E5008C4AFF0000003300000000005C31A8008B4BFF008D4DFF00000000008B
+          4BFF00D89FFF00B578FF00773EE400361D820000003300000033000000331191
+          54FF53D4AAFF008846FF00000033000000000000000000000000000000000252
+          2D951ABA86FF07DBA8FF00BE85FF00A061FF009C5DFF008744FF008A49FF00C9
+          90FF12DCAAFF63D3AFFF008744FF000000330000000000000000000000000000
+          0000008A49FF35D0AAFF20D7B1FF0DD3A7FF0DD4A7FF0DD4A8FF0DD3A7FF0ED1
+          A4FF00CA9AFF13D3A9FF73D7BBFF008A48FF0000000000000000000000000000
+          000000000000018B49FF48C29CFF5CDCC6FF5BDEC8FF5ADEC7FF5BDDC6FF5CDB
+          C3FF00C399FF15CCAAFF85DBC3FF008A48FF0000000000000000000000000000
+          00000000000000000000005B2FA8008946FF008844FF008744FF008947FF00B5
+          8EFF1BC8AEFF98DECBFF008742FF000000000000000000000000000000000000
+          000000000000000000000000000000000000000000000000000000000000239B
+          61FFA1E2D5FF008743FF00000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000082
+          46ED008B49FF0000000000000000000000000000000000000000}
+        TabOrder = 5
+        OnClick = btnRefreshClick
+      end
+    end
+    object pgInput: TcxTabSheet
+      Caption = 'pgInput'
+      ImageIndex = 1
+      DesignSize = (
+        1158
+        546)
+      object Label2: TLabel
+        Left = 4
+        Top = 4
+        Width = 623
+        Height = 26
+        Anchors = [akLeft, akTop, akRight]
+        AutoSize = False
+        Caption = ' Main Menu Input'
+        Color = clBlue
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWhite
+        Font.Height = -21
+        Font.Name = 'Calibri'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        Transparent = False
+      end
+      object rbType: TRadioGroup
+        Left = 16
+        Top = 44
+        Width = 619
+        Height = 41
+        Caption = 'Type Menu'
+        Columns = 4
+        Items.Strings = (
+          'Jasa'
+          'Additional'
+          'Produk')
+        TabOrder = 0
+        TabStop = True
+      end
+      object cxLabel1: TcxLabel
+        Left = 8
+        Top = 101
         Caption = 'Kode Menu'
-        DataBinding.FieldName = 'menu_id'
-        PropertiesClassName = 'TcxTextEditProperties'
-        Properties.ReadOnly = True
-        Width = 100
+        Transparent = True
       end
-      object gtbListlastuser: TcxGridDBColumn
-        Caption = 'User Edit'
-        DataBinding.FieldName = 'lastuser'
-        PropertiesClassName = 'TcxTextEditProperties'
+      object edKode: TcxTextEdit
+        Left = 108
+        Top = 100
         Properties.ReadOnly = True
-        Width = 100
+        TabOrder = 2
+        Width = 289
       end
-      object gtbListlasteditdate: TcxGridDBColumn
-        Caption = 'Date Edit'
-        DataBinding.FieldName = 'lasteditdate'
-        PropertiesClassName = 'TcxDateEditProperties'
-        Properties.ReadOnly = True
-        Width = 100
+      object edJenis: TcxComboBox
+        Left = 108
+        Top = 130
+        OnFocusChanged = edJenisFocusChanged
+        Properties.CharCase = ecUpperCase
+        Properties.DropDownListStyle = lsFixedList
+        Properties.Items.Strings = (
+          'BM'
+          'RF')
+        TabOrder = 3
+        Width = 289
       end
-      object gtbListColumn1: TcxGridDBColumn
-        Caption = 'Type Menu'
-        DataBinding.FieldName = 'type_menu'
-        PropertiesClassName = 'TcxTextEditProperties'
+      object cxLabel2: TcxLabel
+        Left = 8
+        Top = 132
+        Caption = 'Jenis Jasa'
+        Transparent = True
+      end
+      object cxLabel3: TcxLabel
+        Left = 403
+        Top = 128
+        Caption = 'Abaikan Field ini jika menu bukan jasa'
+        ParentFont = False
+        Style.Font.Charset = DEFAULT_CHARSET
+        Style.Font.Color = clWindowText
+        Style.Font.Height = -9
+        Style.Font.Name = 'Tahoma'
+        Style.Font.Style = [fsBold, fsUnderline]
+        Style.TextColor = clRed
+        Style.IsFontAssigned = True
+        Transparent = True
+      end
+      object cxLabel4: TcxLabel
+        Left = 403
+        Top = 144
+        Caption = 'atau addtional'
+        ParentFont = False
+        Style.Font.Charset = DEFAULT_CHARSET
+        Style.Font.Color = clWindowText
+        Style.Font.Height = -9
+        Style.Font.Name = 'Tahoma'
+        Style.Font.Style = [fsBold, fsUnderline]
+        Style.TextColor = clRed
+        Style.IsFontAssigned = True
+        Transparent = True
+      end
+      object cxLabel5: TcxLabel
+        Left = 8
+        Top = 161
+        Caption = 'Nama Menu'
+        Transparent = True
+      end
+      object edNamaMenu: TcxTextEdit
+        Left = 108
+        Top = 160
+        OnFocusChanged = edNamaMenuFocusChanged
+        Properties.CharCase = ecUpperCase
+        TabOrder = 8
+        Width = 519
+      end
+      object edHargaUtama: TcxCalcEdit
+        Left = 108
+        Top = 190
+        OnFocusChanged = edHargaUtamaFocusChanged
+        EditValue = 0.000000000000000000
+        Properties.UseThousandSeparator = True
+        TabOrder = 9
+        Width = 201
+      end
+      object cxLabel6: TcxLabel
+        Left = 8
+        Top = 191
+        Caption = 'Harga Utama'
+        Transparent = True
+      end
+      object cxLabel7: TcxLabel
+        Left = 340
+        Top = 191
+        Caption = 'Lama'
+        Transparent = True
+      end
+      object edLama: TcxCalcEdit
+        Left = 440
+        Top = 190
+        OnFocusChanged = edLamaFocusChanged
+        EditValue = 0.000000000000000000
+        Properties.UseThousandSeparator = True
+        TabOrder = 12
+        Width = 121
+      end
+      object cxLabel8: TcxLabel
+        Left = 8
+        Top = 221
+        Caption = 'Happy Hour'
+        Transparent = True
+      end
+      object edDiscHH: TcxCalcEdit
+        Left = 108
+        Top = 220
+        OnFocusChanged = edDiscHHFocusChanged
+        EditValue = 0.000000000000000000
+        Properties.UseThousandSeparator = True
+        Properties.OnEditValueChanged = edDiscHHPropertiesEditValueChanged
+        TabOrder = 14
+        Width = 65
+      end
+      object cxLabel9: TcxLabel
+        Left = 179
+        Top = 221
+        Caption = ' %  =  '
+        Transparent = True
+      end
+      object edHargaHH: TcxCalcEdit
+        Left = 228
+        Top = 220
+        EditValue = 0.000000000000000000
         Properties.ReadOnly = True
+        Properties.UseThousandSeparator = True
+        TabOrder = 16
+        Width = 147
+      end
+      object cxLabel10: TcxLabel
+        Left = 8
+        Top = 248
+        Caption = 'Normal'
+        Transparent = True
+      end
+      object edDiscNormal: TcxCalcEdit
+        Left = 108
+        Top = 247
+        OnFocusChanged = edDiscNormalFocusChanged
+        EditValue = 0.000000000000000000
+        Properties.UseThousandSeparator = True
+        Properties.OnEditValueChanged = edDiscNormalPropertiesEditValueChanged
+        TabOrder = 18
+        Width = 65
+      end
+      object cxLabel11: TcxLabel
+        Left = 179
+        Top = 248
+        Caption = ' %  =  '
+        Transparent = True
+      end
+      object edHargaNormal: TcxCalcEdit
+        Left = 228
+        Top = 247
+        EditValue = 0.000000000000000000
+        Properties.ReadOnly = True
+        Properties.UseThousandSeparator = True
+        TabOrder = 20
+        Width = 147
+      end
+      object ckKeterangan: TcxCheckBox
+        Left = 8
+        Top = 312
+        Caption = 'Cetak Keterangan Pada Bill'
+        Properties.ValueChecked = 'Y'
+        Properties.ValueGrayed = 'N'
+        Properties.ValueUnchecked = 'N'
+        TabOrder = 21
+      end
+      object edKeterangan: TcxTextEdit
+        Left = 108
+        Top = 277
+        OnFocusChanged = edKeteranganFocusChanged
+        TabOrder = 22
+        Width = 519
+      end
+      object cxLabel12: TcxLabel
+        Left = 8
+        Top = 278
+        Caption = 'Keterangan'
+        Transparent = True
+      end
+      object ckAktif: TcxCheckBox
+        Left = 8
+        Top = 342
+        Caption = 'Aktif'
+        ParentFont = False
+        Properties.ValueChecked = 'Y'
+        Properties.ValueGrayed = 'N'
+        Properties.ValueUnchecked = 'N'
+        State = cbsChecked
+        Style.Font.Charset = DEFAULT_CHARSET
+        Style.Font.Color = clWindowText
+        Style.Font.Height = -16
+        Style.Font.Name = 'Tahoma'
+        Style.Font.Style = [fsBold]
+        Style.IsFontAssigned = True
+        TabOrder = 24
+      end
+      object btnSimpan: TcxButton
+        Left = 140
+        Top = 376
+        Width = 105
+        Height = 50
+        Caption = 'Save'
+        TabOrder = 25
+        OnClick = btnSimpanClick
+      end
+      object cxButton3: TcxButton
+        Left = 380
+        Top = 376
+        Width = 105
+        Height = 50
+        Caption = 'Cancel'
+        TabOrder = 26
+        OnClick = cxButton3Click
+      end
+      object ckBaverage: TcxCheckBox
+        Left = 216
+        Top = 312
+        Caption = 'As Baverage'
+        Properties.ValueChecked = 'Y'
+        Properties.ValueGrayed = 'N'
+        Properties.ValueUnchecked = 'N'
+        TabOrder = 27
+      end
+      object cdRedeem: TcxCheckBox
+        Left = 332
+        Top = 312
+        Caption = 'Can Redeem'
+        Properties.ValueChecked = 'Y'
+        Properties.ValueGrayed = 'N'
+        Properties.ValueUnchecked = 'N'
+        TabOrder = 28
         Visible = False
-        GroupIndex = 0
+      end
+      object ckDiscount: TcxCheckBox
+        Left = 456
+        Top = 312
+        Caption = 'Can Discount'
+        Properties.ValueChecked = 'Y'
+        Properties.ValueGrayed = 'N'
+        Properties.ValueUnchecked = 'N'
+        TabOrder = 29
+        Visible = False
+      end
+      object ckHappyHour: TcxCheckBox
+        Left = 568
+        Top = 312
+        Caption = 'Happy Hour Only'
+        Properties.ValueChecked = 'Y'
+        Properties.ValueGrayed = 'N'
+        Properties.ValueUnchecked = 'N'
+        TabOrder = 30
+      end
+      object GroupBox1: TGroupBox
+        Left = 708
+        Top = 54
+        Width = 257
+        Height = 151
+        Caption = 'Komisi'
+        TabOrder = 31
+        object rbKomisi: TRadioGroup
+          Left = 12
+          Top = 24
+          Width = 193
+          Height = 45
+          Caption = 'By'
+          Columns = 2
+          ItemIndex = 0
+          Items.Strings = (
+            'Persen'
+            'Rupiah')
+          TabOrder = 0
+        end
+        object edKomisi: TcxCalcEdit
+          Left = 16
+          Top = 88
+          EditValue = 0.000000000000000000
+          TabOrder = 1
+          Width = 189
+        end
       end
     end
-    object cxGrid1Level1: TcxGridLevel
-      GridView = gtbList
-    end
-  end
-  object btnNew: TcxButton
-    Left = 124
-    Top = 429
-    Width = 93
-    Height = 37
-    Anchors = [akLeft, akBottom]
-    Caption = 'New Menu'
-    TabOrder = 1
-    OnClick = btnNewClick
-  end
-  object cxButton1: TcxButton
-    Left = 898
-    Top = 429
-    Width = 93
-    Height = 37
-    Anchors = [akRight, akBottom]
-    Caption = 'Import'
-    DropDownMenu = pmImport
-    Kind = cxbkOfficeDropDown
-    TabOrder = 3
-  end
-  object cxButton2: TcxButton
-    Left = 236
-    Top = 429
-    Width = 93
-    Height = 37
-    Anchors = [akLeft, akBottom]
-    Caption = 'Edit Selected'
-    TabOrder = 4
-    OnClick = cxButton2Click
-  end
-  object btnRefresh: TcxButton
-    Left = 8
-    Top = 429
-    Width = 93
-    Height = 37
-    Anchors = [akLeft, akBottom]
-    Caption = 'Refresh'
-    OptionsImage.Glyph.Data = {
-      36040000424D3604000000000000360000002800000010000000100000000100
-      2000000000000004000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000000000330000002F000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000033008B49FF008246F1000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000033008743FFA1E2D5FF239A60FF000000330000
-      0033000000330000003300000022000000000000000000000000000000000000
-      00000000000000000033008743FF93DCC9FF1ACAADFF00B68EFF009658FF0097
-      5BFF008B4AFF008945FF005B30B9000000330000000000000000000000000000
-      000000000000008A48FF81DBC2FF14CEA9FF00C499FF57DBC1FF56DCC3FF56DD
-      C4FF56DEC5FF56DCC4FF44C19AFF008B4AFF0000003300000000000000000000
-      000000000000008A48FF6FD7B8FF12D5A9FF00CD9BFF00CE9DFF00D1A0FF00D2
-      A1FF00D1A0FF00D1A0FF1DD8AEFF2FCCA3FF018A49FF0000001E000000000000
-      00000000000000000000008744FF5FD1ACFF11DDAAFF00CA90FF008B49FF0087
-      45FF009C5EFF00A568FF00C48AFF04DDA8FF16BA83FF01532DAA000000000000
-      0033000000330000001A00000000008846FF4ED3A9FF129155FF000000000000
-      002D00000033004B2889008043F000B578FF00D89FFF008B4BFF00000000008D
-      4DFF008B4BFF004626990000002C0000001400592FA2008D4CFF00000000007B
-      42E5008C4AFF0000003300000000005C31A8008B4BFF008D4DFF00000000008B
-      4BFF00D89FFF00B578FF00773EE400361D820000003300000033000000331191
-      54FF53D4AAFF008846FF00000033000000000000000000000000000000000252
-      2D951ABA86FF07DBA8FF00BE85FF00A061FF009C5DFF008744FF008A49FF00C9
-      90FF12DCAAFF63D3AFFF008744FF000000330000000000000000000000000000
-      0000008A49FF35D0AAFF20D7B1FF0DD3A7FF0DD4A7FF0DD4A8FF0DD3A7FF0ED1
-      A4FF00CA9AFF13D3A9FF73D7BBFF008A48FF0000000000000000000000000000
-      000000000000018B49FF48C29CFF5CDCC6FF5BDEC8FF5ADEC7FF5BDDC6FF5CDB
-      C3FF00C399FF15CCAAFF85DBC3FF008A48FF0000000000000000000000000000
-      00000000000000000000005B2FA8008946FF008844FF008744FF008947FF00B5
-      8EFF1BC8AEFF98DECBFF008742FF000000000000000000000000000000000000
-      000000000000000000000000000000000000000000000000000000000000239B
-      61FFA1E2D5FF008743FF00000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000082
-      46ED008B49FF0000000000000000000000000000000000000000}
-    TabOrder = 5
-    OnClick = btnRefreshClick
   end
   object qryList: TMyQuery
     Connection = dmDB.dbInternal

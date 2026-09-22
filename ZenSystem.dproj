@@ -106,9 +106,9 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=Zen Family Spa &amp; Reflexology;FileDescription=$(MSBuildProjectName);FileVersion=1.1.1.2;InternalName=Zen System;LegalCopyright=www.zenfamilyspa.com;LegalTrademarks=borist.nababan@gmail.com;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.1.1.2;Comments=</VerInfo_Keys>
         <OutputExt>exe</OutputExt>
-        <UWP_DelphiLogo44>D:\BEN\Zen\__NEW BEN SOURCE\_ALL_IN_ONE\All_In_One_Apps\01imgcontainer\Logo40x40.png</UWP_DelphiLogo44>
-        <UWP_DelphiLogo150>D:\BEN\Zen\__NEW BEN SOURCE\_ALL_IN_ONE\All_In_One_Apps\01imgcontainer\Logo150x150.png</UWP_DelphiLogo150>
-        <Icon_MainIcon>ZenSystem_Icon3.ico</Icon_MainIcon>
+        <UWP_DelphiLogo44>D:\BEN\Zen\__NEW BEN SOURCE\_ALL_IN_ONE\ZenApp\All_In_One_Apps\01imgcontainer\Logo40x40.png</UWP_DelphiLogo44>
+        <UWP_DelphiLogo150>D:\BEN\Zen\__NEW BEN SOURCE\_ALL_IN_ONE\ZenApp\All_In_One_Apps\01imgcontainer\Logo150x150.png</UWP_DelphiLogo150>
+        <Icon_MainIcon>ZenSystem_Icon6.ico</Icon_MainIcon>
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
         <VerInfo_Release>1</VerInfo_Release>
         <VerInfo_Build>2</VerInfo_Build>
@@ -184,10 +184,6 @@
         </DCCReference>
         <DCCReference Include="appconfig\FUserManagement.pas">
             <Form>frmUserManagement</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="Hrd\FPresensiManual.pas">
-            <Form>frmPresensiManual</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Hrd\FMasterDivisi.pas">
@@ -430,10 +426,6 @@
             <Form>frmPrintProduk</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="appconfig\FEmpty.pas">
-            <Form>frmEmpty</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="appconfig\FLogo.pas">
             <Form>frmLogo</Form>
             <FormType>dfm</FormType>
@@ -462,8 +454,8 @@
             <Form>frmSelectTherapist</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="pos\master\FPosMainMenu.pas">
-            <Form>frmPosMainMenu</Form>
+        <DCCReference Include="pos\master\ORI_FPosMainMenu.pas">
+            <Form>ORI_frmPosMainMenu</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="pos\master\FPosMainMenuInput.pas">
@@ -606,8 +598,8 @@
             <Form>frmLaporanTherapistReport</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="Report\PosReport\FReportPendapatanHarian.pas">
-            <Form>frmReportPendapatanHarian</Form>
+        <DCCReference Include="Report\PosReport\FBALIReportPendapatanHarian.pas">
+            <Form>frmBALIReportPendapatanHarian</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="pos\FReejectGuest.pas">
@@ -770,6 +762,54 @@
             <Form>frmPintDriversTrans</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="appconfig\FEmpty.pas">
+            <Form>frmEmpty</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="TestForm\FTestMemoryTable.pas">
+            <Form>frmTestMemoryTable</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPosTransPaymentTips.pas">
+            <Form>frmPosTransPaymentTips</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPosLapTips.pas">
+            <Form>frmPosLapTips</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FChangeJadwal.pas">
+            <Form>frmChangeJadwal</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FReportSchedule.pas">
+            <Form>frmReportSchedule</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Report\PosReport\FReportPendapatanHarian.pas">
+            <Form>frmReportPendapatanHarian</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\FPrintRatingCode.pas">
+            <Form>frmPrintRatingCode</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="product\FHOMasukBarang.pas">
+            <Form>frmHOMasukBarang</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FPresensiManual.pas">
+            <Form>frmPresensiManual</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="pos\master\FPosMainMenu.pas">
+            <Form>frmPosMainMenu</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Hrd\FPeriodeUM.pas">
+            <Form>frmPeriodeUM</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -788,7 +828,6 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDS)\lib\TMS Aurelius\TMS Busines Core Library\packages\bpl\Win32\dcltmsbcl250.bpl">File d:\program files\embarcardero\studio\19.0\lib\TMS Aurelius\TMS Busines Core Library\packages\bpl\Win32\dcltmsbcl250.bpl not found</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
@@ -797,8 +836,8 @@
                 </Source>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="01imgcontainer\LogoAPPBWA.png" Configuration="Debug" Class="UWP_DelphiLogo150">
-                    <Platform Name="Win64">
+                <DeployFile LocalName="01imgcontainer\Logo150x150.png" Configuration="Release" Class="UWP_DelphiLogo150">
+                    <Platform Name="Win32">
                         <RemoteDir>Assets\</RemoteDir>
                         <RemoteName>Logo150x150.png</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -866,8 +905,8 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="01imgcontainer\Logo150x150.png" Configuration="Release" Class="UWP_DelphiLogo150">
-                    <Platform Name="Win32">
+                <DeployFile LocalName="01imgcontainer\LogoAPPBWA.png" Configuration="Debug" Class="UWP_DelphiLogo150">
+                    <Platform Name="Win64">
                         <RemoteDir>Assets\</RemoteDir>
                         <RemoteName>Logo150x150.png</RemoteName>
                         <Overwrite>true</Overwrite>

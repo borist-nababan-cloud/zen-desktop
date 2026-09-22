@@ -534,6 +534,16 @@ object frmReportPosPayment: TfrmReportPosPayment
     TabOrder = 5
     OnClick = btnCetakUlangClick
   end
+  object cxButton3: TcxButton
+    Left = 789
+    Top = 36
+    Width = 101
+    Height = 42
+    Anchors = [akTop, akRight]
+    Caption = 'Cetak Rating'
+    TabOrder = 6
+    OnClick = cxButton3Click
+  end
   object dsQryList: TMyDataSource
     DataSet = qryList
     Left = 620
@@ -577,12 +587,12 @@ object frmReportPosPayment: TfrmReportPosPayment
     Connection = dmDB.dbInternal
     SQL.Strings = (
       'select * from pos_master_payment where aktif = '#39'Y'#39)
-    Left = 684
-    Top = 16
+    Left = 364
+    Top = 160
   end
   object dsQryPayment: TMyDataSource
     DataSet = qryPayment
-    Left = 684
-    Top = 60
+    Left = 364
+    Top = 204
   end
 end

@@ -107,9 +107,9 @@ object frmReportPendapatanBulanan: TfrmReportPendapatanBulanan
   end
   object cxGrid1: TcxGrid
     Left = 16
-    Top = 104
+    Top = 98
     Width = 449
-    Height = 392
+    Height = 398
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 2
     object tvreport: TcxGridTableView
@@ -158,10 +158,10 @@ object frmReportPendapatanBulanan: TfrmReportPendapatanBulanan
     OnClick = cxButton2Click
   end
   object memNotes: TMemo
-    Left = 488
-    Top = 104
+    Left = 496
+    Top = 80
     Width = 561
-    Height = 392
+    Height = 202
     Anchors = [akTop, akRight, akBottom]
     Lines.Strings = (
       'Notes :')
@@ -173,12 +173,12 @@ object frmReportPendapatanBulanan: TfrmReportPendapatanBulanan
     Top = 36
     Properties.DropDownListStyle = lsFixedList
     Properties.Items.Strings = (
-      '2023'
-      '2022'
-      '2021'
-      '2020')
+      '2027'
+      '2026'
+      '2025'
+      '2024'
+      '2023')
     TabOrder = 6
-    Text = '2021'
     Width = 121
   end
   object edMonth: TcxComboBox
@@ -213,10 +213,10 @@ object frmReportPendapatanBulanan: TfrmReportPendapatanBulanan
     OnClick = Button1Click
   end
   object memSend: TMemo
-    Left = 488
-    Top = 80
+    Left = 496
+    Top = 288
     Width = 561
-    Height = 416
+    Height = 279
     Anchors = [akTop, akRight, akBottom]
     ScrollBars = ssBoth
     TabOrder = 4
@@ -241,7 +241,7 @@ object frmReportPendapatanBulanan: TfrmReportPendapatanBulanan
       PrinterPage.PageSize.Y = 11700
       PrinterPage._dxMeasurementUnits_ = 0
       PrinterPage._dxLastMU_ = 1
-      ReportDocument.CreationDate = 44931.489284988430000000
+      ReportDocument.CreationDate = 46083.401220601850000000
       OptionsOnEveryPage.Caption = False
       OptionsSize.AutoWidth = True
       OptionsView.Caption = False

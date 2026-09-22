@@ -217,6 +217,11 @@ begin
   qryKeluar2.SQL.Add('select * from temptable');
   qryKeluar2.Active := true;
 
+  qryExec := TMyQuery.Create(Self);
+  qryExec.Connection := DMDB.dbInternal;
+  qryExec.SQL.Add('select * from temptable');
+  qryExec.Active := true;
+
   tblTag.Active := True;
 
   qrykeluar1.Close;

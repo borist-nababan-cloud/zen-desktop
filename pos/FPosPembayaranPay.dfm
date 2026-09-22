@@ -63,8 +63,8 @@ object frmPosPembayaranPay: TfrmPosPembayaranPay
     ParentFont = False
   end
   object Label1: TLabel
-    Left = 427
-    Top = 550
+    Left = 667
+    Top = 288
     Width = 99
     Height = 21
     Caption = 'Sisa Payment'
@@ -104,7 +104,7 @@ object frmPosPembayaranPay: TfrmPosPembayaranPay
   end
   object Label4: TLabel
     Left = 8
-    Top = 287
+    Top = 288
     Width = 78
     Height = 21
     Caption = 'Payment 1'
@@ -162,7 +162,7 @@ object frmPosPembayaranPay: TfrmPosPembayaranPay
   end
   object Label9: TLabel
     Left = 8
-    Top = 365
+    Top = 355
     Width = 78
     Height = 21
     Caption = 'Payment 2'
@@ -175,7 +175,7 @@ object frmPosPembayaranPay: TfrmPosPembayaranPay
   end
   object Label10: TLabel
     Left = 8
-    Top = 398
+    Top = 387
     Width = 55
     Height = 21
     Caption = 'Value 2'
@@ -236,8 +236,8 @@ object frmPosPembayaranPay: TfrmPosPembayaranPay
     Width = 259
   end
   object edSisaPayment: TcxCalcEdit
-    Left = 532
-    Top = 547
+    Left = 652
+    Top = 320
     OnFocusChanged = edSisaPaymentFocusChanged
     EditValue = 0.000000000000000000
     ParentFont = False
@@ -251,7 +251,7 @@ object frmPosPembayaranPay: TfrmPosPembayaranPay
     Style.IsFontAssigned = True
     TabOrder = 10
     Visible = False
-    Width = 203
+    Width = 162
   end
   object ckRedeem: TcxCheckBox
     Left = 8
@@ -407,7 +407,7 @@ object frmPosPembayaranPay: TfrmPosPembayaranPay
     Properties.ListSource = dsQryBank
     TabOrder = 2
     Visible = False
-    Width = 255
+    Width = 259
   end
   object cxLabel3: TcxLabel
     Left = 396
@@ -541,7 +541,7 @@ object frmPosPembayaranPay: TfrmPosPembayaranPay
   end
   object edReff2: TcxTextEdit
     Left = 374
-    Top = 396
+    Top = 385
     OnFocusChanged = edReff2FocusChanged
     Properties.ReadOnly = False
     TabOrder = 8
@@ -550,7 +550,7 @@ object frmPosPembayaranPay: TfrmPosPembayaranPay
   end
   object edValue2: TcxCalcEdit
     Left = 160
-    Top = 396
+    Top = 385
     OnFocusChanged = edValue1FocusChanged
     EditValue = 0.000000000000000000
     ParentFont = False
@@ -568,7 +568,7 @@ object frmPosPembayaranPay: TfrmPosPembayaranPay
   end
   object edPayment2: TcxLookupComboBox
     Left = 160
-    Top = 363
+    Top = 352
     Properties.DropDownListStyle = lsFixedList
     Properties.KeyFieldNames = 'kodepayment'
     Properties.ListColumns = <
@@ -583,7 +583,7 @@ object frmPosPembayaranPay: TfrmPosPembayaranPay
   end
   object edBank2: TcxLookupComboBox
     Left = 374
-    Top = 363
+    Top = 352
     Properties.DropDownListStyle = lsFixedList
     Properties.KeyFieldNames = 'kodebank'
     Properties.ListColumns = <
@@ -594,7 +594,7 @@ object frmPosPembayaranPay: TfrmPosPembayaranPay
     Properties.ReadOnly = False
     TabOrder = 6
     Visible = False
-    Width = 255
+    Width = 259
   end
   object edValGC: TcxCalcEdit
     Left = 492
@@ -685,22 +685,13 @@ object frmPosPembayaranPay: TfrmPosPembayaranPay
     TabOrder = 34
     OnClick = cxButton7Click
   end
-  object Button1: TButton
-    Left = 724
-    Top = 360
-    Width = 75
-    Height = 25
-    Caption = 'Button1'
-    TabOrder = 35
-    Visible = False
-  end
   object cxButton8: TcxButton
     Left = 721
     Top = 224
     Width = 83
     Height = 29
     Caption = 'Clear GC'
-    TabOrder = 36
+    TabOrder = 35
     OnClick = cxButton8Click
   end
   object qryPayment: TMyQuery

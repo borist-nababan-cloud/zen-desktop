@@ -25,7 +25,7 @@ uses
   cxDataStorage, cxEdit, cxNavigator, cxDBData, cxTextEdit, cxCalendar,
   Vcl.StdCtrls, cxGridLevel, cxGridCustomTableView, cxGridTableView,
   cxGridDBTableView, cxClasses, cxGridCustomView, cxGrid, Vcl.Menus, cxButtons, strUtils,
-  FBarcode, cxDBLookupComboBox;
+  cxDBLookupComboBox;
 
 type
   TfrmMemberMaster = class(TForm)

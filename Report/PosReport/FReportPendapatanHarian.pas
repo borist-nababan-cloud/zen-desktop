@@ -36,8 +36,7 @@ uses
   IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdGlobal,
   IdExplicitTLSClientServerBase, IdMessageClient, IdSMTPBase, IdSMTP, IdText,
   IdAttachmentFile, Data.Bind.Components, Data.Bind.ObjectScope, REST.Client,
-  REST.Authenticator.OAuth, clMailMessage, clTcpClient, clTcpClientTls,
-  clTcpCommandClient, clMC, clSmtp;
+  REST.Authenticator.OAuth;
 
 type
   TfrmReportPendapatanHarian = class(TForm)
@@ -58,14 +57,10 @@ type
     PrintGridLink1: TdxGridReportLink;
     memSend: TMemo;
     memNotes: TMemo;
-    cxButton3: TcxButton;
-    clSmtp1: TclSmtp;
-    clMailMessage1: TclMailMessage;
     procedure FormCreate(Sender: TObject);
     procedure cxButton1Click(Sender: TObject);
     procedure cxButton2Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure cxButton3Click(Sender: TObject);
   private
     { Private declarations }
     qryCari, qryPayment, qrySearch, qryFind : TMyQuery;
@@ -1040,7 +1035,7 @@ begin
       'MAIN_MAIL' + '''');
   qryPayment.Open;
   MailAcc := qryPayment.Fields[0].AsString;
-
+  {
   // IO HANDLER SETTINGS //
   With frmMain.IdSSLIOHandlerSocketOpenSSL1 do
       begin
@@ -1061,34 +1056,34 @@ begin
   frmMain.IdSMTP1.IOHandler := frmMain.IdSSLIOHandlerSocketOpenSSL1;
   frmMain.IdSMTP1.AuthType := satDefault;
   frmMain.IdSMTP1.UseTLS := utUseExplicitTLS;
-
+   }
 
   //IO SETTING ZENFAMILYSPA.COM
   With frmMain.IdSSLIOHandlerSocketOpenSSL1 do
       begin
-        //Destination := 'mail.zenfamilyspa.com:2080';
-        //Destination := 'mail.zenfamilyspa.com:2080';
-        //https://mail.zenfamilyspa.com:2080
-        //Host := 'smtp.gmail.com';
-        {MaxLineAction := maException;
-        Port := 465;
-        SSLOptions.Method := sslvTLSv1_2;
-        SSLOptions.Mode := sslmClient;
+//        Destination := 'mail.zenfamilyspa.com:2080';
+//        Host := 'mail.zenfamilyspa.com';
+        Destination := 'srv60.niagahoster.com:2096';
+        Host := 'srv60.niagahoster.com:2096';
+        MaxLineAction := maException;
+        Port := 587;
+        SSLOptions.Method := sslvTLSv1;
+        SSLOptions.Mode := sslmUnassigned;
         SSLOptions.VerifyMode := [];
-        SSLOptions.VerifyDepth := 0;}
+        SSLOptions.VerifyDepth := 0;
       end;
   //
   //SETTING SMTP COMPONENT mail.zenfamilyspa.com //
 
-  {frmMain.IdSMTP1.Host := 'smtp.gmail.com';
-  frmMain.IdSMTP1.Port := 465;
+//  frmMain.IdSMTP1.Host := 'srv60.niagahoster.com:2096';
+  frmMain.IdSMTP1.Host := 'mail.zenfamilyspa.com';
+  frmMain.IdSMTP1.Port := 587;
   frmMain.IdSMTP1.Username := MailAcc; // please change to your gmail address //
-  frmMain.IdSMTP1.Password := 'cnqwuekxdrxotcqh';
+  frmMain.IdSMTP1.Password := MailPass;
   frmMain.IdSMTP1.IOHandler := frmMain.IdSSLIOHandlerSocketOpenSSL1;
   frmMain.IdSMTP1.AuthType := satDefault;
-  frmMain.IdSMTP1.UseTLS := utUseExplicitTLS;}
-  //frmMain.IdSMTP1.Username := MailAcc; // please change to your gmail address //
-  //frmMain.IdSMTP1.Password := 'cnqwuekxdrxotcqh';
+  frmMain.IdSMTP1.UseTLS := utUseExplicitTLS;
+
   // SETTING email MESSAGE DATA //
 
 
@@ -1126,7 +1121,7 @@ begin
   lTextPart.ContentType := 'text/html';}
 
 
-  //ini buat test github
+
   lTextPart := TIdText.Create(frmMain.IdMessage1.MessageParts);
   lTextPart.Body.Text := memSend.Text;
   lTextPart.ContentType := 'text/html';
@@ -1160,7 +1155,7 @@ begin
   frmMain.IdMessage1.From.Address :=  MailAcc;
   frmMain.IdMessage1.Subject := subject;
   frmMain.IdMessage1.Body := lsBody;
-  //frmMain.IdMessage1.Priority := mpHigh;
+  frmMain.IdMessage1.Priority := mpHigh;
 
   TRY
       frmMain.IdSMTP1.Connect();
@@ -1184,49 +1179,6 @@ begin
   AttachmentFile.Free;
   lsBody.Free;
   //--
-end;
-
-procedure TfrmReportPendapatanHarian.cxButton3Click(Sender: TObject);
-var
-   ConfigDir, namaFile, subject, MailAcc, MailPass, emailAddress,
-   NamaCnt, txtCodeGenerator : String;
-   i : Integer;
-   isOkMail : Boolean;
-   lTextPart : TIdText;
-   Attachmentfile: TIdAttachmentFile;
-   lsBody : TStringList;
-begin
-    clMailMessage1.BuildMessage('Ini Body Text', '');
-    clMailMessage1.From.FullAddress := 'zenspa.dev@gmail.com';
-    clMailMessage1.ToList.EmailAddresses := 'borist.nababan@gmail.com';
-    clMailMessage1.Subject := 'Ini Subject';
-
-
-    clSMTP1.Server := 'smtp.gmail.com';
-    clSMTP1.UserName := 'zenspa.dev@gmail.com';
-    clSMTP1.Password := 'cnqwuekxdrxotcqh';
-
-    clSMTP1.Open();
-    {try
-      clSMTP1.Send(clMailMessage1);
-
-    finally
-      clSMTP1.Close();
-    end;}
-
-    Try
-    clSMTP1.Send(clMailMessage1);
-    except on e:Exception do
-      begin
-           memNotes.Lines.Add('Exception class name = '+E.ClassName);
-           memNotes.Lines.Add('Exception message = '+E.Message);
-      end;
-
-    end;
-
-    clSMTP1.Close();
-    ShowMessage('The message was sent successfully');
-
 end;
 
 procedure TfrmReportPendapatanHarian.DeleteDouble;

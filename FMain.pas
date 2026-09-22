@@ -31,7 +31,7 @@ uses
   IdMessage, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient,
   IdExplicitTLSClientServerBase, IdMessageClient, IdSMTPBase, IdSMTP,
   IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, MMSystem,
-  clMailMessage, clTcpClient, clTcpClientTls, clTcpCommandClient, clMC, clSmtp;
+  System.Threading, cxMemo;
 
 type
 
@@ -155,7 +155,7 @@ TfrmMain = class(TdxRibbonForm)
     BACKSTAGE_INPUT_PULANG: TAdvGlowButton;
     BACKSTAGE_INPUT_SAKIT: TAdvGlowButton;
     HRD_INPUT_IJIN_PULANG: TdxBarButton;
-    HRD_REKAP_PRESENSI: TdxBarLargeButton;
+    DELETED_HRD_REKAP_PRESENSI: TdxBarLargeButton;
     BACKSTAGE_REKAP_PRESENSI: TAdvGlowButton;
     tmrClock: TTimer;
     HRD_SALDO_CUTI_GENERATE: TdxBarButton;
@@ -261,6 +261,26 @@ TfrmMain = class(TdxRibbonForm)
     HRD_REP_THR_SPV: TdxBarButton;
     HRD_REP_THR_ADMIN: TdxBarButton;
     POS_TRANS_DRIVERS: TdxBarLargeButton;
+    barOutletID: TcxBarEditItem;
+    barMemo: TdxBarEdit;
+    barLog: TcxBarEditItem;
+    POS_TIPS_RCPT: TdxBarLargeButton;
+    POS_TIPS_ADMIN: TdxBarLargeButton;
+    REPORT_POS_TIPS_RCPT: TdxBarLargeButton;
+    REPORT_POS_TIPS_ADMIN: TdxBarLargeButton;
+    HRD_INPUT_CHANGE_JADWAL: TdxBarButton;
+    HRD_REPORT_JADWAL: TdxBarButton;
+    dxBarButton1: TdxBarButton;
+    dxBarLargeButton1: TdxBarLargeButton;
+    PRODUCT_MASTER: TdxBarSubItem;
+    PROD_MASTER_BARANG: TdxBarButton;
+    PROD_MASTER_SUPPLIER: TdxBarButton;
+    BarProdHoTrans: TdxBar;
+    BarProdOutletTrans: TdxBar;
+    dxBarSubItem4: TdxBarSubItem;
+    HRD_INPUT_ABSEN_MANUAL: TdxBarButton;
+    REPORT_POS_DAYLI_REVENUE_BALI_ADMIN: TdxBarLargeButton;
+    REPORT_POS_DAYLI_REVENUE_BALI: TdxBarLargeButton;
     procedure FormCreate(Sender: TObject);
     procedure BACKSTAGE_EXITClick(Sender: TObject);
     procedure edToolbarStylePropertiesChange(Sender: TObject);
@@ -296,7 +316,7 @@ TfrmMain = class(TdxRibbonForm)
     procedure BACKSTAGE_KONTRAK_BERJALAN_ADMINClick(Sender: TObject);
     procedure HRD_KONTRAK_BERJALAN_ADMINClick(Sender: TObject);
     procedure HRD_KONTRAK_BERJALAN_SPVClick(Sender: TObject);
-    procedure HRD_REKAP_PRESENSIClick(Sender: TObject);
+    procedure DELETED_HRD_REKAP_PRESENSIClick(Sender: TObject);
     procedure tmrClockTimer(Sender: TObject);
     procedure HRD_INPUT_LEMBURClick(Sender: TObject);
     procedure APP_EXITClick(Sender: TObject);
@@ -389,6 +409,16 @@ TfrmMain = class(TdxRibbonForm)
     procedure HRD_REP_THR_ADMINClick(Sender: TObject);
     procedure HRD_REP_THR_SPVClick(Sender: TObject);
     procedure POS_TRANS_DRIVERSClick(Sender: TObject);
+    procedure POS_TIPS_ADMINClick(Sender: TObject);
+    procedure POS_TIPS_RCPTClick(Sender: TObject);
+    procedure REPORT_POS_TIPS_RCPTClick(Sender: TObject);
+    procedure REPORT_POS_TIPS_ADMINClick(Sender: TObject);
+    procedure HRD_INPUT_IJIN_KELUARClick(Sender: TObject);
+    procedure HRD_INPUT_CHANGE_JADWALClick(Sender: TObject);
+    procedure HRD_REPORT_JADWALClick(Sender: TObject);
+    procedure HRD_INPUT_ABSEN_MANUALClick(Sender: TObject);
+    procedure HRD_PERIODE_UMX3Click(Sender: TObject);
+    procedure REPORT_POS_DAYLI_REVENUE_BALI_ADMINClick(Sender: TObject);
   private
     { Private declarations }
     CNTLOGIN : Integer;
@@ -396,6 +426,7 @@ TfrmMain = class(TdxRibbonForm)
     function CekInternet: Boolean;
     procedure LoadConfigApps();
     procedure LoadStyleList();
+
   public
     { Public declarations }
     LOCAL_DBNAME, LOCAL_DBUSER, LOCAL_DBHOST, LOCAL_DBPASS, LOCAL_DBPORT,
@@ -407,8 +438,8 @@ TfrmMain = class(TdxRibbonForm)
     APP_OUTLETNAME, APP_OUTLETADDRESS, APP_OUTLETPHONE, APP_OUTLETCITY,
     APP_OUTLETPROVINCE,APP_OUTLETZIPCODE, APP_OUTLETPLAT,
     MINPRICE, PASSDELETE, PASSCETAK, MEMBERDBNAME, JUDULATAS, JUDULBAWAH,
-    MERGERDBNAME, FOOTER1, FOOTER2, FOOTER3 : String;
-    IDXSOPRINTER, IDXPOSPRINTER, N_PEMBULATAN : Integer;
+    MERGERDBNAME, FOOTER1, FOOTER2, FOOTER3  : String;
+    IDXSOPRINTER, IDXPOSPRINTER, N_PEMBULATAN, API_OUTLET_ID : Integer;
     ConfigJSON          : XSuperObject.ISuperObject;
     pnlSession : array[0..1] of TPanel;
     sesStatus : array[0..1] of TSessionMode;
@@ -422,7 +453,10 @@ TfrmMain = class(TdxRibbonForm)
     procedure InsertMember(var KodeMember : String);
     procedure UpdateMember(var KodeMemberMain:String;KodePaymentMain:String;
               pTambah : Double; pKurang : Double; pSisa:Double; pAwal:Double; nSubtotal : Double);
+    procedure PutNewMember(var KodeMemberMain:String;KodePaymentMain:String;
+              pTambah : Double; pKurang : Double; pSisa:Double; pAwal:Double; nSubtotal : Double);
     procedure SendMemberMail(const namaCnt : String; emailAddress: string; subject: string; body: string; strattachFiles: string);
+    procedure CekIDOUTLET;
   end;
 
 var
@@ -448,7 +482,9 @@ uses FConfigSetup, FdmDB, FLogin, FPassword, FGroupManagement, FUserManagement,
   FReportKontrakBerjalan, FReportAbsenManual, FReportRekapAbsen,
   FReportSakit, FReportCuti, FReportLembur, FReportPosMaster, FReportVoid,
   FPayrollPeriode, FLiburNasional, FRegistrationDrivers, FDrivers,
-  FTHRPerhitungan, FTHRParameter, FTHRReport, FDriverSelectTrans;
+  FTHRPerhitungan, FTHRParameter, FTHRReport, FDriverSelectTrans,
+  FPosTransPaymentTips, FPosLapTips, FIjinMasukList, FIjinKeluar, FChangeJadwal,
+  FReportSchedule, FReportPendapatanHarianApi, FPeriodeUM;
 
 { TForm2 }
 
@@ -739,42 +775,63 @@ end;
 
 procedure TfrmMain.REPORT_POS_DAYLI_REVENUEClick(Sender: TObject);
 begin
-   if (not IsFormOpen('frmReportPendapatanHarian')) then
+   if (not IsFormOpen('frmReportPendapatanHarianApi')) then
        begin
-            Application.CreateForm(TfrmReportPendapatanHarian, frmReportPendapatanHarian);
-            frmReportPendapatanHarian.FormStyle := fsMDIChild;
-            frmReportPendapatanHarian.Show;
-            frmReportPendapatanHarian.WindowState := wsNormal;
-            frmReportPendapatanHarian.Position := poDesktopCenter;
-            frmReportPendapatanHarian.edServerTime.Properties.ReadOnly := True;
+            Application.CreateForm(TfrmReportPendapatanHarianApi, frmReportPendapatanHarianApi);
+            frmReportPendapatanHarianApi.FormStyle := fsMDIChild;
+            frmReportPendapatanHarianApi.Show;
+            frmReportPendapatanHarianApi.WindowState := wsNormal;
+            frmReportPendapatanHarianApi.Position := poDesktopCenter;
+            frmReportPendapatanHarianApi.edServerTime.Properties.ReadOnly := True;
        end
-     else if (IsFormOpen('frmReportPendapatanHarian')) then
+     else if (IsFormOpen('frmReportPendapatanHarianApi')) then
         begin
-             frmReportPendapatanHarian.edServerTime.Properties.ReadOnly := True;
+             frmReportPendapatanHarianApi.edServerTime.Properties.ReadOnly := True;
              ShowMessage('Form Report GC Packet has been created');
-             frmReportPendapatanHarian.Show;
-             frmReportPendapatanHarian.Position := poDesktopCenter;
+             frmReportPendapatanHarianApi.Show;
+             frmReportPendapatanHarianApi.Position := poDesktopCenter;
              Exit;
         end;
 end;
 
 procedure TfrmMain.REPORT_POS_DAYLI_REVENUE_ADMINClick(Sender: TObject);
 begin
-   if (not IsFormOpen('frmReportPendapatanHarian')) then
+   if (not IsFormOpen('frmReportPendapatanHarianApi')) then
        begin
-            Application.CreateForm(TfrmReportPendapatanHarian, frmReportPendapatanHarian);
-            frmReportPendapatanHarian.FormStyle := fsMDIChild;
-            frmReportPendapatanHarian.Show;
-            frmReportPendapatanHarian.WindowState := wsNormal;
-            frmReportPendapatanHarian.Position := poDesktopCenter;
-            frmReportPendapatanHarian.edServerTime.Properties.ReadOnly := False;
+            Application.CreateForm(TfrmReportPendapatanHarianApi, frmReportPendapatanHarianApi);
+            frmReportPendapatanHarianApi.FormStyle := fsMDIChild;
+            frmReportPendapatanHarianApi.Show;
+            frmReportPendapatanHarianApi.WindowState := wsNormal;
+            frmReportPendapatanHarianApi.Position := poDesktopCenter;
+            frmReportPendapatanHarianApi.edServerTime.Properties.ReadOnly := False;
        end
-     else if (IsFormOpen('frmReportPendapatanHarian')) then
+     else if (IsFormOpen('frmReportPendapatanHarianApi')) then
         begin
-             frmReportPendapatanHarian.edServerTime.Properties.ReadOnly := False;
-             ShowMessage('Form Report GC Packet has been created');
-             frmReportPendapatanHarian.Show;
-             frmReportPendapatanHarian.Position := poDesktopCenter;
+             frmReportPendapatanHarianApi.edServerTime.Properties.ReadOnly := False;
+             ShowMessage('Form Report Harian has been created');
+             frmReportPendapatanHarianApi.Show;
+             frmReportPendapatanHarianApi.Position := poDesktopCenter;
+             Exit;
+        end;
+end;
+
+procedure TfrmMain.REPORT_POS_DAYLI_REVENUE_BALI_ADMINClick(Sender: TObject);
+begin
+     if (not IsFormOpen('frmBALIReportPendapatanHarian')) then
+       begin
+            Application.CreateForm(TfrmBALIReportPendapatanHarian, frmBALIReportPendapatanHarian);
+            frmBALIReportPendapatanHarian.FormStyle := fsMDIChild;
+            frmBALIReportPendapatanHarian.Show;
+            frmBALIReportPendapatanHarian.WindowState := wsNormal;
+            frmBALIReportPendapatanHarian.Position := poDesktopCenter;
+            frmBALIReportPendapatanHarian.edServerTime.Properties.ReadOnly := False;
+       end
+     else if (IsFormOpen('frmBALIReportPendapatanHarian')) then
+        begin
+             frmBALIReportPendapatanHarian.edServerTime.Properties.ReadOnly := False;
+             ShowMessage('Form Report Harian has been created');
+             frmBALIReportPendapatanHarian.Show;
+             frmBALIReportPendapatanHarian.Position := poDesktopCenter;
              Exit;
         end;
 end;
@@ -991,6 +1048,16 @@ begin
      qrySetAccess.Free;
      Screen.Cursor := crDefault;
      PAGE_CONTROL.Enabled := True;
+     TTask.Run(
+                procedure
+                  begin
+                     TThread.Synchronize(nil,
+                        procedure
+                        begin
+                           frmMain.CekIDOUTLET;
+                        end);
+                  end
+               );
 end;
 
 procedure TfrmMain.tmrClockTimer(Sender: TObject);
@@ -1748,6 +1815,56 @@ begin
         end;
 end;
 
+procedure TfrmMain.POS_TIPS_ADMINClick(Sender: TObject);
+begin
+     // is admin
+     if (not IsFormOpen('frmPosTransPaymentTips')) then
+       begin
+            Application.CreateForm(TfrmPosTransPaymentTips, frmPosTransPaymentTips);
+            frmPosTransPaymentTips.FormStyle := fsMDIChild;
+            frmPosTransPaymentTips.Show;
+            frmPosTransPaymentTips.ISADMIN := True;
+            frmPosTransPaymentTips.edTanggal.Enabled := True;
+            frmPosTransPaymentTips.WindowState := wsNormal;
+            frmPosTransPaymentTips.Position := poDesktopCenter;
+
+       end
+     else if (IsFormOpen('frmPosTransPaymentTips')) then
+        begin
+             ShowMessage('Form Pos Transaction Tips has been created');
+             frmPosTransPaymentTips.Show;
+             frmPosTransPaymentTips.ISADMIN := True;
+             frmPosTransPaymentTips.edTanggal.Enabled := True;
+             frmPosTransPaymentTips.Position := poDesktopCenter;
+             Exit;
+        end;
+end;
+
+procedure TfrmMain.POS_TIPS_RCPTClick(Sender: TObject);
+begin
+     // reception
+     if (not IsFormOpen('frmPosTransPaymentTips')) then
+       begin
+            Application.CreateForm(TfrmPosTransPaymentTips, frmPosTransPaymentTips);
+            frmPosTransPaymentTips.FormStyle := fsMDIChild;
+            frmPosTransPaymentTips.Show;
+            frmPosTransPaymentTips.ISADMIN := False;
+            frmPosTransPaymentTips.edTanggal.Enabled := False;
+            frmPosTransPaymentTips.WindowState := wsNormal;
+            frmPosTransPaymentTips.Position := poDesktopCenter;
+
+       end
+     else if (IsFormOpen('frmPosTransPaymentTips')) then
+        begin
+             ShowMessage('Form Pos Transaction Tips has been created');
+             frmPosTransPaymentTips.Show;
+             frmPosTransPaymentTips.ISADMIN := False;
+            frmPosTransPaymentTips.edTanggal.Enabled := False;
+             frmPosTransPaymentTips.Position := poDesktopCenter;
+             Exit;
+        end;
+end;
+
 procedure TfrmMain.POS_TRANSClick(Sender: TObject);
 begin
    //TfrmPosTransMain
@@ -1934,6 +2051,124 @@ begin
         end;
 end;
 
+procedure TfrmMain.PutNewMember(var KodeMemberMain: String;
+  KodePaymentMain: String; pTambah, pKurang, pSisa, pAwal, nSubtotal: Double);
+var
+  Note: TNotification;
+   jsVal, jsData, jsRoot, jsResponse : XSuperObject.ISuperObject;
+   strJSON, idMember, NamaDepan, NamaBelakang, noHape, email: String;
+   jsArray : ISuperArray;
+   jmlhPoint : Double;
+   idApiRec : Integer;
+begin
+    {get member id}
+
+    try
+           dmDB.vClient.BaseURL := 'https://member.zenfamilyspa.net/api/pointmembers?filters[idmember][$eq]=' + KodeMemberMain;
+           dmDB.vRequest.Execute;
+           jsVal := XSuperObject.SO(dmDB.vResponse.Content);
+        except on E: Exception do
+            begin
+              ShowMessage('There was an error: ' + E.Message);
+              Exit;
+            end;
+        end;
+    jsArray := jsVal.AsObject.A['data'];
+         if (jsArray.Length <= 0) then
+            begin
+                  Note := frmMain.NotifMain.CreateNotification;
+                  try
+                      try
+                          Note.Name := 'There was an error';
+                          Note.Title := 'UPDATE MEMBER Failed';
+                          Note.AlertBody := 'No Member ' + KodeMemberMain + ' Tidak dapat ditemukan';
+                          Note.FireDate := Now;
+                          frmMain.NotifMain.PresentNotification(Note);
+                          except
+                      end;
+                      finally
+                        Note.Free;
+                  end;
+            end
+         else if (jsArray.Length > 0) then
+            begin
+
+                 jsData := jsArray.O[0];
+                 idApiRec := jsData.I['id'];
+                 jsRoot := jsData.O['attributes'];
+                 strJSON := jsRoot.AsJSON(True,True);
+                 idMember := jsRoot.S['idmember'];
+                 jmlhPoint := jsRoot.F['point'];
+            end;
+//    ShowMessage('GET member id passed');
+    {Update member id}
+     try
+           dmDB.vClient.BaseURL := 'https://member.zenfamilyspa.net/api/pointmembers/' + IntToStr(idApiRec);
+
+           jsVal := XSuperObject.SO('{}');
+           jsData := XSuperObject.SO('{}');
+           jsData.F['point'] := pSisa;
+           jsVal.O['data'] := jsData;
+           strJSON := jsVal.AsJSON(True,True);
+//           dmDB.vPost.Method := rmPUT;
+           dmDB.vPUT.Params[1].Value := jsVal.AsJSON(false, false);
+           dmDB.vPUT.Execute;
+        except on E: Exception do
+            begin
+              ShowMessage('There was an error: ' + E.Message);
+              Exit;
+            end;
+     end;
+//     ShowMessage('PUT member passed');
+
+     {update member trans}
+
+     try
+         dmDB.vClient.BaseURL := 'https://member.zenfamilyspa.net/api/memberpayments';
+         jsVal := XSuperObject.SO('{}');
+         jsData := XSuperObject.SO('{}');
+         jsData.S['qrmember'] := KodeMemberMain;
+         jsData.S['idpayment'] := KodePaymentMain;
+         jsData.F['pointawal'] := pAwal;
+         jsData.F['tambahpoint'] := pAwal;
+         jsData.F['kurangpoint'] := pKurang;
+         jsData.F['sisapoint'] := pSisa;
+         jsData.B['aktif'] := true;
+         jsData.F['total'] := nSubtotal;
+         jsData.Date['tanggal'] := Date;
+//         jsData.I['member'] := idApiRec;
+         jsData.I['masteroutlet'] := API_OUTLET_ID;
+         //setup data
+         jsVal.O['data'] := jsData;
+         strJSON := jsVal.AsJSON(True,True);
+         dmDB.vPOST.Params[1].Value := jsVal.AsJSON(false, false);
+         dmDB.vPOST.Execute;
+         jsResponse := XSuperObject.SO(dmDB.vResponse.Content);
+         strJSON := jsResponse.AsJSON(True,True);
+      except on E: Exception do
+          begin
+            ShowMessage('There was an error: ' + E.Message);
+            Exit;
+          end;
+
+      end;
+     barLog.EditValue := strJSON + ' Response ' + dmDB.vResponse.StatusText;
+    {kirim notifikasi}
+    Note := frmMain.NotifMain.CreateNotification;
+    try
+        try
+            Note.Name := 'UPDATE MEMBER BARU';
+            Note.Title := 'UPDATE MEMBER BARU';
+            Note.AlertBody := 'Member ' + KodeMemberMain + ' telah di update di API!';
+            Note.FireDate := Now;
+            frmMain.NotifMain.PresentNotification(Note);
+            except
+        end;
+        finally
+          Note.Free;
+    end;
+end;
+
 procedure TfrmMain.LoadConfigApps;
 var
    jsonConfig : TStringList;
@@ -2071,6 +2306,7 @@ begin
     MainLabelAppRelease.Caption := APP_RELEASE;
     MainLabelAppDeveloper.Caption := APP_DEVELOPER;
     MainLabelAppLegal.Caption := APP_TRADEMARK;
+    
     CNTLOGIN := 0;
 end;
 
@@ -2474,6 +2710,39 @@ begin
         end;
 end;
 
+procedure TfrmMain.CekIDOUTLET;
+var
+   jsVal, jsData, jsRoot : XSuperObject.ISuperObject;
+   strJSON, idMember, NamaDepan, NamaBelakang : String;
+   jsArray : ISuperArray;
+begin
+
+     {get outlet id from api}
+
+    try
+           dmDB.vClient.BaseURL := 'https://member.zenfamilyspa.net/api/masteroutlets?filters[kodeoutlet][$eq]=' + APP_OUTLETID;
+           dmDB.vRequest.Execute;
+           jsVal := XSuperObject.SO(dmDB.vResponse.Content);
+        except on E: Exception do
+            begin
+              ShowMessage('There was an error: ' + E.Message);
+              Exit;
+            end;
+        end;
+
+    jsArray := jsVal.AsObject.A['data'];
+         if (jsArray.Length <= 0) then
+            begin
+                  API_OUTLET_ID := 77
+            end
+         else if (jsArray.Length > 0) then
+            begin
+                 jsData := jsArray.O[0];
+                 API_OUTLET_ID := jsData.I['id'];
+            end;
+    barOutletID.EditValue := APP_OUTLETID + '#' + inttostr(API_OUTLET_ID);
+end;
+
 function TfrmMain.CekInternet: Boolean;
 begin
     result := (InternetGetConnectedState(nil, 0));
@@ -2635,6 +2904,54 @@ begin
         end;
 end;
 
+procedure TfrmMain.REPORT_POS_TIPS_ADMINClick(Sender: TObject);
+begin
+     if (not IsFormOpen('frmRepTopRequest')) then
+       begin
+            Application.CreateForm(TfrmPosLapTips, frmPosLapTips);
+            frmPosLapTips.FormStyle := fsMDIChild;
+            frmPosLapTips.Show;
+            frmPosLapTips.ISADMIN := True;
+            frmPosLapTips.WindowState := wsNormal;
+            frmPosLapTips.Position := poDesktopCenter;
+
+       end
+     else if (IsFormOpen('frmPosLapTips')) then
+        begin
+             ShowMessage('Top Request has been created');
+             frmPosLapTips.Show;
+             frmPosLapTips.ISADMIN := True;
+             frmPosLapTips.Position := poDesktopCenter;
+             Exit;
+        end;
+end;
+
+procedure TfrmMain.REPORT_POS_TIPS_RCPTClick(Sender: TObject);
+begin
+     if (not IsFormOpen('frmRepTopRequest')) then
+       begin
+            Application.CreateForm(TfrmPosLapTips, frmPosLapTips);
+            frmPosLapTips.FormStyle := fsMDIChild;
+            frmPosLapTips.Show;
+            frmPosLapTips.ISADMIN := False;
+            frmPosLapTips.edStart.Enabled := False;
+             frmPosLapTips.edEnd.Enabled := False;
+            frmPosLapTips.WindowState := wsNormal;
+            frmPosLapTips.Position := poDesktopCenter;
+
+       end
+     else if (IsFormOpen('frmPosLapTips')) then
+        begin
+             ShowMessage('Top Request has been created');
+             frmPosLapTips.Show;
+             frmPosLapTips.ISADMIN := False;
+             frmPosLapTips.edStart.Enabled := False;
+             frmPosLapTips.edEnd.Enabled := False;
+             frmPosLapTips.Position := poDesktopCenter;
+             Exit;
+        end;
+end;
+
 procedure TfrmMain.REPORT_POS_TOP_REQUESTClick(Sender: TObject);
 begin
    if (not IsFormOpen('frmRepTopRequest')) then
@@ -2764,6 +3081,44 @@ begin
      tmrFormLogin.Enabled := True;
 end;
 
+procedure TfrmMain.HRD_INPUT_ABSEN_MANUALClick(Sender: TObject);
+begin
+     if (not IsFormOpen('frmPresensiManual')) then
+       begin
+            Application.CreateForm(TfrmPresensiManual, frmPresensiManual);
+            frmPresensiManual.Show;
+            frmPresensiManual.WindowState := wsNormal;
+            frmPresensiManual.Position := poDesktopCenter;
+
+       end
+     else if (IsFormOpen('frmPresensiManual')) then
+        begin
+             ShowMessage('Form Absen Manual has been created');
+             frmPresensiManual.Show;
+             frmPresensiManual.Position := poDesktopCenter;
+             Exit;
+        end;
+end;
+
+procedure TfrmMain.HRD_INPUT_CHANGE_JADWALClick(Sender: TObject);
+begin
+    if (not IsFormOpen('frmChangeJadwal')) then
+       begin
+            Application.CreateForm(TfrmChangeJadwal, frmChangeJadwal);
+            frmChangeJadwal.Show;
+            frmChangeJadwal.WindowState := wsNormal;
+            frmChangeJadwal.Position := poDesktopCenter;
+
+       end
+     else if (IsFormOpen('frmChangeJadwal')) then
+        begin
+             ShowMessage('Form Change Jadwal has been created');
+             frmChangeJadwal.Show;
+             frmChangeJadwal.Position := poDesktopCenter;
+             Exit;
+        end;
+end;
+
 procedure TfrmMain.HRD_INPUT_CUTIClick(Sender: TObject);
 begin
    if (not IsFormOpen('frmIjinCutiList')) then
@@ -2783,9 +3138,46 @@ begin
         end;
 end;
 
+procedure TfrmMain.HRD_INPUT_IJIN_KELUARClick(Sender: TObject);
+begin
+     //TfrmIjinKeluar
+     if (not IsFormOpen('frmIjinKeluar')) then
+       begin
+            Application.CreateForm(TfrmIjinKeluar, frmIjinKeluar);
+            frmIjinKeluar.FormStyle := fsMDIChild;
+            frmIjinKeluar.Show;
+            frmIjinKeluar.WindowState := wsNormal;
+            frmIjinKeluar.Position := poDesktopCenter;
+
+       end
+     else if (IsFormOpen('frmIjinKeluar')) then
+        begin
+             ShowMessage('Form List Ijin Keluar has been created');
+             frmIjinKeluar.Show;
+             frmIjinKeluar.Position := poDesktopCenter;
+             Exit;
+        end;
+end;
+
 procedure TfrmMain.HRD_INPUT_IJIN_MASUKClick(Sender: TObject);
 begin
-    //
+    //TfrmIjinMasukList
+    if (not IsFormOpen('frmIjinMasukList')) then
+       begin
+            Application.CreateForm(TfrmIjinMasukList, frmIjinMasukList);
+            frmIjinMasukList.FormStyle := fsMDIChild;
+            frmIjinMasukList.Show;
+            frmIjinMasukList.WindowState := wsNormal;
+            frmIjinMasukList.Position := poDesktopCenter;
+
+       end
+     else if (IsFormOpen('frmIjinMasukList')) then
+        begin
+             ShowMessage('Form List Ijin Masuk has been created');
+             frmIjinPulangList.Show;
+             frmIjinMasukList.Position := poDesktopCenter;
+             Exit;
+        end;
 end;
 
 procedure TfrmMain.HRD_INPUT_IJIN_PULANGClick(Sender: TObject);
@@ -3265,6 +3657,25 @@ begin
       end;
 end;
 
+procedure TfrmMain.HRD_PERIODE_UMX3Click(Sender: TObject);
+begin
+     //TfrmPeriodeUM
+     if (not IsFormOpen('frmPeriodeUM')) then
+      begin
+           Application.CreateForm(TfrmPeriodeUM, frmPeriodeUM);
+           frmPeriodeUM.Show;
+           frmPeriodeUM.WindowState := wsNormal;
+           frmPeriodeUM.Position := poDesktopCenter;
+      end
+   else if (IsFormOpen('frmPeriodeUM')) then
+      begin
+           ShowMessage('Finger Registration Form has been created');
+           frmPeriodeUM.Show;
+           frmPeriodeUM.Position := poDesktopCenter;
+           Exit;
+      end;
+end;
+
 procedure TfrmMain.HRD_REG_FINGERClick(Sender: TObject);
 begin
    if (not IsFormOpen('frmRegKaryawan')) then
@@ -3283,7 +3694,7 @@ begin
       end;
 end;
 
-procedure TfrmMain.HRD_REKAP_PRESENSIClick(Sender: TObject);
+procedure TfrmMain.DELETED_HRD_REKAP_PRESENSIClick(Sender: TObject);
 begin
    {Application.CreateForm(TfrmRekapHarianBaru, frmRekapHarianBaru);
    frmRekapHarianBaru.FormStyle := fsMDIChild;
@@ -3343,6 +3754,27 @@ begin
              ShowMessage('Form Report Laporan has been created');
              frmReportCuti.Show;
              frmReportCuti.Position := poDesktopCenter;
+             Exit;
+        end;
+end;
+
+procedure TfrmMain.HRD_REPORT_JADWALClick(Sender: TObject);
+begin
+     //
+     if (not IsFormOpen('frmReportSchedule')) then
+       begin
+            Application.CreateForm(TfrmReportSchedule, frmReportSchedule);
+            frmReportSchedule.FormStyle := fsMDIChild;
+            frmReportSchedule.Show;
+            frmReportSchedule.WindowState := wsNormal;
+            frmReportSchedule.Position := poDesktopCenter;
+
+       end
+     else if (IsFormOpen('frmReportSchedule')) then
+        begin
+             ShowMessage('Form Report Jadwal Lokal has been created');
+             frmReportSchedule.Show;
+             frmReportSchedule.Position := poDesktopCenter;
              Exit;
         end;
 end;

@@ -588,7 +588,7 @@ object frmRekapHarianBaru: TfrmRekapHarianBaru
     Width = 442
     Height = 101
     TabOrder = 4
-    Properties.ActivePage = tbAll
+    Properties.ActivePage = tbDivisi
     Properties.CustomButtons.Buttons = <>
     ClientRectBottom = 98
     ClientRectLeft = 2

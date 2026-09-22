@@ -79,10 +79,22 @@ object frmMain: TfrmMain
     end
     object pgProduct: TdxRibbonTab
       Caption = 'PRODUCT'
-      Groups = <>
+      Groups = <
+        item
+          Caption = 'Master Data Product'
+          ToolbarName = 'BarMasterProduct'
+        end
+        item
+          ToolbarName = 'BarProdHoTrans'
+        end
+        item
+          Caption = 'Outlet Transaction'
+          ToolbarName = 'BarProdOutletTrans'
+        end>
       Index = 3
     end
     object pgReportPoS: TdxRibbonTab
+      Active = True
       Caption = 'REPORT PoS'
       Groups = <
         item
@@ -110,7 +122,6 @@ object frmMain: TfrmMain
       Index = 6
     end
     object pgAPPS: TdxRibbonTab
-      Active = True
       Caption = 'APPLICATION'
       Groups = <
         item
@@ -34247,8 +34258,8 @@ object frmMain: TfrmMain
         ParentFont = False
       end
       object Label13: TLabel
-        Left = 328
-        Top = 112
+        Left = 318
+        Top = 108
         Width = 109
         Height = 19
         Caption = 'Component Style'
@@ -34716,6 +34727,11 @@ object frmMain: TfrmMain
     UseSystemFont = True
     Left = 356
     Top = 348
+    DockControlHeights = (
+      0
+      0
+      0
+      0)
     object BarMasterProduct: TdxBar
       Caption = 'Master product'
       CaptionButtons = <>
@@ -34725,7 +34741,11 @@ object frmMain: TfrmMain
       FloatTop = 8
       FloatClientWidth = 0
       FloatClientHeight = 0
-      ItemLinks = <>
+      ItemLinks = <
+        item
+          Visible = True
+          ItemName = 'PRODUCT_MASTER'
+        end>
       OneOnRow = False
       Row = 0
       UseOwnFont = False
@@ -34796,7 +34816,7 @@ object frmMain: TfrmMain
         end
         item
           Visible = True
-          ItemName = 'HRD_REKAP_PRESENSI'
+          ItemName = 'DELETED_HRD_REKAP_PRESENSI'
         end
         item
           Visible = True
@@ -34897,6 +34917,14 @@ object frmMain: TfrmMain
         item
           Visible = True
           ItemName = 'APP_EXIT'
+        end
+        item
+          Visible = True
+          ItemName = 'barOutletID'
+        end
+        item
+          Visible = True
+          ItemName = 'barLog'
         end>
       OneOnRow = True
       Row = 0
@@ -35005,6 +35033,14 @@ object frmMain: TfrmMain
         item
           Visible = True
           ItemName = 'POS_TRANS_DRIVERS'
+        end
+        item
+          Visible = True
+          ItemName = 'POS_TIPS_RCPT'
+        end
+        item
+          Visible = True
+          ItemName = 'POS_TIPS_ADMIN'
         end>
       OneOnRow = True
       Row = 0
@@ -35077,6 +35113,22 @@ object frmMain: TfrmMain
         item
           Visible = True
           ItemName = 'REPORT_POS_TOP_REQUEST'
+        end
+        item
+          Visible = True
+          ItemName = 'REPORT_POS_TIPS_RCPT'
+        end
+        item
+          Visible = True
+          ItemName = 'REPORT_POS_TIPS_ADMIN'
+        end
+        item
+          Visible = True
+          ItemName = 'REPORT_POS_DAYLI_REVENUE_BALI_ADMIN'
+        end
+        item
+          Visible = True
+          ItemName = 'REPORT_POS_DAYLI_REVENUE_BALI'
         end>
       OneOnRow = True
       Row = 0
@@ -35134,6 +35186,38 @@ object frmMain: TfrmMain
           Visible = True
           ItemName = 'HRD_THR_PARAMETER'
         end>
+      OneOnRow = False
+      Row = 0
+      UseOwnFont = False
+      Visible = True
+      WholeRow = False
+    end
+    object BarProdHoTrans: TdxBar
+      Caption = 'Head Office Transaction'
+      CaptionButtons = <>
+      DockedLeft = 119
+      DockedTop = 0
+      FloatLeft = 1217
+      FloatTop = 8
+      FloatClientWidth = 0
+      FloatClientHeight = 0
+      ItemLinks = <>
+      OneOnRow = False
+      Row = 0
+      UseOwnFont = False
+      Visible = True
+      WholeRow = False
+    end
+    object BarProdOutletTrans: TdxBar
+      Caption = 'Outlet Transaction'
+      CaptionButtons = <>
+      DockedLeft = 257
+      DockedTop = 0
+      FloatLeft = 1217
+      FloatTop = 8
+      FloatClientWidth = 0
+      FloatClientHeight = 0
+      ItemLinks = <>
       OneOnRow = False
       Row = 0
       UseOwnFont = False
@@ -36199,6 +36283,14 @@ object frmMain: TfrmMain
         item
           Visible = True
           ItemName = 'HRD_INPUT_IJIN_MASUK'
+        end
+        item
+          Visible = True
+          ItemName = 'HRD_INPUT_CHANGE_JADWAL'
+        end
+        item
+          Visible = True
+          ItemName = 'HRD_INPUT_ABSEN_MANUAL'
         end>
     end
     object HRD_INPUT_LEMBUR: TdxBarButton
@@ -36227,6 +36319,7 @@ object frmMain: TfrmMain
       Category = 0
       Hint = 'Ijin Keluar'
       Visible = ivAlways
+      OnClick = HRD_INPUT_IJIN_KELUARClick
     end
     object HRD_INPUT_TIDAK_MASUK: TdxBarButton
       Caption = 'Ijin Tidak Masuk'
@@ -36249,7 +36342,7 @@ object frmMain: TfrmMain
       Visible = ivAlways
       OnClick = HRD_INPUT_IJIN_PULANGClick
     end
-    object HRD_REKAP_PRESENSI: TdxBarLargeButton
+    object DELETED_HRD_REKAP_PRESENSI: TdxBarLargeButton
       Caption = 'Rekap Presensi'
       Category = 0
       Hint = 'Rekap Presensi'
@@ -36385,7 +36478,7 @@ object frmMain: TfrmMain
         0000000000000000000000000000000000000000000000000000000000000000
         0000000000000000000000000000000000000000000000000000000000000000
         0000000000000000000000000000000000000000000000000000}
-      OnClick = HRD_REKAP_PRESENSIClick
+      OnClick = DELETED_HRD_REKAP_PRESENSIClick
     end
     object HRD_SALDO_CUTI_GENERATE: TdxBarButton
       Caption = 'Saldo Cuti'
@@ -37728,6 +37821,7 @@ object frmMain: TfrmMain
       Category = 0
       Hint = 'UMx3 Periode'
       Visible = ivAlways
+      OnClick = HRD_PERIODE_UMX3Click
     end
     object HRD_PERIODE_THR: TdxBarButton
       Caption = 'THR Periode'
@@ -39093,6 +39187,10 @@ object frmMain: TfrmMain
         item
           Visible = True
           ItemName = 'HRD_REPORT_CUTI'
+        end
+        item
+          Visible = True
+          ItemName = 'HRD_REPORT_JADWAL'
         end>
     end
     object HRD_REPORT_LEMBUR: TdxBarButton
@@ -39276,6 +39374,141 @@ object frmMain: TfrmMain
         0000000000000000000000000000000000000000000000000000000000000000
         0000000000000000000000000000000000000000000000000000}
       OnClick = POS_TRANS_DRIVERSClick
+    end
+    object barOutletID: TcxBarEditItem
+      Caption = 'OUTLET ID'
+      Category = 0
+      Hint = 'OUTLET ID'
+      Visible = ivAlways
+      PropertiesClassName = 'TcxTextEditProperties'
+      Properties.ReadOnly = True
+      InternalEditValue = '7'
+    end
+    object barMemo: TdxBarEdit
+      Caption = 'New Item'
+      Category = 0
+      Hint = 'New Item'
+      Visible = ivAlways
+      ShowCaption = True
+      Width = 200
+      ReadOnly = True
+    end
+    object barLog: TcxBarEditItem
+      Caption = 'log'
+      Category = 0
+      Hint = 'log'
+      Visible = ivAlways
+      Width = 250
+      PropertiesClassName = 'TcxMemoProperties'
+      Properties.ReadOnly = True
+      Properties.ScrollBars = ssBoth
+      InternalEditValue = '{empty}'
+    end
+    object POS_TIPS_RCPT: TdxBarLargeButton
+      Caption = 'Input Tips'
+      Category = 0
+      Hint = 'Input Tips'
+      Visible = ivAlways
+      OnClick = POS_TIPS_RCPTClick
+    end
+    object POS_TIPS_ADMIN: TdxBarLargeButton
+      Caption = 'Input Tips'
+      Category = 0
+      Hint = 'Input Tips'
+      Visible = ivAlways
+      OnClick = POS_TIPS_ADMINClick
+    end
+    object REPORT_POS_TIPS_RCPT: TdxBarLargeButton
+      Caption = 'Rep. Tips '
+      Category = 0
+      Hint = 'Rep. Tips '
+      Visible = ivAlways
+      OnClick = REPORT_POS_TIPS_RCPTClick
+    end
+    object REPORT_POS_TIPS_ADMIN: TdxBarLargeButton
+      Caption = 'Rep. Tips '
+      Category = 0
+      Hint = 'Rep. Tips '
+      Visible = ivAlways
+      OnClick = REPORT_POS_TIPS_ADMINClick
+    end
+    object HRD_INPUT_CHANGE_JADWAL: TdxBarButton
+      Caption = 'Change Jadwal'
+      Category = 0
+      Hint = 'Change Jadwal'
+      Visible = ivAlways
+      OnClick = HRD_INPUT_CHANGE_JADWALClick
+    end
+    object HRD_REPORT_JADWAL: TdxBarButton
+      Caption = 'Rep. Jadwal'
+      Category = 0
+      Hint = 'Rep. Jadwal'
+      Visible = ivAlways
+      OnClick = HRD_REPORT_JADWALClick
+    end
+    object dxBarButton1: TdxBarButton
+      Caption = 'New Button'
+      Category = 0
+      Hint = 'New Button'
+      Visible = ivAlways
+    end
+    object dxBarLargeButton1: TdxBarLargeButton
+      Caption = 'New Button'
+      Category = 0
+      Hint = 'New Button'
+      Visible = ivAlways
+    end
+    object PRODUCT_MASTER: TdxBarSubItem
+      Caption = 'Master Data'
+      Category = 0
+      Visible = ivAlways
+      ItemLinks = <
+        item
+          Visible = True
+          ItemName = 'PROD_MASTER_BARANG'
+        end
+        item
+          Visible = True
+          ItemName = 'PROD_MASTER_SUPPLIER'
+        end>
+    end
+    object PROD_MASTER_BARANG: TdxBarButton
+      Caption = 'Barang'
+      Category = 0
+      Hint = 'Barang'
+      Visible = ivAlways
+    end
+    object PROD_MASTER_SUPPLIER: TdxBarButton
+      Caption = 'Supplier'
+      Category = 0
+      Hint = 'Supplier'
+      Visible = ivAlways
+    end
+    object dxBarSubItem4: TdxBarSubItem
+      Caption = 'New SubItem'
+      Category = 0
+      Visible = ivAlways
+      ItemLinks = <>
+    end
+    object HRD_INPUT_ABSEN_MANUAL: TdxBarButton
+      Caption = 'Absen Manual'
+      Category = 0
+      Hint = 'Absen Manual'
+      Visible = ivAlways
+      OnClick = HRD_INPUT_ABSEN_MANUALClick
+    end
+    object REPORT_POS_DAYLI_REVENUE_BALI_ADMIN: TdxBarLargeButton
+      Caption = 'Lap. Harian Bali'
+      Category = 0
+      Hint = 'Lap. Harian Bali'
+      Visible = ivAlways
+      OnClick = REPORT_POS_DAYLI_REVENUE_BALI_ADMINClick
+    end
+    object REPORT_POS_DAYLI_REVENUE_BALI: TdxBarLargeButton
+      Caption = 'Lap. Harian Bali'
+      Category = 0
+      Hint = 'Lap. Harian Bali'
+      Visible = ivAlways
     end
   end
   object mainSkinControl: TdxSkinController
@@ -39494,8 +39727,8 @@ object frmMain: TfrmMain
     MaxLineAction = maException
     Port = 587
     DefaultPort = 0
-    SSLOptions.Method = sslvTLSv1_2
-    SSLOptions.SSLVersions = [sslvTLSv1_2]
+    SSLOptions.Method = sslvSSLv23
+    SSLOptions.SSLVersions = [sslvTLSv1, sslvTLSv1_1, sslvTLSv1_2]
     SSLOptions.Mode = sslmClient
     SSLOptions.VerifyMode = []
     SSLOptions.VerifyDepth = 0
@@ -39508,7 +39741,6 @@ object frmMain: TfrmMain
     Password = 'cnqwuekxdrxotcqh'
     Port = 587
     SASLMechanisms = <>
-    UseTLS = utUseExplicitTLS
     Username = 'zenspa.dev@gmail.com'
     Left = 917
     Top = 194

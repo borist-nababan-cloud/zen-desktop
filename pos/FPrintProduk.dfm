@@ -85,8 +85,8 @@ object frmPrintProduk: TfrmPrintProduk
       ForceNewColumn = False
       ForceNewPage = False
       Size.Values = (
-        404.224537037037100000
-        779.050925925926000000)
+        404.224537037037000000
+        779.050925925925900000)
       PreCaluculateBandHeight = False
       KeepOnOnePage = False
       BandType = rbPageHeader
@@ -238,35 +238,6 @@ object frmPrintProduk: TfrmPrintProduk
         MaxBreakChars = 0
         FontSize = 7
       end
-      object lblTanggal: TQRLabel
-        Left = 136
-        Top = 175
-        Width = 103
-        Height = 28
-        Size.Values = (
-          41.157407407407410000
-          199.907407407407400000
-          257.233796296296300000
-          151.400462962963000000)
-        XLColumn = 0
-        XLNumFormat = nfGeneral
-        ActiveInPreview = False
-        Alignment = taLeftJustify
-        AlignToBand = False
-        Caption = '2019-01-01'
-        Color = clWhite
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = 'Times New Roman'
-        Font.Style = []
-        ParentFont = False
-        Transparent = False
-        ExportAs = exptText
-        WrapStyle = BreakOnSpaces
-        VerticalAlignment = tlTop
-        FontSize = 9
-      end
       object QRLabel1: TQRLabel
         Left = 44
         Top = 207
@@ -326,6 +297,35 @@ object frmPrintProduk: TfrmPrintProduk
         VerticalAlignment = tlTop
         FontSize = 9
       end
+      object lblTanggal: TQRLabel
+        Left = 136
+        Top = 175
+        Width = 103
+        Height = 28
+        Size.Values = (
+          41.157407407407410000
+          199.907407407407400000
+          257.233796296296300000
+          151.400462962963000000)
+        XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
+        Alignment = taLeftJustify
+        AlignToBand = False
+        Caption = '2019-01-01'
+        Color = clWhite
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Times New Roman'
+        Font.Style = []
+        ParentFont = False
+        Transparent = False
+        ExportAs = exptText
+        WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
+        FontSize = 9
+      end
     end
     object SummaryBand1: TQRBand
       Left = 10
@@ -338,7 +338,7 @@ object frmPrintProduk: TfrmPrintProduk
       ForceNewPage = False
       Size.Values = (
         69.085648148148150000
-        779.050925925926000000)
+        779.050925925925900000)
       PreCaluculateBandHeight = False
       KeepOnOnePage = False
       BandType = rbSummary
@@ -439,8 +439,8 @@ object frmPrintProduk: TfrmPrintProduk
       ForceNewColumn = False
       ForceNewPage = False
       Size.Values = (
-        129.351851851851800000
-        779.050925925926000000)
+        129.351851851851900000
+        779.050925925925900000)
       PreCaluculateBandHeight = False
       KeepOnOnePage = False
       BandType = rbPageFooter

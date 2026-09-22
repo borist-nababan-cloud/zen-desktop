@@ -21,25 +21,6 @@ object frmRekapHarianOld: TfrmRekapHarianOld
     556)
   PixelsPerInch = 96
   TextHeight = 13
-  object Label4: TLabel
-    Left = 0
-    Top = -4
-    Width = 977
-    Height = 26
-    Anchors = [akLeft, akTop, akRight]
-    AutoSize = False
-    Caption = '  Rekap Absen Harian'
-    Color = clBlue
-    Font.Charset = ANSI_CHARSET
-    Font.Color = clWhite
-    Font.Height = -21
-    Font.Name = 'Calibri'
-    Font.Style = [fsBold]
-    ParentColor = False
-    ParentFont = False
-    Transparent = False
-    ExplicitWidth = 833
-  end
   object Label1: TLabel
     Left = 16
     Top = 36

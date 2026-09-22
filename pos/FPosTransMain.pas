@@ -50,7 +50,7 @@ type
     dsQryDetails: TMyDataSource;
     gtbMasternotes: TcxGridDBColumn;
     gtbMastercabang: TcxGridDBColumn;
-    cxLabel1: TcxLabel;
+    lblNamaPaket: TcxLabel;
     lblActivePacket: TcxLabel;
     edDateTimeServer: TcxDateEdit;
     cxLabel2: TcxLabel;
@@ -119,7 +119,7 @@ implementation
 
 {$R *.dfm}
 uses FdMDB, FMain, FNewMenuTrans, FBuyAdditional, FBuyProduct, FBuyGC,
-     FPrintSO, FPosTransMainDetails;
+     FPrintSO, FPosTransMainDetails, FTestMemoryTable;
 
 function InputCombo(const ACaption, APrompt: string; const AList: TStrings): string;
 
@@ -886,10 +886,11 @@ end;
 procedure TfrmPosTransMain.SyncForm;
 var
    intHari : Integer;
+   namaPaket : String;
    vTgl, vBulan, vTahun, vMenit, vDetik, vJam, vmDetik,
    pMenit, pDetik, pJam, pmDetik  : Word;
    nDate : TDate;
-   nWaktu, tPacket : TTime;
+   nWaktu, tPacket, nStart, nEnd : TTime;
    dtPacket, dtSekarang, tmpDateTime : TDateTime;
    qryThread1, qryThread2 : TMyQuery;
 begin
@@ -915,7 +916,7 @@ begin
 
    qryThread2.Close;
    qryThread2.SQL.Clear;
-   qryThread2.SQL.Add('select end_time from paket where paket_id = ''' + 'HH' + '''');
+   qryThread2.SQL.Add('select end_time, start_time, nama_paket from paket where paket_id = ''' + 'HH' + '''');
    qryThread2.Open;
    //edTimePacket.Time := qryThread2.Fields[0].AsDateTime;
    tPacket := qryThread2.Fields[0].AsDateTime;

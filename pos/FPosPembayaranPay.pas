@@ -83,7 +83,6 @@ type
     cxButton5: TcxButton;
     cxButton6: TcxButton;
     cxButton7: TcxButton;
-    Button1: TButton;
     cxButton8: TcxButton;
     lblBeliGC: TLabel;
     procedure edCashPropertiesEditValueChanged(Sender: TObject);
@@ -115,12 +114,14 @@ type
     procedure btnFindGCClick(Sender: TObject);
   private
     { Private declarations }
-    qrySearch, qryExec, qryFind : TMyQuery;
+    qrySearch, qryExec, qryFind, qryCari, qryTemp : TMyQuery;
     tglServer : TDateTime;
     function CreateAutoNumb : String;
     function CekInternet : Boolean;
+    function GenerateRandomString(ALength: Integer): string;
     procedure HitungSisa;
     procedure CetakNota(var kodePayCetak : String);
+    procedure CetakRating(var kodePayCetak : String);
     procedure CetakProduk(var kodePayProduk : String);
   public
     { Public declarations }
@@ -138,7 +139,7 @@ implementation
 
 {$R *.dfm}
 
-uses FPosPembayaran, FdmDB, FMain, FPrintTrans, FPrintProduk;
+uses FPosPembayaran, FdmDB, FMain, FPrintTrans, FPrintProduk, FPrintRatingCode;
 
 { TfrmPosPembayaranPay }
 
@@ -151,7 +152,8 @@ var
   lamaValid : Integer;
   hargaGC : Double;
 begin
-  noGift := '%' + edNOGC.Text;
+//  noGift := '%' + edNOGC.Text;
+  noGift := edNOGC.Text;
   qrySearch.Close;
   qrySearch.SQL.Clear;
   qrySearch.SQL.Add('select harga_jasa, aktif, terjual, pakai, tgl_jual from gc_sold where gc_number like ' +
@@ -540,6 +542,64 @@ begin
    QryPrintDetail.Free;
 end;
 
+procedure TfrmPosPembayaranPay.CetakRating(var kodePayCetak: String);
+var
+   rand1, rand2, code1, RatingCode, idPayment, transID : String;
+   i : Integer;
+  y: Integer;
+
+begin
+     idPayment := kodePayCetak;
+     qrySearch.Close;
+     qrySearch.SQL.Clear;
+     qrySearch.SQL.Add('select trans_id from trans_master where id_payment = ''' + idPayment + '''');
+     qrySearch.Open;
+     qrySearch.First;
+     for i := 0 to qrySearch.RecordCount - 1 do
+         begin
+               transID := qrySearch.Fields[0].AsString;
+               rand1 := GenerateRandomString(5);
+               code1 :=  frmMain.APP_OUTLETID + FormatDateTime('yyMMddhhmmss', now);
+               rand2 := GenerateRandomString(5);
+               RatingCode := rand1 + code1 + rand2;
+               qryExec.SQL.Clear;
+               qryExec.SQL.Add('insert into ben_guest_rating values(' +
+                   '''' + RatingCode + ''',' +
+                   '''' + idPayment + ''',' +
+                   '''' + transID + ''',' +
+                   '''' + 'N' + ''',' +
+                   '''' + '2025-01-01 01:01:01' + ''');');
+               qryExec.ExecSQL;
+               qrySearch.Next;
+         end;
+    qryFind.Close;
+    qryFind.SQL.Clear;
+    qryFind.SQL.Add('select ratingcode, id_payment, trans_id from ben_guest_rating where id_payment = ''' + idPayment + '''');
+    qryFind.Open;
+    qryFind.First;
+    for y := 0 to qryFind.RecordCount - 1 do
+        begin
+              transID := qryFind.Fields[2].AsString;
+//              ShowMessage(transID);
+              qryCari.Close;
+              qryCari.SQL.Clear;
+              qryCari.SQL.Add('select room_id, therapist_id from trans_master where trans_id = ''' + transID + '''');
+              qryCari.Open;
+              ShowMessage(qryCari.Fields[0].AsString + '#' + qryCari.Fields[1].AsString);
+              Application.CreateForm(TfrmPrintRatingCode, frmPrintRatingCode);
+              with frmPrintRatingCode do
+                   begin
+                        frmPrintRatingCode.lblRatingApps.BarcodeText := 'https://zfeedback.zenfamilyspa.id/?ratingcode=' + qryFind.Fields[0].AsString;
+                        frmPrintRatingCode.lblDetailsRate.Caption := FormatDateTime('dd/MM/yy hh:mm:ss', Now) + ' @ ' +frmMain.APP_OUTLETNAME +
+                            ' Room : ' + qryCari.Fields[0].AsString + ' TR ID : ' + qryCari.Fields[1].AsString;
+                   end;
+              frmPrintRatingCode.qrpPrintRating.Prepare;
+              frmPrintRatingCode.qrpPrintRating.Preview;
+              qryFind.Next;
+        end;
+
+end;
+
 procedure TfrmPosPembayaranPay.ckRedeemPropertiesEditValueChanged(
   Sender: TObject);
 begin
@@ -587,7 +647,7 @@ end;
 procedure TfrmPosPembayaranPay.cxButton1Click(Sender: TObject);
 var
   idPayment, idTrans, kodeMember, keterangan, kodePaket, NomorGC : String;
-  i: Integer;
+  i, panjang: Integer;
   pTambah, pKurang, pSisa, pAwal, nSubtotal : Double;
 
 begin
@@ -614,18 +674,39 @@ begin
     idPayment := CreateAutoNumb;
     KODEPEMBAYARAN := idPayment;
     kodeMember := frmPosPembayaran.lblKodeMember.Caption;
+    panjang := Length(frmPosPembayaran.edScan.Text);
     if (frmPosPembayaran.lblKodeMember.Caption <> '') then
       begin
-        TTask.Run(
-              procedure
-                begin
-                   TThread.Synchronize(nil,
-                      procedure
+        if (panjang <= 15) then
+          begin
+//               ShowMessage('Member Lama');
+               TTask.Run(
+                    procedure
                       begin
-                         frmMain.UpdateMember(kodeMember, idPayment, pTambah, pKurang, pSisa, pAwal, nSubtotal);
-                      end);
-                end
-             );
+                         TThread.Synchronize(nil,
+                            procedure
+                            begin
+                               frmMain.UpdateMember(kodeMember, idPayment, pTambah, pKurang, pSisa, pAwal, nSubtotal);
+                            end);
+                      end
+                   );
+          end
+        else if (panjang > 15) then
+          begin
+//               ShowMessage('Member Baru');
+
+               TTask.Run(
+                    procedure
+                      begin
+                         TThread.Synchronize(nil,
+                            procedure
+                            begin
+                                 frmMain.PutNewMember(kodeMember, idPayment, pTambah, pKurang, pSisa, pAwal, nSubtotal);
+                            end);
+                      end
+                   );
+          end;
+
       end;
     {TTask.Run(
         procedure
@@ -706,6 +787,7 @@ begin
               end
            );
       end;
+
     CetakNota(idPayment);
     if ((frmPosPembayaranPay.totBP > 0) OR (frmPosPembayaranPay.totBG > 0)) then
         begin
@@ -720,8 +802,10 @@ begin
                 end
                    ); }
              CetakProduk(idPayment);
+
         end;
 
+    CetakRating(idPayment);
     ShowMessage('Payment Finish !');
     frmPosPembayaran.edPromo.Clear;
     frmPosPembayaran.edPromo.ClearSelection;
@@ -908,6 +992,16 @@ begin
     qrySearch.SQL.Add('select * from temptable');
     qrySearch.Active := true;
 
+    qryCari := TMyQuery.Create(Self);
+    qryCari.Connection := DMDB.dbInternal;
+    qryCari.SQL.Add('select * from temptable');
+    qryCari.Active := true;
+
+    qryTemp := TMyQuery.Create(Self);
+    qryTemp.Connection := DMDB.dbInternal;
+    qryTemp.SQL.Add('select * from temptable');
+    qryTemp.Active := true;
+
     qryFind := TMyQuery.Create(Self);
     qryFind.Connection := DMDB.dbInternal;
     qryFind.SQL.Add('select * from temptable');
@@ -926,7 +1020,30 @@ begin
     tglServer := qrySearch.Fields[0].AsDateTime;
     qryPayment.Active := True;
     qryBank.Active := True;
+    Randomize;
 
+end;
+
+function TfrmPosPembayaranPay.GenerateRandomString(ALength: Integer): string;
+const
+  // Define the set of characters that can be used in the random string.
+  // This includes uppercase letters, lowercase letters, and digits.
+  ValidChars: array[0..61] of Char = (
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+  );
+var
+  I: Integer;
+begin
+     Result := ''; // Initialize the result string as empty
+  // Loop 'ALength' times to build the string
+  for I := 1 to ALength do
+  begin
+    // Append a random character from the ValidChars array to the result string.
+    // Random(High(ValidChars) + 1) generates a random index within the bounds of ValidChars.
+    Result := Result + ValidChars[Random(High(ValidChars) + 1)];
+  end;
 end;
 
 procedure TfrmPosPembayaranPay.HitungSisa;
@@ -1026,13 +1143,13 @@ begin
         pTambah := edTambahPoint.EditValue;
         pKurang := 0;
       end;
-
+//update table payment_master
     qryExec.SQL.Clear;
     qryExec.SQL.Add('insert into trans_payment values(' +
         '''' + kodePayMaster + ''',' +
         '''' + FormatDateTime('yyyy-MM-dd', tglServer) + ''',' +
         '''' + FormatDateTime('hh:mm:ss', tglServer) + ''',' +
-        '''' + frmPosPembayaran.lblNoKartu.Caption + ''',' +
+        '''' + frmPosPembayaran.lblKodeMember.Caption + ''',' +
         QuotedStr(frmPosPembayaran.edMemberNama.Text) + ',' +
         '''' + FloatToStr(edSubtPayment.EditValue) + ''',' +
         '''' + FloatToStr(0) + ''',' +
@@ -1079,6 +1196,7 @@ begin
          '''' + '' + ''');');
     //qryExec.ExecSQL;
     qryExec.ExecSQL;
+//end update table payment_master
     UpdateDetails(kodePayMaster);
     //qryExecPayment.Free;
 end;

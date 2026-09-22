@@ -83,11 +83,13 @@ type
     qryPayment: TMyQuery;
     dsQryPayment: TMyDataSource;
     btnCetakUlang: TcxButton;
+    cxButton3: TcxButton;
     procedure FormCreate(Sender: TObject);
     procedure cxButton2Click(Sender: TObject);
     procedure cxButton1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnCetakUlangClick(Sender: TObject);
+    procedure cxButton3Click(Sender: TObject);
   private
     { Private declarations }
     qryCari, qryExec, qrySearch, qryFind : TMyQuery;
@@ -103,7 +105,7 @@ implementation
 
 {$R *.dfm}
 
-uses FdmDB, FMain, FPrintTrans;
+uses FdmDB, FMain, FPrintTrans, FPrintRatingCode;
 
 procedure TfrmReportPosPayment.btnCetakUlangClick(Sender: TObject);
 var
@@ -321,6 +323,39 @@ begin
       FormatDateTime('yyyy-MM-dd', edEnd.Date) + '''');
   qryList.Open;
   gtbDayli.DataController.Refresh;
+end;
+
+procedure TfrmReportPosPayment.cxButton3Click(Sender: TObject);
+var
+   transID, idPayment : String;
+   y, recSel : Integer;
+begin
+    recSel := gtbDayli.DataController.GetFocusedRecordIndex;
+    idPayment := vartostr(gtbDayli.DataController.GetValue(recSel, gtbDayliid_payment.Index));
+
+    qryFind.Close;
+    qryFind.SQL.Clear;
+    qryFind.SQL.Add('select ratingcode, id_payment, trans_id from ben_guest_rating where id_payment = ''' + idPayment + '''');
+    qryFind.Open;
+    qryFind.First;
+    for y := 0 to qryFind.RecordCount - 1 do
+        begin
+              transID := qryFind.Fields[2].AsString;
+              qryCari.Close;
+              qryCari.SQL.Clear;
+              qryCari.SQL.Add('select room_id, therapist_id from trans_master where trans_id = ''' + transID + '''');
+              qryCari.Open;
+              Application.CreateForm(TfrmPrintRatingCode, frmPrintRatingCode);
+              with frmPrintRatingCode do
+                   begin
+                        frmPrintRatingCode.lblRatingApps.BarcodeText := 'https://zfeedback.zenfamilyspa.id/?ratingcode=' + qryFind.Fields[0].AsString;
+                        frmPrintRatingCode.lblDetailsRate.Caption := FormatDateTime('dd/MM/yy hh:mm:ss', Now) + ' @ ' +frmMain.APP_OUTLETNAME +
+                            ' Room : ' + qryCari.Fields[0].AsString + ' TR ID : ' + qryCari.Fields[1].AsString;
+                   end;
+              frmPrintRatingCode.qrpPrintRating.Prepare;
+              frmPrintRatingCode.qrpPrintRating.Preview;
+              qryFind.Next;
+        end;
 end;
 
 procedure TfrmReportPosPayment.deleteDouble;

@@ -27,11 +27,10 @@ uses
   dxSkinSharpPlus, dxSkinTheAsphaltWorld, dxSkinVisualStudio2013Blue,
   dxSkinVisualStudio2013Dark, dxSkinVisualStudio2013Light, dxSkinVS2010,
   dxSkinWhiteprint, cxNavigator, Vcl.ComCtrls, dxCore, cxDateUtils,
-  dxBarBuiltInMenu, MemDS, MyAccess;
+  dxBarBuiltInMenu, MemDS, MyAccess, XSuperJSON, XSuperObject;
 
 type
   TfrmRekapHarianOld = class(TForm)
-    Label4: TLabel;
     cxGrid1Level1: TcxGridLevel;
     cxGrid1: TcxGrid;
     rbSearch: TcxRadioGroup;
@@ -137,6 +136,7 @@ type
     procedure CariJadwalTetap;
     procedure CariFinger;
     procedure CariKomisi;
+    procedure CariKomisiBaru;
     procedure CariCuti;
     procedure CariLain;
     procedure CariLembur;
@@ -1481,6 +1481,81 @@ begin
      '#' + FormatFloat('#,#', KOMISITOT));}
 end;
 
+procedure TfrmRekapHarianOld.CariKomisiBaru;
+var
+   valueKomisi, nSubtotal, varKomisi : Double;
+   z, x, y, typeKomisi : Integer;
+   kodeItem, mstrTransID : String;
+   qryKomisi1, qryKomisi2, qryKomisi3 : TMyQuery;
+   jSonItem : XSuperObject.ISuperObject;
+begin
+  //ShowMessage('Komisi Baru on OLD');
+  KOMISITOT := 0;
+  nSubtotal := 0;
+  qryKomisi1 := TMyQuery.Create(Self);
+  qryKomisi1.Connection := DMDB.dbInternal;
+  qryKomisi1.SQL.Add('select * from temptable');
+  qryKomisi1.Active := true;
+
+  qryKomisi2 := TMyQuery.Create(Self);
+  qryKomisi2.Connection := DMDB.dbInternal;
+  qryKomisi2.SQL.Add('select * from temptable');
+  qryKomisi2.Active := true;
+
+  qryKomisi3 := TMyQuery.Create(Self);
+  qryKomisi3.Connection := DMDB.dbInternal;
+  qryKomisi3.SQL.Add('select * from temptable');
+  qryKomisi3.Active := true;
+
+
+  qryKomisi1.Close;
+  qryKomisi1.SQL.Clear;
+  qryKomisi1.SQL.Add('select trans_master.trans_id FROM trans_master WHERE trans_master.tanggal = ''' +
+  FormatDateTime('yyyy-MM-dd', TANGGALCARI) + ''' AND trans_master.status_trans = ''' +
+  'PAID' + ''' AND trans_master.therapist_id = ''' + IDFINGER + ''' ORDER BY trans_master.trans_id ASC');
+  qryKomisi1.Open;
+  qryKomisi1.First;
+  for x := 0 to qryKomisi1.RecordCount - 1 do
+      begin
+        mstrTransID := qryKomisi1.Fields[0].AsString;
+        qryKomisi2.Close;
+        qryKomisi2.SQL.Clear;
+        qryKomisi2.SQL.Add('select trans_detail.id_trans, trans_detail.trans_type_id ,trans_detail.produk_jasa_id, trans_detail.subtotal, ' +
+            '(select main_menu.notes from main_menu where main_menu.menu_id = trans_detail.produk_jasa_id) as notes ' +
+            'from trans_detail where id_trans = ''' + mstrTransID + '''');
+        qryKomisi2.Open;
+        qryKomisi2.First;
+        for z := 0 to qryKomisi2.RecordCount -1 do
+            begin
+                 jSonItem := XSuperobject.SO(qryKomisi2.Fields[4].AsString);
+                 typeKomisi := jSonItem.I['typeKomisi'];
+                 valueKomisi := jSonItem.F['valueKomisi'];
+                 if (valueKomisi > 0) then
+                   begin
+                        if (typeKomisi = 0) then
+                           begin
+                                nSubtotal := qryKomisi2.Fields[3].AsFloat;
+                                varKomisi := nSubtotal * valueKomisi / 100;
+                                KOMISITOT := KOMISITOT + varKomisi;
+                           end
+                        else if (typeKomisi = 1) then
+                           begin
+                                KOMISITOT := KOMISITOT + valueKomisi;
+                           end;
+                   end
+                 else if (valueKomisi <= 0) then
+                   begin
+                        KOMISITOT := KOMISITOT + 0;
+                   end;
+                qryKomisi2.Next;
+            end;
+          qryKomisi1.Next;
+      end;
+  qryKomisi1.Free;
+  qryKomisi2.Free;
+  qryKomisi3.Free;
+end;
+
 procedure TfrmRekapHarianOld.CariAbsenHarian;
 var
   i, jmlHari, lamaKerja, lamaReal, selMsk, selKlr, nLembur,sLemb,
@@ -1513,7 +1588,7 @@ begin
       gtvRekap.DataController.SetValue(NEWREC, gtvRekapKomisi.Index, 0);
       //ShowMessage('1A');
       TANGGALCARI := nHari;
-      CariKomisi;
+      CariKomisiBaru;
       CariUMX3;
       //ShowMessage('1B');
 //----------------------------------------------------------------------------------------------------------

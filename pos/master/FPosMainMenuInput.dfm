@@ -2,7 +2,7 @@ object frmPosMainMenuInput: TfrmPosMainMenuInput
   Left = 0
   Top = 0
   Caption = '  Main Menu Input'
-  ClientHeight = 438
+  ClientHeight = 464
   ClientWidth = 635
   Color = clMoneyGreen
   Font.Charset = DEFAULT_CHARSET
@@ -15,7 +15,7 @@ object frmPosMainMenuInput: TfrmPosMainMenuInput
   OnCreate = FormCreate
   DesignSize = (
     635
-    438)
+    464)
   PixelsPerInch = 96
   TextHeight = 16
   object Label1: TLabel
@@ -60,7 +60,7 @@ object frmPosMainMenuInput: TfrmPosMainMenuInput
     Left = 108
     Top = 100
     Properties.ReadOnly = True
-    TabOrder = 1
+    TabOrder = 2
     Width = 289
   end
   object edJenis: TcxComboBox
@@ -71,7 +71,7 @@ object frmPosMainMenuInput: TfrmPosMainMenuInput
     Properties.Items.Strings = (
       'BM'
       'RF')
-    TabOrder = 2
+    TabOrder = 3
     Width = 289
   end
   object cxLabel2: TcxLabel
@@ -118,7 +118,7 @@ object frmPosMainMenuInput: TfrmPosMainMenuInput
     Left = 108
     Top = 160
     Properties.CharCase = ecUpperCase
-    TabOrder = 3
+    TabOrder = 8
     Width = 519
   end
   object edHargaUtama: TcxCalcEdit
@@ -128,7 +128,7 @@ object frmPosMainMenuInput: TfrmPosMainMenuInput
     EditValue = 0.000000000000000000
     Properties.UseThousandSeparator = True
     Properties.OnEditValueChanged = edHargaUtamaPropertiesEditValueChanged
-    TabOrder = 4
+    TabOrder = 9
     Width = 201
   end
   object cxLabel6: TcxLabel
@@ -148,7 +148,7 @@ object frmPosMainMenuInput: TfrmPosMainMenuInput
     Top = 190
     EditValue = 0.000000000000000000
     Properties.UseThousandSeparator = True
-    TabOrder = 5
+    TabOrder = 12
     Width = 121
   end
   object cxLabel8: TcxLabel
@@ -164,7 +164,7 @@ object frmPosMainMenuInput: TfrmPosMainMenuInput
     EditValue = 0.000000000000000000
     Properties.UseThousandSeparator = True
     Properties.OnEditValueChanged = edDiscHHPropertiesEditValueChanged
-    TabOrder = 6
+    TabOrder = 14
     Width = 65
   end
   object cxLabel9: TcxLabel
@@ -179,7 +179,7 @@ object frmPosMainMenuInput: TfrmPosMainMenuInput
     EditValue = 0.000000000000000000
     Properties.ReadOnly = True
     Properties.UseThousandSeparator = True
-    TabOrder = 7
+    TabOrder = 16
     Width = 147
   end
   object cxLabel10: TcxLabel
@@ -195,7 +195,7 @@ object frmPosMainMenuInput: TfrmPosMainMenuInput
     EditValue = 0.000000000000000000
     Properties.UseThousandSeparator = True
     Properties.OnEditValueChanged = edDiscNormalPropertiesEditValueChanged
-    TabOrder = 8
+    TabOrder = 18
     Width = 65
   end
   object cxLabel11: TcxLabel
@@ -211,7 +211,7 @@ object frmPosMainMenuInput: TfrmPosMainMenuInput
     EditValue = 0.000000000000000000
     Properties.ReadOnly = True
     Properties.UseThousandSeparator = True
-    TabOrder = 9
+    TabOrder = 20
     Width = 147
   end
   object ckKeterangan: TcxCheckBox
@@ -221,12 +221,12 @@ object frmPosMainMenuInput: TfrmPosMainMenuInput
     Properties.ValueChecked = 'Y'
     Properties.ValueGrayed = 'N'
     Properties.ValueUnchecked = 'N'
-    TabOrder = 11
+    TabOrder = 21
   end
   object edKeterangan: TcxTextEdit
     Left = 108
     Top = 277
-    TabOrder = 10
+    TabOrder = 22
     Width = 519
   end
   object cxLabel12: TcxLabel
@@ -250,7 +250,7 @@ object frmPosMainMenuInput: TfrmPosMainMenuInput
     Style.Font.Name = 'Tahoma'
     Style.Font.Style = [fsBold]
     Style.IsFontAssigned = True
-    TabOrder = 12
+    TabOrder = 24
   end
   object btnSimpan: TcxButton
     Left = 140

@@ -18,11 +18,7 @@ object frmIjinLainCetak: TfrmIjinLainCetak
     Top = 8
     Width = 794
     Height = 378
-    Frame.Color = clBlack
-    Frame.DrawTop = False
-    Frame.DrawBottom = False
-    Frame.DrawLeft = False
-    Frame.DrawRight = False
+    ShowingPreview = False
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
@@ -61,6 +57,7 @@ object frmIjinLainCetak: TfrmIjinLainCetak
     PrinterSettings.UseCustomPaperCode = False
     PrinterSettings.CustomPaperCode = 0
     PrinterSettings.PrintMetaFile = False
+    PrinterSettings.MemoryLimit = 1000000
     PrinterSettings.PrintQuality = 0
     PrinterSettings.Collate = 0
     PrinterSettings.ColorOption = 0
@@ -70,6 +67,8 @@ object frmIjinLainCetak: TfrmIjinLainCetak
     Zoom = 100
     PrevFormStyle = fsMDIChild
     PreviewInitialState = wsNormal
+    PreviewWidth = 500
+    PreviewHeight = 500
     PrevInitialZoom = qrZoomToFit
     PreviewDefaultSaveType = stQRP
     PreviewLeft = 0
@@ -79,13 +78,11 @@ object frmIjinLainCetak: TfrmIjinLainCetak
       Top = 19
       Width = 756
       Height = 246
-      Frame.Color = clBlack
       Frame.DrawTop = True
       Frame.DrawBottom = True
       Frame.DrawLeft = True
       Frame.DrawRight = True
       AlignToBottom = False
-      Color = clWhite
       TransparentBand = False
       ForceNewColumn = False
       ForceNewPage = False
@@ -100,22 +97,18 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 8
         Width = 745
         Height = 23
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           60.854166666666670000
           10.583333333333330000
           21.166666666666670000
           1971.145833333333000000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taCenter
         AlignToBand = False
         AutoSize = False
-        AutoStretch = False
-        Caption = 'SURAT LEMBUR'
+        Caption = 'SURAT IJIN KELUAR'
         Color = clWhite
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -124,9 +117,9 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Font.Style = [fsBold]
         ParentFont = False
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 14
       end
       object QRLabel2: TQRLabel
@@ -134,27 +127,22 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 44
         Width = 100
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           18.520833333333330000
           116.416666666666700000
           264.583333333333300000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taLeftJustify
         AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
         Caption = 'Diajukan Tanggal'
         Color = clWhite
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object QRLabel3: TQRLabel
@@ -162,27 +150,22 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 67
         Width = 66
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           18.520833333333330000
           177.270833333333300000
           174.625000000000000000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taLeftJustify
         AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
         Caption = 'Tanggal Ijin'
         Color = clWhite
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object QRLabel5: TQRLabel
@@ -190,27 +173,22 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 90
         Width = 120
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           18.520833333333330000
           238.125000000000000000
           317.500000000000000000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taLeftJustify
         AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
         Caption = 'Kode Karyawan / ID '
         Color = clWhite
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object QRLabel6: TQRLabel
@@ -218,27 +196,22 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 118
         Width = 96
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           18.520833333333330000
           312.208333333333300000
           254.000000000000000000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taLeftJustify
         AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
         Caption = 'Nama Karyawan'
         Color = clWhite
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object QRLabel7: TQRLabel
@@ -246,27 +219,22 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 146
         Width = 67
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           18.520833333333330000
           386.291666666666700000
           177.270833333333300000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taLeftJustify
         AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
         Caption = 'Keterangan'
         Color = clWhite
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object QRLabel9: TQRLabel
@@ -274,27 +242,22 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 44
         Width = 13
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           367.770833333333300000
           116.416666666666700000
           34.395833333333330000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taLeftJustify
         AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
         Caption = ' : '
         Color = clWhite
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object QRLabel10: TQRLabel
@@ -302,27 +265,22 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 67
         Width = 13
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           367.770833333333300000
           177.270833333333300000
           34.395833333333330000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taLeftJustify
         AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
         Caption = ' : '
         Color = clWhite
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object QRLabel12: TQRLabel
@@ -330,27 +288,22 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 90
         Width = 13
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           367.770833333333300000
           238.125000000000000000
           34.395833333333330000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taLeftJustify
         AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
         Caption = ' : '
         Color = clWhite
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object QRLabel13: TQRLabel
@@ -358,27 +311,22 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 118
         Width = 13
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           367.770833333333300000
           312.208333333333300000
           34.395833333333330000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taLeftJustify
         AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
         Caption = ' : '
         Color = clWhite
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object QRLabel14: TQRLabel
@@ -386,27 +334,22 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 146
         Width = 13
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           367.770833333333300000
           386.291666666666700000
           34.395833333333330000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taLeftJustify
         AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
         Caption = ' : '
         Color = clWhite
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object QRLabel16: TQRLabel
@@ -414,21 +357,17 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 212
         Width = 132
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           87.312500000000000000
           560.916666666666700000
           349.250000000000000000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taCenter
         AlignToBand = False
         AutoSize = False
-        AutoStretch = False
         Caption = 'Karyawan'
         Color = clWhite
         Font.Charset = DEFAULT_CHARSET
@@ -438,9 +377,9 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Font.Style = [fsBold, fsUnderline]
         ParentFont = False
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object QRLabel17: TQRLabel
@@ -448,21 +387,17 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 212
         Width = 132
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           478.895833333333300000
           560.916666666666700000
           349.250000000000000000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taCenter
         AlignToBand = False
         AutoSize = False
-        AutoStretch = False
         Caption = 'Leader'
         Color = clWhite
         Font.Charset = DEFAULT_CHARSET
@@ -472,9 +407,9 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Font.Style = [fsBold, fsUnderline]
         ParentFont = False
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object QRLabel18: TQRLabel
@@ -482,21 +417,17 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 212
         Width = 132
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           965.729166666666700000
           560.916666666666700000
           349.250000000000000000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taCenter
         AlignToBand = False
         AutoSize = False
-        AutoStretch = False
         Caption = 'Head Dipartement'
         Color = clWhite
         Font.Charset = DEFAULT_CHARSET
@@ -506,9 +437,9 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Font.Style = [fsBold, fsUnderline]
         ParentFont = False
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object QRLabel19: TQRLabel
@@ -516,21 +447,17 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 212
         Width = 144
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           1505.479166666667000000
           560.916666666666700000
           381.000000000000000000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taCenter
         AlignToBand = False
         AutoSize = False
-        AutoStretch = False
         Caption = 'Operational Manager'
         Color = clWhite
         Font.Charset = DEFAULT_CHARSET
@@ -540,9 +467,9 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Font.Style = [fsBold, fsUnderline]
         ParentFont = False
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object lblTanggal: TQRLabel
@@ -550,27 +477,22 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 44
         Width = 17
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           441.854166666666700000
           116.416666666666700000
           44.979166666666670000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taLeftJustify
         AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
         Caption = '....'
         Color = clWhite
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object lblTglIjin: TQRLabel
@@ -578,27 +500,22 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 67
         Width = 17
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           441.854166666666700000
           177.270833333333300000
           44.979166666666670000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taLeftJustify
         AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
         Caption = '....'
         Color = clWhite
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object lblKode: TQRLabel
@@ -606,27 +523,22 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 90
         Width = 17
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           441.854166666666700000
           238.125000000000000000
           44.979166666666670000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taLeftJustify
         AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
         Caption = '....'
         Color = clWhite
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object lblNama: TQRLabel
@@ -634,27 +546,22 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 118
         Width = 17
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           441.854166666666700000
           312.208333333333300000
           44.979166666666670000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taLeftJustify
         AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
         Caption = '....'
         Color = clWhite
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object lblKet: TQRLabel
@@ -662,27 +569,23 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 146
         Width = 574
         Height = 51
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           134.937500000000000000
           441.854166666666700000
           386.291666666666700000
           1518.708333333333000000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = False
-        AutoStretch = False
         Caption = '....'
         Color = clWhite
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
       object lblNoIjin: TQRLabel
@@ -690,27 +593,22 @@ object frmIjinLainCetak: TfrmIjinLainCetak
         Top = 37
         Width = 17
         Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
           1936.750000000000000000
           97.895833333333330000
           44.979166666666670000)
         XLColumn = 0
+        XLNumFormat = nfGeneral
+        ActiveInPreview = False
         Alignment = taRightJustify
         AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
         Caption = '....'
         Color = clWhite
         Transparent = False
-        WordWrap = True
         ExportAs = exptText
         WrapStyle = BreakOnSpaces
+        VerticalAlignment = tlTop
         FontSize = 10
       end
     end
@@ -719,13 +617,7 @@ object frmIjinLainCetak: TfrmIjinLainCetak
       Top = 265
       Width = 756
       Height = 40
-      Frame.Color = clBlack
-      Frame.DrawTop = False
-      Frame.DrawBottom = False
-      Frame.DrawLeft = False
-      Frame.DrawRight = False
       AlignToBottom = False
-      Color = clWhite
       TransparentBand = False
       ForceNewColumn = False
       ForceNewPage = False
