@@ -172,7 +172,8 @@ uses
   FHOMasukBarang in 'product\FHOMasukBarang.pas' {frmHOMasukBarang},
   FPresensiManual in 'Hrd\FPresensiManual.pas' {frmPresensiManual},
   FPosMainMenu in 'pos\master\FPosMainMenu.pas' {frmPosMainMenu},
-  FPeriodeUM in 'Hrd\FPeriodeUM.pas' {frmPeriodeUM};
+  FPeriodeUM in 'Hrd\FPeriodeUM.pas' {frmPeriodeUM},
+  FReportPendapatanHarianApi in 'Report\PosReport\FReportPendapatanHarianApi.pas' {frmReportPendapatanHarianApi};
 
 {$R *.res}
 
@@ -182,5 +183,6 @@ begin
   Application.Title := 'Zen Internal System';
   Application.CreateForm(TdmDB, dmDB);
   Application.CreateForm(TfrmMain, frmMain);
+  Application.CreateForm(TfrmReportPendapatanHarianApi, frmReportPendapatanHarianApi);
   Application.Run;
 end.

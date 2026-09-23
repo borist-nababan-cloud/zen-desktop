@@ -25,3 +25,11 @@ Win32/Debug/config.json
 *.ddp
 *.~*
 *.dsk
+
+
+# Added by Agent for safety
+.env
+*.sql
+*.md
+!README.md
+docs/

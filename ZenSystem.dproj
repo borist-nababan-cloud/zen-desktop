@@ -810,6 +810,10 @@
             <Form>frmPeriodeUM</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="Report\PosReport\FReportPendapatanHarianApi.pas">
+            <Form>frmReportPendapatanHarianApi</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

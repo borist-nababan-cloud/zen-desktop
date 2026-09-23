@@ -52,6 +52,7 @@ object frmMain: TfrmMain
       Index = 0
     end
     object pgPOS: TdxRibbonTab
+      Active = True
       Caption = 'POS'
       Groups = <
         item
@@ -94,7 +95,6 @@ object frmMain: TfrmMain
       Index = 3
     end
     object pgReportPoS: TdxRibbonTab
-      Active = True
       Caption = 'REPORT PoS'
       Groups = <
         item

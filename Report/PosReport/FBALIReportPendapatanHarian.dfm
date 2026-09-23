@@ -71,7 +71,7 @@ object frmBALIReportPendapatanHarian: TfrmBALIReportPendapatanHarian
     TabOrder = 4
     Visible = False
   end
-  object cxButton1: TcxButton
+  object btnClosing: TcxButton
     Left = 16
     Top = 506
     Width = 137
@@ -79,7 +79,7 @@ object frmBALIReportPendapatanHarian: TfrmBALIReportPendapatanHarian
     Anchors = [akLeft, akBottom]
     Caption = 'Close Trans'
     TabOrder = 0
-    OnClick = cxButton1Click
+    OnClick = btnClosingClick
   end
   object edServerTime: TcxDateEdit
     Left = 128
@@ -151,6 +151,15 @@ object frmBALIReportPendapatanHarian: TfrmBALIReportPendapatanHarian
     ScrollBars = ssBoth
     TabOrder = 5
   end
+  object btnTest1: TcxButton
+    Left = 488
+    Top = 36
+    Width = 75
+    Height = 31
+    Caption = 'Test Part 1'
+    TabOrder = 6
+    OnClick = btnTest1Click
+  end
   object PrintGrid: TdxComponentPrinter
     CurrentLink = PrintGridLink1
     Version = 0
@@ -159,6 +168,7 @@ object frmBALIReportPendapatanHarian: TfrmBALIReportPendapatanHarian
     object PrintGridLink1: TdxGridReportLink
       Active = True
       Component = cxGrid1
+      PageNumberFormat = pnfNumeral
       PrinterPage.DMPaper = 9
       PrinterPage.Footer = 200
       PrinterPage.Header = 200
@@ -170,7 +180,8 @@ object frmBALIReportPendapatanHarian: TfrmBALIReportPendapatanHarian
       PrinterPage.PageSize.Y = 11700
       PrinterPage._dxMeasurementUnits_ = 0
       PrinterPage._dxLastMU_ = 1
-      ReportDocument.CreationDate = 46287.459315393520000000
+      ReportDocument.CreationDate = 46287.508545567130000000
+      AssignedFormatValues = [fvDate, fvTime, fvPageNumber]
       OptionsOnEveryPage.Caption = False
       OptionsSize.AutoWidth = True
       OptionsView.Caption = False

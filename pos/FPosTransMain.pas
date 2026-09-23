@@ -119,7 +119,7 @@ implementation
 
 {$R *.dfm}
 uses FdMDB, FMain, FNewMenuTrans, FBuyAdditional, FBuyProduct, FBuyGC,
-     FPrintSO, FPosTransMainDetails, FTestMemoryTable;
+     FPrintSO, FPosTransMainDetails;
 
 function InputCombo(const ACaption, APrompt: string; const AList: TStrings): string;
 

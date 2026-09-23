@@ -484,7 +484,8 @@ uses FConfigSetup, FdmDB, FLogin, FPassword, FGroupManagement, FUserManagement,
   FPayrollPeriode, FLiburNasional, FRegistrationDrivers, FDrivers,
   FTHRPerhitungan, FTHRParameter, FTHRReport, FDriverSelectTrans,
   FPosTransPaymentTips, FPosLapTips, FIjinMasukList, FIjinKeluar, FChangeJadwal,
-  FReportSchedule, FReportPendapatanHarianApi, FPeriodeUM;
+  FReportSchedule, FReportPendapatanHarianApi, FPeriodeUM,
+  FBALIReportPendapatanHarian;
 
 { TForm2 }
 
