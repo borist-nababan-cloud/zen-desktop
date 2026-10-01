@@ -269,7 +269,7 @@ begin
    tvreport.DataController.Post(True);
 
    recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
-   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, 'TOTAL SALES');
+   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, 'GROSS SALES');
 
    qryCari.Close;
    qryCari.SQL.Clear;
@@ -308,7 +308,7 @@ begin
      val3 := VarToStr(tvreport.DataController.Values[i, tvreportColumn3.Index]);
      val4 := VarToStr(tvreport.DataController.Values[i, tvreportColumn4.Index]);
      
-     if (Pos('|PENJUALAN', val2) > 0) or (Pos('|PAYMENT', val2) > 0) or (Pos('|OTHERS|', val2) > 0) or (Pos('TOTAL SALES', val2) > 0) or (Pos('NET SALES', val2) > 0) or (Pos('DETAIL PAYMENT', val2) > 0) then
+     if (Pos('|PENJUALAN', val2) > 0) or (Pos('|PAYMENT', val2) > 0) or (Pos('|OTHERS|', val2) > 0) or (Pos('GROSS SALES', val2) > 0) or (Pos('NET SALES', val2) > 0) or (Pos('DETAIL PAYMENT', val2) > 0) then
      begin
        memSend.Lines.Add('        <tr style="background-color: #fbfbfb; font-weight: bold;">');
      end
@@ -1427,7 +1427,7 @@ begin
    tvreport.DataController.Post(True);
 
    recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
-   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, 'TOTAL SALES');
+   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, 'GROSS SALES');
 
    qryCari.Close;
    qryCari.SQL.Clear;

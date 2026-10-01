@@ -33,3 +33,15 @@ Win32/Debug/config.json
 *.md
 !README.md
 docs/
+
+*.env
+.env
+*.sql
+docs/
+
+
+*.env
+.env
+*.sql
+docs/
+

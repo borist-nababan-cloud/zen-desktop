@@ -229,6 +229,7 @@ object frmReportPendapatanBulanan: TfrmReportPendapatanBulanan
     object PrintGridLink1: TdxGridReportLink
       Active = True
       Component = cxGrid1
+      PageNumberFormat = pnfNumeral
       PrinterPage.DMPaper = 9
       PrinterPage.Footer = 200
       PrinterPage.GrayShading = True
@@ -241,7 +242,8 @@ object frmReportPendapatanBulanan: TfrmReportPendapatanBulanan
       PrinterPage.PageSize.Y = 11700
       PrinterPage._dxMeasurementUnits_ = 0
       PrinterPage._dxLastMU_ = 1
-      ReportDocument.CreationDate = 46083.401220601850000000
+      ReportDocument.CreationDate = 46297.032817256940000000
+      AssignedFormatValues = [fvDate, fvTime, fvPageNumber]
       OptionsOnEveryPage.Caption = False
       OptionsSize.AutoWidth = True
       OptionsView.Caption = False

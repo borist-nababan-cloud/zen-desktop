@@ -116,10 +116,10 @@ begin
    tvreport.DataController.PostEditingData;
    tvreport.DataController.Post(True);
    newRec := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
-   tvreport.DataController.SetValue(newRec, tvreportColumn1.Index, '****');
-   tvreport.DataController.SetValue(newRec, tvreportColumn2.Index, '**************** |OTHERS| ****************');
-   tvreport.DataController.SetValue(newRec, tvreportColumn3.Index, '****');
-   tvreport.DataController.SetValue(newRec, tvreportColumn4.Index, '****');
+   tvreport.DataController.SetValue(newRec, tvreportColumn1.Index, '*');
+   tvreport.DataController.SetValue(newRec, tvreportColumn2.Index, '|OTHERS|');
+   tvreport.DataController.SetValue(newRec, tvreportColumn3.Index, '*');
+   tvreport.DataController.SetValue(newRec, tvreportColumn4.Index, '*');
    tvreport.DataController.PostEditingData;
    tvreport.DataController.Post(True);
    qryFind.Close;
@@ -257,7 +257,7 @@ end;
 procedure TfrmReportPendapatanBulanan.CariPembayaran;
 var
   idPayment, keterangan : String;
-  subtotal : Double;
+  subtotal, totalSales, totalPromo, totalDisc, driversFee, netSales : Double;
   i, recSel: Integer;
 begin
    idPayment := frmMain.APP_OUTLETID + '.PAY.' + FormatDateTime('yyMMdd', tglCari) + '%';
@@ -274,10 +274,10 @@ begin
    tvreport.DataController.Post(True);
 
    recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
-   tvreport.DataController.SetValue(recSel, tvreportColumn1.Index, '****');
-   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, '**************** |PAYMENT BY CASH| ****************');
-   tvreport.DataController.SetValue(recSel, tvreportColumn3.Index, '****');
-   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, '****');
+   tvreport.DataController.SetValue(recSel, tvreportColumn1.Index, '*');
+   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, '|PAYMENT BY CASH|');
+   tvreport.DataController.SetValue(recSel, tvreportColumn3.Index, '*');
+   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, '*');
    tvreport.DataController.PostEditingData;
    tvreport.DataController.Post(True);
 
@@ -301,11 +301,11 @@ begin
    tvreport.DataController.PostEditingData;
    tvreport.DataController.Post(True);
 
-//   recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
-//   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, 'Exchange');
-//   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, FormatFloat('#,#', qryPayment.Fields[2].AsFloat));
-//   tvreport.DataController.PostEditingData;
-//   tvreport.DataController.Post(True);
+   recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
+   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, 'Exchange');
+   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, FormatFloat('#,#', qryPayment.Fields[2].AsFloat));
+   tvreport.DataController.PostEditingData;
+   tvreport.DataController.Post(True);
 
    subtotal := qryPayment.Fields[0].AsFloat - qryPayment.Fields[2].AsFloat;
    recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
@@ -315,10 +315,10 @@ begin
    tvreport.DataController.Post(True);
 
    recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
-   tvreport.DataController.SetValue(recSel, tvreportColumn1.Index, '****');
-   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, '**************** |PAYMENT NON CASH| ****************');
-   tvreport.DataController.SetValue(recSel, tvreportColumn3.Index, '****');
-   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, '****');
+   tvreport.DataController.SetValue(recSel, tvreportColumn1.Index, '*');
+   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, '|PAYMENT NON CASH|');
+   tvreport.DataController.SetValue(recSel, tvreportColumn3.Index, '*');
+   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, '*');
    tvreport.DataController.PostEditingData;
    tvreport.DataController.Post(True);
    //------------------------------------------------------------------------------
@@ -438,6 +438,64 @@ begin
          Application.ProcessMessages;
      end;
 
+   // Get Total Sales
+   qryPayment.Close;
+   qryPayment.SQL.Clear;
+   qryPayment.SQL.Add('select sum(subtotal) from trans_detail ' +
+         'where tanggal >= ' + QuotedStr(FormatDateTime('yyyy-MM-dd', tglAwal)) +
+         ' AND tanggal <= ' + QuotedStr(FormatDateTime('yyyy-MM-dd', tglAkhir)));
+   qryPayment.Open;
+   if not qryPayment.Fields[0].IsNull then totalSales := qryPayment.Fields[0].AsFloat else totalSales := 0;
+
+   // Get Total Promos & Discounts
+   qryPayment.Close;
+   qryPayment.SQL.Clear;
+   qryPayment.SQL.Add('select sum(vpromo), sum(vdisc) from trans_payment_detail ' +
+         'where tanggal >= ' + QuotedStr(FormatDateTime('yyyy-MM-dd', tglAwal)) +
+         ' AND tanggal <= ' + QuotedStr(FormatDateTime('yyyy-MM-dd', tglAkhir)));
+   qryPayment.Open;
+   if not qryPayment.Fields[0].IsNull then totalPromo := qryPayment.Fields[0].AsFloat else totalPromo := 0;
+   if not qryPayment.Fields[1].IsNull then totalDisc := qryPayment.Fields[1].AsFloat else totalDisc := 0;
+
+   // Get Driver's Fee
+   qryPayment.Close;
+   qryPayment.SQL.Clear;
+   qryPayment.SQL.Add('select sum(total_fee) from ben_drivers_trans_master ' +
+         'where tanggal >= ' + QuotedStr(FormatDateTime('yyyy-MM-dd', tglAwal)) +
+         ' AND tanggal <= ' + QuotedStr(FormatDateTime('yyyy-MM-dd', tglAkhir)));
+   qryPayment.Open;
+
+   recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
+   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, 'DRIVERS FEE');
+   if (not qryPayment.IsEmpty) and (not qryPayment.Fields[0].IsNull) and (qryPayment.Fields[0].AsFloat > 0) then
+   begin
+     driversFee := qryPayment.Fields[0].AsFloat;
+     tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, FormatFloat('#,#', driversFee));
+   end
+   else
+   begin
+     driversFee := 0;
+     tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, '');
+   end;
+   tvreport.DataController.PostEditingData;
+   tvreport.DataController.Post(True);
+
+   // Calculate Net Sales
+   netSales := totalSales - totalPromo - totalDisc - driversFee;
+
+   // Blank Spacer Row
+   recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
+   tvreport.DataController.SetValue(recSel, tvreportColumn1.Index, ' ');
+   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, ' ');
+   tvreport.DataController.PostEditingData;
+   tvreport.DataController.Post(True);
+
+   // Insert NET SALES Row
+   recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
+   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, '|NET SALES|');
+   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, FormatFloat('#,#', netSales));
+   tvreport.DataController.PostEditingData;
+   tvreport.DataController.Post(True);
 end;
 
 procedure TfrmReportPendapatanBulanan.CariSummary;
@@ -472,27 +530,17 @@ begin
     memSend.Lines.Add('<!DOCTYPE html>');
     memSend.Lines.Add('<html>' + #13 + ' <head>');
     memSend.Lines.Add('<meta name="viewport" content="width=device-width, initial-scale=1">');
-    memSend.Lines.Add('<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">');
-    memSend.Lines.Add('<style>table{font-family: arial, sans-serif; border-collapse: ' +
-        'collapse;} td, th {border: 1px solid #dddddd; text-align: left; ' +
-        'padding: 8px; } tr:nth-child(odd) { background-color: #c6f7d3; } </style>');
     memSend.Lines.Add('<title> Summary Report ' + frmMain.APP_OUTLETNAME + '</title>');
-    memSend.Lines.Add('</head>' + #13 + '<body>');
-    memSend.Lines.Add('<div class="w3-container">');
-    memSend.Lines.Add('<img src="https://drive.google.com/uc?export=view&id=1XqSBvnRkiLJ7VyuQJMxsT7BTf9cZRdK3" alt="ZEN" width="64" height="64">');
-    memSend.Lines.Add('</div');
-    memSend.Lines.Add('<div class="w3-container">');
-    memSend.Lines.Add('<h3>Summary Report Periodic ' + frmMain.APP_OUTLETNAME + '</h3>');
-    memSend.Lines.Add('<h4>Date ' + FormatDateTime('dd/MMM/yyyy', tglAwal) + ' To ' + FormatDateTime('dd/MMM/yyyy', tglAkhir) + '</h4>');
-    memSend.Lines.Add('<hr>');
-    //memSend.Lines.Add('Summary Report ' + frmMain.APP_OUTLETNAME);
-    //memSend.Lines.Add('Date : ' + FormatDateTime('dd/MMM/yyyy', tglCari));
-    //memSend.Lines.Add('----------------------------------------------------------------------------');
-    memSend.Lines.Add('<br>');
-    memSend.Lines.Add('</div>');
-    memSend.Lines.Add('<div class="w3-container">');
-    memSend.Lines.Add('<table>');
-    memSend.Lines.Add('<tr><td colspan="3"><b>Report Details</b></td></tr>');
+    memSend.Lines.Add('</head>' + #13 + '<body style="font-family: Arial, sans-serif; background-color: #f4f7f6; padding: 2px; margin: 0;">');
+    memSend.Lines.Add('<div style="width: 100%; max-width: 100%; margin: 0 auto; background-color: #ffffff; padding: 5px; border-radius: 8px; box-sizing: border-box;">');
+    memSend.Lines.Add('  <div style="text-align: center; margin-bottom: 10px; border-bottom: 2px solid #3498db; padding-bottom: 10px;">');
+    memSend.Lines.Add('    <img src="https://drive.google.com/uc?export=view&id=1XqSBvnRkiLJ7VyuQJMxsT7BTf9cZRdK3" alt="ZEN" width="50" height="50" />');
+    memSend.Lines.Add('    <h2 style="color: #2c3e50; margin: 10px 0 5px 0; font-size: 16px;">Summary Report Periodic ' + frmMain.APP_OUTLETNAME + '</h2>');
+    memSend.Lines.Add('    <h4 style="color: #7f8c8d; margin: 0; font-size: 13px;">Date ' + FormatDateTime('dd/MMM/yyyy', tglAwal) + ' To ' + FormatDateTime('dd/MMM/yyyy', tglAkhir) + '</h4>');
+    memSend.Lines.Add('  </div>');
+    memSend.Lines.Add('    <table width="100%" border="1" cellpadding="4" cellspacing="0" style="border-collapse: collapse; width: 100%; max-width: 100%; font-size: 12px; border-color: #dddddd; word-wrap: break-word;">');
+    memSend.Lines.Add('      <tbody>');
+    memSend.Lines.Add('        <tr style="background-color: #e8f4f8; font-weight: bold;"><td colspan="3"><b>Report Details</b></td></tr>');
 
     qrySum1.Close;
     qrySum1.SQL.Clear;
@@ -576,7 +624,7 @@ begin
        FormatDateTime('yyyy-MM-dd', tglAwal) + ''' AND tanggal <= ''' + FormatDateTime('yyyy-MM-dd', tglAkhir) +
        ''' AND trans_type_id = ''' + 'BP' + '''');
     qrySum1.Open;
-    memSend.Lines.Add('<tr><td></td><td align="right">Total Product </td><td align="right" text-align= "right">' + FormatFloat('#,#', qrySum1.Fields[0].AsFloat) + '</td></tr>');
+    memSend.Lines.Add('<tr><td></td><td>Total Product </td><td align="right" text-align= "right">' + FormatFloat('#,#', qrySum1.Fields[0].AsFloat) + '</td></tr>');
 
     qrySum1.Close;
     qrySum1.SQL.Clear;
@@ -772,16 +820,7 @@ begin
        memSend.Lines.Add('<tr><td></td><td>'+ 'Null' +'</td><td></td></tr>');
      end;
 
-   memSend.Lines.Add('</table>');
-   memSend.Lines.Add('</div>');
-   memSend.Lines.Add('<div class="w3-container" style="width:50%">');
-   memSend.Lines.Add('<p><strong>Sales By Month Current Year</strong></p>');
-   CreateBar;
-   memSend.Lines.Add('</div>');
-   memSend.Lines.Add('<br>');
-   memSend.Lines.Add('<hr>');
-   memSend.Lines.Add('</body>');
-   memSend.Lines.Add('</html>');
+   // Table and body left open so grid rows can be appended in cxButton1Click
    qrySum1.Free;
    qrySum2.Free;
    qrySum3.Free;
@@ -792,6 +831,7 @@ var
   i, noUrut, recSel, intTahun, intBulan : Integer;
   keterangan1, keterangan2 : String;
   GrandPenjualan, totBm, totRF, totGC, totProd, qtyRoomRF, qtyRoomBM : Double;
+  inOthersSection: Boolean;
 begin
   intTahun := StrToInt(edYear.Text);
   intBulan := StrToInt(edMonth.Text);
@@ -805,16 +845,7 @@ begin
   lblTtest.Caption := 'Load ' + FormatDateTime('dd MMMM yyyy', tglAwal) + ' to ' + FormatDateTime('dd MMMM yyyy', tglAkhir);
   Application.ProcessMessages;
 
-   TTask.Run(
-        procedure
-          begin
-             TThread.Synchronize(nil,
-                procedure
-                begin
-                   frmReportPendapatanBulanan.CariSummary;
-                end);
-          end
-       );
+   CariSummary;
 
    GrandPenjualan := 0;
    tvreport.DataController.SelectAll;
@@ -832,10 +863,10 @@ begin
    qryCari.First;
    noUrut := 0;
    recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
-   tvreport.DataController.SetValue(recSel, tvreportColumn1.Index, '****');
-   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, '**************** |PENJUALAN JASA| ****************');
-   tvreport.DataController.SetValue(recSel, tvreportColumn3.Index, '****');
-   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, '****');
+   tvreport.DataController.SetValue(recSel, tvreportColumn1.Index, '*');
+   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, '|PENJUALAN JASA|');
+   tvreport.DataController.SetValue(recSel, tvreportColumn3.Index, '*');
+   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, '*');
    tvreport.DataController.PostEditingData;
    tvreport.DataController.Post(True);
    for i := 0 to qryCari.RecordCount - 1 do
@@ -889,10 +920,10 @@ begin
    qryCari.First;
    noUrut := 0;
    recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
-   tvreport.DataController.SetValue(recSel, tvreportColumn1.Index, '****');
-   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, '**************** |PENJUALAN ADDITIONAL| ****************');
-   tvreport.DataController.SetValue(recSel, tvreportColumn3.Index, '****');
-   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, '****');
+   tvreport.DataController.SetValue(recSel, tvreportColumn1.Index, '*');
+   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, '|PENJUALAN ADDITIONAL|');
+   tvreport.DataController.SetValue(recSel, tvreportColumn3.Index, '*');
+   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, '*');
    tvreport.DataController.PostEditingData;
    tvreport.DataController.Post(True);
    for i := 0 to qryCari.RecordCount - 1 do
@@ -945,10 +976,10 @@ begin
    qryCari.First;
    noUrut := 0;
    recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
-   tvreport.DataController.SetValue(recSel, tvreportColumn1.Index, '****');
-   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, '**************** |PENJUALAN PRODUK| ****************');
-   tvreport.DataController.SetValue(recSel, tvreportColumn3.Index, '****');
-   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, '****');
+   tvreport.DataController.SetValue(recSel, tvreportColumn1.Index, '*');
+   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, '|PENJUALAN PRODUK|');
+   tvreport.DataController.SetValue(recSel, tvreportColumn3.Index, '*');
+   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, '*');
    tvreport.DataController.PostEditingData;
    tvreport.DataController.Post(True);
    for i := 0 to qryCari.RecordCount - 1 do
@@ -989,10 +1020,10 @@ begin
    qryCari.First;
    noUrut := 0;
    recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
-   tvreport.DataController.SetValue(recSel, tvreportColumn1.Index, '****');
-   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, '**************** |PENJUALAN GC| ****************');
-   tvreport.DataController.SetValue(recSel, tvreportColumn3.Index, '****');
-   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, '****');
+   tvreport.DataController.SetValue(recSel, tvreportColumn1.Index, '*');
+   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, '|PENJUALAN GC|');
+   tvreport.DataController.SetValue(recSel, tvreportColumn3.Index, '*');
+   tvreport.DataController.SetValue(recSel, tvreportColumn4.Index, '*');
    tvreport.DataController.PostEditingData;
    tvreport.DataController.Post(True);
    for i := 0 to qryCari.RecordCount - 1 do
@@ -1026,7 +1057,7 @@ begin
 
 
    recSel := tvreport.DataController.InsertRecord(tvreport.DataController.RecordCount);
-   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, '**************** |TOTAL SALES| ****************');
+   tvreport.DataController.SetValue(recSel, tvreportColumn2.Index, '|GROSS SALES|');
    qryCari.Close;
    qryCari.SQL.Clear;
    qryCari.SQL.Add('select sum(subtotal) from trans_detail where tanggal >= ''' +
@@ -1101,6 +1132,51 @@ begin
 
    CariDetails;
    CariPembayaran;
+
+   memSend.Lines.Add('        <tr style="background-color: #e8f4f8; font-weight: bold;">');
+   memSend.Lines.Add('          <td colspan="3" style="text-align: center; border-top: 2px solid #3498db; padding-top: 20px;"><b>Detail Laporan Penjualan (Grid Report)</b></td>');
+   memSend.Lines.Add('        </tr>');
+
+   inOthersSection := False;
+
+   for i := 0 to tvreport.DataController.RecordCount - 1 do
+   begin
+     keterangan1 := VarToStr(tvreport.DataController.Values[i, tvreportColumn2.Index]);
+     
+     if Pos('|OTHERS|', keterangan1) > 0 then inOthersSection := True;
+     if Pos('|PAYMENT BY CASH|', keterangan1) > 0 then inOthersSection := False;
+
+     if not inOthersSection then
+     begin
+       if (Pos('|PENJUALAN', keterangan1) > 0) or (Pos('|PAYMENT', keterangan1) > 0) or (Pos('GROSS SALES', keterangan1) > 0) or (Pos('NET SALES', keterangan1) > 0) or (Pos('DETAIL PAYMENT', keterangan1) > 0) then
+       begin
+         memSend.Lines.Add('        <tr style="background-color: #fbfbfb; font-weight: bold;">');
+       end
+       else
+       begin
+         memSend.Lines.Add('        <tr>');
+       end;
+       
+       memSend.Lines.Add('          <td>' + VarToStr(tvreport.DataController.Values[i, tvreportColumn1.Index]) + '</td>');
+       memSend.Lines.Add('          <td>' + keterangan1 + '</td>');
+       memSend.Lines.Add('          <td style="text-align: right;">' + VarToStr(tvreport.DataController.Values[i, tvreportColumn4.Index]) + '</td>');
+       memSend.Lines.Add('        </tr>');
+     end;
+   end;
+   
+   memSend.Lines.Add('      </tbody>');
+   memSend.Lines.Add('    </table>');
+   memSend.Lines.Add('</div>'); // close report container
+
+   // Render Sales By Month graphic at the very bottom
+   memSend.Lines.Add('  <br>');
+   memSend.Lines.Add('  <div style="width: 100%; max-width: 100%; margin: 0 auto; background-color: #ffffff; padding: 15px; border-radius: 8px; box-sizing: border-box; text-align: left;">');
+   memSend.Lines.Add('    <h3 style="color: #2c3e50; font-size: 14px; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px;">Sales By Month Current Year</h3>');
+   CreateBar;
+   memSend.Lines.Add('  </div>');
+   
+   memSend.Lines.Add('</body></html>');
+
    ShowMessage('Closing Done' + #13 + 'Please Check Your Data !!');
 end;
 
@@ -1333,22 +1409,37 @@ procedure TfrmReportPendapatanBulanan.CreateBar;
 var
   intBulan, intTahun, intHari, intBulanBar : Word;
   tglBarAwal, tglBarAkhir : TDate;
-  i: Integer;
-  nPersen : Double;
-  strPersen, keterangan : String;
-  qryBar1, qryBar2 : TMyQuery;
+  i, barWidth: Integer;
+  qryBar1 : TMyQuery;
+  nMaxSales, nCurrentSales: Double;
 begin
   qryBar1 := TMyQuery.Create(Self);
   qryBar1.Connection := dmDB.dbInternal;
-  qryBar1.SQL.Add('select * from temptable');
-  qryBar1.Active := true;
-
-  qryBar2 := TMyQuery.Create(Self);
-  qryBar2.Connection := dmDB.dbInternal;
-  qryBar2.SQL.Add('select * from temptable');
-  qryBar2.Active := true;
 
   DecodeDate(tglAwal, intTahun, intBulan, intHari);
+  
+  // First pass: find maximum sales to calculate percentages relative to the highest month
+  nMaxSales := 0;
+  intBulanBar := 1;
+  for i := 0 to intBulan - 1 do
+  begin
+    tglBarAwal :=  EncodeDate(intTahun, intBulanBar, 1);
+    tglBarAkhir := EndOfTheMonth(tglBarAwal);
+    qryBar1.Close;
+    qryBar1.SQL.Clear;
+    qryBar1.SQL.Add('select sum(subtotal) from trans_detail where tanggal >= ''' +
+        FormatDateTime('yyyy-MM-dd', tglBarAwal) + ''' and tanggal <= ''' +
+        FormatDateTime('yyyy-MM-dd', tglBarAkhir) + ''' and payment_id <> ''' +
+        '(NONE)' + '''');
+    qryBar1.Open;
+    if qryBar1.Fields[0].AsFloat > nMaxSales then
+       nMaxSales := qryBar1.Fields[0].AsFloat;
+    intBulanBar := intBulanBar + 1;
+  end;
+  
+  if nMaxSales = 0 then nMaxSales := 1; // prevent division by zero
+
+  // Second pass: Generate HTML
   intBulanBar := 1;
   for i := 0 to intBulan -1 do
     begin
@@ -1361,16 +1452,22 @@ begin
           FormatDateTime('yyyy-MM-dd', tglBarAkhir) + ''' and payment_id <> ''' +
           '(NONE)' + '''');
       qryBar1.Open;
-      nPersen := qryBar1.Fields[0].AsFloat / 10000000;
-      keterangan := 'Sales ' + FormatDateTime('MMM/yy', tglBarAwal);
-      memSend.Lines.Add('<div class="w3-light-grey w3-round">' + keterangan);
-      memSend.Lines.Add('<div class="w3-container w3-red w3-round-xlarge" style="width:' + FormatFloat('#,#', 50) +
-                        '%">' + '<strong>' + FormatFloat('#,#', qryBar1.Fields[0].AsFloat) + '</strong></div>');
+      
+      nCurrentSales := qryBar1.Fields[0].AsFloat;
+      barWidth := Round((nCurrentSales / nMaxSales) * 100);
+      if barWidth < 5 then barWidth := 5; // ensure it's at least visible
+      
+      memSend.Lines.Add('<div style="margin-bottom: 10px;">');
+      memSend.Lines.Add('  <div style="font-size: 12px; color: #555; margin-bottom: 3px;">' + FormatDateTime('MMMM yyyy', tglBarAwal) + '</div>');
+      memSend.Lines.Add('  <div style="width: 100%; background-color: #f1f1f1; border-radius: 4px; overflow: hidden;">');
+      memSend.Lines.Add('    <div style="width: ' + IntToStr(barWidth) + '%; background-color: #3498db; color: white; padding: 4px 8px; text-align: right; font-size: 11px; font-weight: bold; box-sizing: border-box; border-radius: 4px; white-space: nowrap;">' + FormatFloat('#,#', nCurrentSales) + '</div>');
+      memSend.Lines.Add('  </div>');
       memSend.Lines.Add('</div>');
+      
       intBulanBar := intBulanBar + 1;
     end;
+    
   qryBar1.Free;
-  qryBar2.Free;
 end;
 
 procedure TfrmReportPendapatanBulanan.CreateCharts;
