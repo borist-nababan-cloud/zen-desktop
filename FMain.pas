@@ -31,7 +31,7 @@ uses
   IdMessage, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient,
   IdExplicitTLSClientServerBase, IdMessageClient, IdSMTPBase, IdSMTP,
   IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, MMSystem,
-  System.Threading, cxMemo;
+  System.Threading, cxMemo, System.Net.HttpClient, System.Net.URLClient, System.NetEncoding, DateUtils, Data.DB;
 
 type
 
@@ -281,6 +281,10 @@ TfrmMain = class(TdxRibbonForm)
     HRD_INPUT_ABSEN_MANUAL: TdxBarButton;
     REPORT_POS_DAYLI_REVENUE_BALI_ADMIN: TdxBarLargeButton;
     REPORT_POS_DAYLI_REVENUE_BALI: TdxBarLargeButton;
+    tmrWebChat: TTimer;
+    POS_MASTER_ROOM: TdxBarButton;
+    POS_TR_FLOW: TdxBarLargeButton;
+    procedure tmrWebChatTimer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BACKSTAGE_EXITClick(Sender: TObject);
     procedure edToolbarStylePropertiesChange(Sender: TObject);
@@ -419,6 +423,8 @@ TfrmMain = class(TdxRibbonForm)
     procedure HRD_INPUT_ABSEN_MANUALClick(Sender: TObject);
     procedure HRD_PERIODE_UMX3Click(Sender: TObject);
     procedure REPORT_POS_DAYLI_REVENUE_BALI_ADMINClick(Sender: TObject);
+    procedure POS_MASTER_ROOMClick(Sender: TObject);
+    procedure POS_TR_FLOWClick(Sender: TObject);
   private
     { Private declarations }
     CNTLOGIN : Integer;
@@ -436,9 +442,9 @@ TfrmMain = class(TdxRibbonForm)
     APP_VERSION, APP_TRADEMARK, APP_RELEASE, APP_NAME, APP_DEVELOPER,
     DBHRDNAME, DBPOSNAME, SESSION, APP_CHANGEDB, APP_OUTLETID, SATJUAL,
     APP_OUTLETNAME, APP_OUTLETADDRESS, APP_OUTLETPHONE, APP_OUTLETCITY,
-    APP_OUTLETPROVINCE,APP_OUTLETZIPCODE, APP_OUTLETPLAT,
+    APP_OUTLETPROVINCE, APP_OUTLETZIPCODE, APP_OUTLETPLAT,
     MINPRICE, PASSDELETE, PASSCETAK, MEMBERDBNAME, JUDULATAS, JUDULBAWAH,
-    MERGERDBNAME, FOOTER1, FOOTER2, FOOTER3  : String;
+    MERGERDBNAME, FOOTER1, FOOTER2, FOOTER3, SUPABASE_URL, SUPABASE_KEY  : String;
     IDXSOPRINTER, IDXPOSPRINTER, N_PEMBULATAN, API_OUTLET_ID : Integer;
     ConfigJSON          : XSuperObject.ISuperObject;
     pnlSession : array[0..1] of TPanel;
@@ -485,7 +491,7 @@ uses FConfigSetup, FdmDB, FLogin, FPassword, FGroupManagement, FUserManagement,
   FTHRPerhitungan, FTHRParameter, FTHRReport, FDriverSelectTrans,
   FPosTransPaymentTips, FPosLapTips, FIjinMasukList, FIjinKeluar, FChangeJadwal,
   FReportSchedule, FReportPendapatanHarianApi, FPeriodeUM,
-  FBALIReportPendapatanHarian;
+  FBALIReportPendapatanHarian, FPosMstrRuangan, FTherapisFlow;
 
 { TForm2 }
 
@@ -1066,6 +1072,77 @@ begin
     mainStatusBar.Panels[1].Text := FormatDateTime('dd-MMMM-yyyy hh:mm:ss', Now);
 end;
 
+procedure TfrmMain.tmrWebChatTimer(Sender: TObject);
+var
+  HTTP: THTTPClient;
+  Resp: IHTTPResponse;
+  Headers: TNetHeaders;
+  Endpoint: string;
+  JSONArray: ISuperArray;
+  JSONRoom: ISuperObject;
+  sMemberName, sLastMsg, sCategory: string;
+  Note: TNotification;
+begin
+  if (SUPABASE_URL = '') or (SUPABASE_KEY = '') or (APP_OUTLETID = '') then Exit;
+  if not IsFormOpen('frmPosTransMain') then
+  begin
+    tmrWebChat.Enabled := False;
+    Exit;
+  end;
+
+  tmrWebChat.Enabled := False;
+  try
+    HTTP := THTTPClient.Create;
+    try
+      HTTP.ConnectionTimeout := 5000;
+      HTTP.ResponseTimeout := 8000;
+      SetLength(Headers, 3);
+      Headers[0] := TNameValuePair.Create('apikey', SUPABASE_KEY);
+      Headers[1] := TNameValuePair.Create('Authorization', 'Bearer ' + SUPABASE_KEY);
+      Headers[2] := TNameValuePair.Create('Accept', 'application/json');
+
+      Endpoint := SUPABASE_URL + 'web_chat_rooms?kode_outlet=eq.' + APP_OUTLETID +
+                  '&unread_by_outlet=eq.true&status=in.(WAITING_STAFF,ACTIVE)&select=id,member_name,last_message,category&limit=1';
+
+      Resp := HTTP.Get(Endpoint, nil, Headers);
+      if Resp.StatusCode = 200 then
+      begin
+        JSONArray := SA(Resp.ContentAsString);
+        if Assigned(JSONArray) and (JSONArray.Length > 0) then
+        begin
+          JSONRoom := JSONArray.O[0];
+          sMemberName := JSONRoom.S['member_name'];
+          sLastMsg := JSONRoom.S['last_message'];
+          sCategory := JSONRoom.S['category'];
+
+            MessageBeep(MB_ICONASTERISK);
+            barLog.EditValue := Format('[CHAT TAMU] %s (%s): %s', [sMemberName, sCategory, sLastMsg]);
+
+            try
+              Note := frmMain.NotifMain.CreateNotification;
+              try
+                Note.Name := 'WEB_CHAT_ALERT';
+                Note.Title := 'Pesan Tamu Website (' + APP_OUTLETNAME + ')';
+                Note.AlertBody := 'Tamu: ' + sMemberName + ' - "' + sLastMsg + '"';
+                Note.FireDate := Now;
+                frmMain.NotifMain.PresentNotification(Note);
+              finally
+                Note.Free;
+              end;
+            except
+            end;
+          end;
+        end;
+    finally
+      HTTP.Free;
+    end;
+  except
+  end;
+
+  if IsFormOpen('frmPosTransMain') then
+    tmrWebChat.Enabled := True;
+end;
+
 procedure TfrmMain.tmrFormLoginTimer(Sender: TObject);
 begin
      //ShowMessage(IntToStr(CNTLOGIN));
@@ -1090,115 +1167,179 @@ end;
 
 procedure TfrmMain.UpdateBeliGC(var KodePaket: String; KodePayMain: String; KodeMember : String);
 var
-  dbBeliGC : TMyConnection;
-  sQryCari, sQryExec, lqrySearch, lQryExec : TMyQuery;
-  jSonItem : XSuperObject.ISuperObject;
-  strJson, Judul, Isi : String;
-  i: Integer;
+  lqrySearch: TMyQuery;
+  BulkGC: ISuperArray;
+  JSONGC: ISuperObject;
+  sGCNumber, sPack, sMember, sOutletBuy, sQRCode, sPayloadJSON, sUrl, sKey, sPayCode: String;
+  dtTglJual, dtExpired: TDateTime;
+  bIsActive, bHasUsed: Boolean;
 begin
-    lqrySearch := TMyQuery.Create(Self);
+  if (Trim(SUPABASE_URL) = '') or (Trim(SUPABASE_KEY) = '') then
+  begin
+    barLog.EditValue := '[GC-BUY] Konfigurasi Supabase belum diisi. SyncAgent akan menyusulkan data gc_sold.';
+    Exit;
+  end;
+
+  lqrySearch := TMyQuery.Create(nil);
+  try
     lqrySearch.Connection := DMDB.dbInternal;
-    lqrySearch.SQL.Add('select * from temptable');
-    lqrySearch.Active := true;
+    lqrySearch.SQL.Text :=
+      'SELECT s.*, ' +
+      '  (SELECT d.paket_number FROM gc_detail d WHERE d.gc_number = s.gc_number LIMIT 1) AS pack_number ' +
+      'FROM gc_sold s ' +
+      'WHERE s.payment_jual = :pPay ' +
+      '  AND s.gc_number IS NOT NULL AND s.gc_number <> '''' AND s.gc_number <> ''(NONE)''';
+    lqrySearch.ParamByName('pPay').AsString := KodePayMain;
+    lqrySearch.Open;
 
-    lQryExec := TMyQuery.Create(Self);
-    lQryExec.Connection := DMDB.dbInternal;
-    lQryExec.SQL.Add('select * from temptable');
-    lQryExec.Active := true;
-   if (CekInternet = False) then
-       begin
-          jSonItem :=  XSuperObject.SO('{}');
-          jSonItem.S['KodePaket'] := KodePaket;
-          jSonItem.S['KodePayMain'] := KodePayMain;
-          jSonItem.S['KodeMember'] := KodeMember;
-          strJson := jSonItem.AsJSON(False, False);
+    if lqrySearch.IsEmpty then
+    begin
+      barLog.EditValue := '[GC-BUY] Tidak ditemukan data gc_sold untuk payment ' + KodePayMain;
+      Exit;
+    end;
 
-          lQryExec.SQL.Clear;
-          lQryExec.SQL.Add('insert into logmain values(' +
-              '''' + '' + ''',' +
-              '''' + 'BG' + ''',' +
-              QuotedStr(strJson) + ');');
-          lQryExec.ExecSQL;
-       end;
-   if (CekInternet = True) then
-       begin
-         dbBeliGC := TMyConnection.Create(nil);
-         dbBeliGC.Server := frmMain.SERVER_DBHOST;
-         dbBeliGC.Database := frmMain.MERGERDBNAME;
-         dbBeliGC.Username := frmMain.SERVER_DBUSER;
-         dbBeliGC.Password := frmMain.SERVER_DBPASS;
-         dbBeliGC.Port := StrToInt(frmMain.SERVER_DBPORT);
-         try
-              dbBeliGC.Connected := True;
-           Except
-             on E : Exception do
-             Exit;
-           end;
-         if (dbBeliGC.Connected = True) then
-           begin
-              sQryCari := TMyQuery.Create(Self);
-              sQryCari.Connection := dbBeliGC;
-              sQryCari.SQL.Add('select * from empty_x');
-              sQryCari.Active := true;
+    BulkGC := SA();
+    while not lqrySearch.Eof do
+    begin
+      sGCNumber := Trim(lqrySearch.FieldByName('gc_number').AsString);
+      sPack := Trim(lqrySearch.FieldByName('pack_number').AsString);
+      if (sPack = '') or (sPack = '(NONE)') then
+        sPack := Trim(KodePaket);
 
-              sQryExec := TMyQuery.Create(Self);
-              sQryExec.Connection := dbBeliGC;
-              sQryExec.SQL.Add('select * from empty_x');
-              sQryExec.Active := true;
-              sQryExec.SQL.Clear;
-              //ShowMessage(KodePayMain);
-              lqrySearch.Close;
-              lqrySearch.SQL.Clear;
-              lqrySearch.SQL.Add('select * from gc_sold where payment_jual = ''' + KodePayMain + '''');
-              lqrySearch.Open;
-              lqrySearch.First;
-              sQryExec.SQL.Clear;
-              for i := 0 to lqrySearch.RecordCount -1  do
-                begin
-                  sQryExec.SQL.Add('insert into gc_detail (gc_number, id_members, tanggal, expired_date, ' +
-                      'nama_menu, harga_jasa, aktif, payment_sold, terjual, tgl_jual, outlet_jual) values(' +
-                      '''' + lqrySearch.Fields[1].AsString + ''',' +
-                      '''' + lqrySearch.Fields[2].AsString + ''',' +
-                      '''' + FormatDateTime('yyyy-MM-dd',lqrySearch.Fields[3].AsDateTime) + ''',' +
-                      '''' + FormatDateTime('yyyy-MM-dd',lqrySearch.Fields[4].AsDateTime) + ''',' +
-                      QuotedStr(lqrySearch.Fields[5].AsString) + ',' +
-                      '''' + FloatToStr(lqrySearch.Fields[6].AsFloat) + ''',' +
-                      '''' + lqrySearch.Fields[7].AsString + ''',' +
-                      '''' + lqrySearch.Fields[8].AsString + ''',' +
-                      '''' + lqrySearch.Fields[9].AsString + ''',' +
-                      '''' + FormatDateTime('yyyy-MM-dd',lqrySearch.Fields[10].AsDateTime) + ''',' +
-                      '''' + frmMain.APP_OUTLETID + ''');');
-                  lqrySearch.Next;
+      sMember := Trim(lqrySearch.FieldByName('id_members').AsString);
+      if (sMember = '') or (sMember = '(NONE)') then
+        sMember := Trim(KodeMember);
 
-                end;
-              sQryExec.ExecSQL;
-              Judul := 'Upload GC';
-              Isi := 'Uploading Pembelian GC ' + KodePayMain + ' Selesai';
-              KirimNotif(Judul, Isi);
-               sQryCari.Free;
-               sQryExec.Free;
-               dbBeliGC.Disconnect;
-           end
-         else if (dbBeliGC.Connected = False) then
-           begin
-             jSonItem :=  XSuperObject.SO('{}');
-             jSonItem.S['KodePaket'] := KodePaket;
-             jSonItem.S['KodePayMain'] := KodePayMain;
-             jSonItem.S['KodeMember'] := KodeMember;
-             strJson := jSonItem.AsJSON(False, False);
+      sOutletBuy := Trim(lqrySearch.FieldByName('outlet_jual').AsString);
+      if (sOutletBuy = '') or (sOutletBuy = '(NONE)') then
+        sOutletBuy := APP_OUTLETID;
 
-             lQryExec.SQL.Clear;
-             lQryExec.SQL.Add('insert into logmain values(' +
-                '''' + '' + ''',' +
-                '''' + 'BG' + ''',' +
-                QuotedStr(strJson) + ');');
-             lQryExec.ExecSQL;
-           end;
+      if (not lqrySearch.FieldByName('tgl_jual').IsNull) and (FormatDateTime('yyyy', lqrySearch.FieldByName('tgl_jual').AsDateTime) <> '2000') then
+      begin
+        dtTglJual := lqrySearch.FieldByName('tgl_jual').AsDateTime;
+        // Jika tanggal jual = hari ini (kolom DATE tanpa jam), gunakan jam real-time Now
+        if DateOf(dtTglJual) = Date then
+          dtTglJual := Now;
+      end
+      else
+        dtTglJual := Now;
 
-         dbBeliGC.Free;
-       end;
-   lqrySearch.Free;
-   lQryExec.Free;
+      // expired_date selalu 120 hari dari tanggal beli (tgl_jual / buy_at)
+      dtExpired := IncDay(DateOf(dtTglJual), 120);
+
+      bIsActive := UpperCase(Trim(lqrySearch.FieldByName('aktif').AsString)) <> 'N';
+      bHasUsed := UpperCase(Trim(lqrySearch.FieldByName('pakai').AsString)) = 'Y';
+
+      JSONGC := SO();
+      if (sMember <> '') and (sMember <> '(NONE)') then
+        JSONGC.S['user_uid'] := sMember
+      else
+        JSONGC.Null['user_uid'] := jNull;
+
+      JSONGC.S['gc_number'] := sGCNumber;
+      JSONGC.S['gc_barcode'] := sGCNumber;
+
+      sQRCode := Trim(lqrySearch.FieldByName('notes').AsString);
+      if (sQRCode <> '') and (sQRCode <> '(NONE)') then
+        JSONGC.S['qrcode'] := sQRCode
+      else
+        JSONGC.Null['qrcode'] := jNull;
+
+      if (sPack <> '') and (sPack <> '(NONE)') then
+        JSONGC.S['pack_number'] := sPack
+      else
+        JSONGC.Null['pack_number'] := jNull;
+
+      JSONGC.S['nama_gc'] := lqrySearch.FieldByName('nama_menu').AsString;
+      JSONGC.F['value'] := lqrySearch.FieldByName('harga_jasa').AsFloat;
+      JSONGC.S['buy_at'] := FormatDateTime('yyyy-mm-dd"T"hh:nn:ss"+07:00"', dtTglJual);
+      JSONGC.S['expired_date'] := FormatDateTime('yyyy-mm-dd', dtExpired);
+      JSONGC.B['is_active'] := bIsActive;
+      JSONGC.B['has_used'] := bHasUsed;
+      JSONGC.Null['used_at'] := jNull;
+      JSONGC.S['id_payment_buy'] := KodePayMain;
+      JSONGC.Null['id_payment_used'] := jNull;
+      JSONGC.S['kode_outlet_buy'] := sOutletBuy;
+      JSONGC.Null['kode_outlet_used'] := jNull;
+
+      BulkGC.Add(JSONGC);
+      lqrySearch.Next;
+    end;
+
+    if BulkGC.Length = 0 then Exit;
+    sPayloadJSON := BulkGC.AsJSON;
+  finally
+    lqrySearch.Free;
+  end;
+
+  // Capture immutable strings for background HTTP dispatch (zero UI blocking)
+  sUrl := SUPABASE_URL;
+  sKey := SUPABASE_KEY;
+  sPayCode := KodePayMain;
+
+  TTask.Run(
+    procedure
+    var
+      HTTP: THTTPClient;
+      Headers: TNetHeaders;
+      ReqBody: TStringStream;
+      Resp: IHTTPResponse;
+      sErrMsg: String;
+      iStatus: Integer;
+    begin
+      HTTP := THTTPClient.Create;
+      ReqBody := TStringStream.Create(sPayloadJSON, TEncoding.UTF8);
+      try
+        HTTP.ConnectionTimeout := 5000;
+        HTTP.ResponseTimeout := 10000;
+        SetLength(Headers, 4);
+        Headers[0] := TNameValuePair.Create('apikey', sKey);
+        Headers[1] := TNameValuePair.Create('Authorization', 'Bearer ' + sKey);
+        Headers[2] := TNameValuePair.Create('Content-Type', 'application/json');
+        // Insert-only: mencegah menimpa status has_used=true jika GC sudah dipakai di cabang lain
+        Headers[3] := TNameValuePair.Create('Prefer', 'resolution=ignore-duplicates');
+        try
+          Resp := HTTP.Post(sUrl + 'ot_pos_gc_transaction?on_conflict=gc_number', ReqBody, nil, Headers);
+          iStatus := Resp.StatusCode;
+          if (iStatus = 200) or (iStatus = 201) then
+          begin
+            TThread.Queue(nil,
+              procedure
+              var
+                Judul, Isi: String;
+              begin
+                Judul := 'Upload GC';
+                Isi := 'Upload Pembelian GC ' + sPayCode + ' ke Supabase Selesai';
+                KirimNotif(Judul, Isi);
+                barLog.EditValue := '[GC-BUY] ' + Isi + ' (HTTP ' + IntToStr(iStatus) + ')';
+              end);
+          end
+          else
+          begin
+            sErrMsg := Format('[GC-BUY] Gagal upload GC %s (HTTP %d): %s. SyncAgent akan menyusulkan otomatis.',
+              [sPayCode, iStatus, Resp.ContentAsString]);
+            TThread.Queue(nil,
+              procedure
+              begin
+                barLog.EditValue := sErrMsg;
+              end);
+          end;
+        except
+          on E: Exception do
+          begin
+            sErrMsg := '[GC-BUY] Koneksi Supabase gagal untuk ' + sPayCode + ': ' + E.Message + ' (SyncAgent akan menyusulkan otomatis)';
+            TThread.Queue(nil,
+              procedure
+              begin
+                barLog.EditValue := sErrMsg;
+              end);
+          end;
+        end;
+      finally
+        ReqBody.Free;
+        HTTP.Free;
+      end;
+    end);
 end;
 
 procedure TfrmMain.UpdateMember(var KodeMemberMain: String;
@@ -1380,100 +1521,201 @@ end;
 
 procedure TfrmMain.UpdatePakaiGC(var KodePayMain: String; NomorGC: String);
 var
-  dbGC : TMyConnection;
-  sQryCari, sQryExec, lqrySearch, lQryExec : TMyQuery;
-  jSonItem : XSuperObject.ISuperObject;
-  strJson, judulNotif, isiNotif : String;
+  lqrySearch, lQryExec: TMyQuery;
+  JSONPatch, JSONInsert: ISuperObject;
+  sPatchJSON, sInsertJSON, sUrl, sKey, sGC, sPayCode: String;
+  sMember, sNamaGC, sOutletBuy, sPayBuy, sQRCode: String;
+  fHargaGC: Double;
+  dtTglJual, dtExpired, dtNow: TDateTime;
 begin
-    lqrySearch := TMyQuery.Create(Self);
-    lqrySearch.Connection := DMDB.dbInternal;
-    lqrySearch.SQL.Add('select * from temptable');
-    lqrySearch.Active := true;
+  sGC := Trim(NomorGC);
+  if sGC = '' then Exit;
 
-    lQryExec := TMyQuery.Create(Self);
+  dtNow := Now;
+  sMember := '';
+  sNamaGC := 'GC ' + sGC;
+  sOutletBuy := APP_OUTLETID;
+  sPayBuy := KodePayMain;
+  sQRCode := '';
+  fHargaGC := 0;
+  dtTglJual := dtNow;
+  dtExpired := IncDay(dtNow, 120);
+
+  // 1. WAJIB: Update lokal gc_sold terlebih dahulu (agar tetap aman meski internet mati)
+  lQryExec := TMyQuery.Create(nil);
+  lqrySearch := TMyQuery.Create(nil);
+  try
     lQryExec.Connection := DMDB.dbInternal;
-    lQryExec.SQL.Add('select * from temptable');
-    lQryExec.Active := true;
-   if (CekInternet = False) then
-       begin
-          jSonItem :=  XSuperObject.SO('{}');
-          jSonItem.S['KodePayMain'] := KodePayMain;
-          jSonItem.S['NomorGC'] := NomorGC;
-          strJson := jSonItem.AsJSON(False, False);
+    lQryExec.SQL.Text :=
+      'UPDATE gc_sold SET ' +
+      '  payment_pakai = :pPay, ' +
+      '  pakai = ''Y'', ' +
+      '  outlet_pakai = :pOutlet, ' +
+      '  tgl_pakai = :pTgl ' +
+      'WHERE gc_number = :pGC';
+    lQryExec.ParamByName('pPay').AsString := KodePayMain;
+    lQryExec.ParamByName('pOutlet').AsString := APP_OUTLETID;
+    lQryExec.ParamByName('pTgl').AsString := FormatDateTime('yyyy-mm-dd', dtNow);
+    lQryExec.ParamByName('pGC').AsString := sGC;
+    lQryExec.ExecSQL;
 
-          lQryExec.SQL.Clear;
-          lQryExec.SQL.Add('insert into logmain values(' +
-              '''' + '' + ''',' +
-              '''' + 'PG' + ''',' +
-              QuotedStr(strJson) + ');');
-          lQryExec.ExecSQL;
-       end;
-   if (CekInternet = True) then
-       begin
-         dbGC := TMyConnection.Create(nil);
-         dbGC.Server := frmMain.SERVER_DBHOST;
-         dbGC.Database := frmMain.MERGERDBNAME;
-         dbGC.Username := frmMain.SERVER_DBUSER;
-         dbGC.Password := frmMain.SERVER_DBPASS;
-         dbGC.Port := StrToInt(frmMain.SERVER_DBPORT);
-         try
-              dbGC.Connected := True;
-           Except
-             on E : Exception do
-             Exit;
-           end;
-         if (dbGC.Connected = True) then
-           begin
-               //lQryExec.Close;
-               sQryExec := TMyQuery.Create(Self);
-              sQryExec.Connection := dbGC;
-              sQryExec.SQL.Add('select * from empty_x');
-              sQryExec.Active := true;
+    // Ambil metadata lokal untuk fallback auto-insert bila belum ada di Supabase
+    lqrySearch.Connection := DMDB.dbInternal;
+    lqrySearch.SQL.Text := 'SELECT * FROM gc_sold WHERE gc_number = :pGC LIMIT 1';
+    lqrySearch.ParamByName('pGC').AsString := sGC;
+    lqrySearch.Open;
+    if not lqrySearch.IsEmpty then
+    begin
+      sMember := Trim(lqrySearch.FieldByName('id_members').AsString);
+      if Trim(lqrySearch.FieldByName('nama_menu').AsString) <> '' then
+        sNamaGC := lqrySearch.FieldByName('nama_menu').AsString;
+      fHargaGC := lqrySearch.FieldByName('harga_jasa').AsFloat;
+      if (Trim(lqrySearch.FieldByName('outlet_jual').AsString) <> '') and
+         (Trim(lqrySearch.FieldByName('outlet_jual').AsString) <> '(NONE)') then
+        sOutletBuy := Trim(lqrySearch.FieldByName('outlet_jual').AsString);
+      if (Trim(lqrySearch.FieldByName('payment_jual').AsString) <> '') and
+         (Trim(lqrySearch.FieldByName('payment_jual').AsString) <> '(NONE)') then
+        sPayBuy := Trim(lqrySearch.FieldByName('payment_jual').AsString);
+      if (not lqrySearch.FieldByName('tgl_jual').IsNull) and
+         (FormatDateTime('yyyy', lqrySearch.FieldByName('tgl_jual').AsDateTime) <> '2000') then
+        dtTglJual := lqrySearch.FieldByName('tgl_jual').AsDateTime;
+      // expired_date selalu 120 hari dari tanggal beli (tgl_jual / buy_at)
+      dtExpired := IncDay(DateOf(dtTglJual), 120);
+      sQRCode := Trim(lqrySearch.FieldByName('notes').AsString);
+    end;
+  finally
+    lqrySearch.Free;
+    lQryExec.Free;
+  end;
 
-               lQryExec.SQL.Clear;
-               lQryExec.SQL.Add('update gc_sold set ' +
-                   'payment_pakai = ''' + KodePayMain + ''',' +
-                   'pakai = ''' + 'Y' + ''',' +
-                   'outlet_pakai = ''' + frmMain.APP_OUTLETID + ''',' +
-                   'tgl_pakai = ''' + FormatDateTime('yyyy-MM-dd', Date) + ''' ' +
-                   'where gc_number = ''' + NomorGC + ''';');
-               lQryExec.ExecSQL;
+  if (Trim(SUPABASE_URL) = '') or (Trim(SUPABASE_KEY) = '') then
+  begin
+    barLog.EditValue := '[GC-USE] Konfigurasi Supabase belum diisi. Status pakai tersimpan lokal.';
+    Exit;
+  end;
 
-               sQryExec.SQL.Clear;
-               sQryExec.SQL.Add('update gc_detail set ' +
-                   'payment_pakai = ''' + KodePayMain + ''',' +
-                   'pakai = ''' + 'Y' + ''',' +
-                   'outlet_pakai = ''' + frmMain.APP_OUTLETID + ''',' +
-                   'tgl_pakai = ''' + FormatDateTime('yyyy-MM-dd', Date) + ''' ' +
-                   'where gc_number = ''' + NomorGC + ''';');
-               sQryExec.ExecSQL;
+  // 2. Siapkan payload PATCH & fallback INSERT ke Supabase
+  JSONPatch := SO();
+  JSONPatch.B['has_used'] := True;
+  JSONPatch.S['used_at'] := FormatDateTime('yyyy-mm-dd"T"hh:nn:ss"+07:00"', dtNow);
+  JSONPatch.S['id_payment_used'] := KodePayMain;
+  JSONPatch.S['kode_outlet_used'] := APP_OUTLETID;
+  sPatchJSON := JSONPatch.AsJSON;
 
-               //sQryCari.Free;
-               sQryExec.Free;
-               dbGC.Disconnect;
-               judulNotif := 'Update Pembayaran GC';
-               isiNotif := 'Update Data Gift Certificate ' + NomorGC + ' Ke Server Online Selesai !';
-               KirimNotif(judulNotif, isiNotif);
-           end
-         else if (dbGC.Connected = False) then
-           begin
-              jSonItem :=  XSuperObject.SO('{}');
-              jSonItem.S['KodePayMain'] := KodePayMain;
-              jSonItem.S['NomorGC'] := NomorGC;
-              strJson := jSonItem.AsJSON(False, False);
+  JSONInsert := SO();
+  if (sMember <> '') and (sMember <> '(NONE)') then
+    JSONInsert.S['user_uid'] := sMember
+  else
+    JSONInsert.Null['user_uid'] := jNull;
+  JSONInsert.S['gc_number'] := sGC;
+  JSONInsert.S['gc_barcode'] := sGC;
+  if (sQRCode <> '') and (sQRCode <> '(NONE)') then
+    JSONInsert.S['qrcode'] := sQRCode
+  else
+    JSONInsert.Null['qrcode'] := jNull;
+  JSONInsert.Null['pack_number'] := jNull;
+  JSONInsert.S['nama_gc'] := sNamaGC;
+  JSONInsert.F['value'] := fHargaGC;
+  JSONInsert.S['buy_at'] := FormatDateTime('yyyy-mm-dd"T"hh:nn:ss"+07:00"', dtTglJual);
+  JSONInsert.S['expired_date'] := FormatDateTime('yyyy-mm-dd', dtExpired);
+  JSONInsert.B['is_active'] := True;
+  JSONInsert.B['has_used'] := True;
+  JSONInsert.S['used_at'] := FormatDateTime('yyyy-mm-dd"T"hh:nn:ss"+07:00"', dtNow);
+  JSONInsert.S['id_payment_buy'] := sPayBuy;
+  JSONInsert.S['id_payment_used'] := KodePayMain;
+  JSONInsert.S['kode_outlet_buy'] := sOutletBuy;
+  JSONInsert.S['kode_outlet_used'] := APP_OUTLETID;
+  sInsertJSON := JSONInsert.AsJSON;
 
-              lQryExec.SQL.Clear;
-              lQryExec.SQL.Add('insert into logmain values(' +
-                  '''' + '' + ''',' +
-                  '''' + 'PG' + ''',' +
-                  QuotedStr(strJson) + ');');
-              lQryExec.ExecSQL;
-           end;
+  sUrl := SUPABASE_URL;
+  sKey := SUPABASE_KEY;
+  sPayCode := KodePayMain;
 
-         dbGC.Free;
-       end;
-   lqrySearch.Free;
-   lQryExec.Free;
+  // 3. Push real-time non-blocking ke Supabase
+  TTask.Run(
+    procedure
+    var
+      HTTP: THTTPClient;
+      HeadersPatch, HeadersPost: TNetHeaders;
+      ReqBody: TStringStream;
+      Resp: IHTTPResponse;
+      sEncodedGC, sErrMsg: String;
+    begin
+      HTTP := THTTPClient.Create;
+      try
+        HTTP.ConnectionTimeout := 5000;
+        HTTP.ResponseTimeout := 10000;
+        sEncodedGC := TNetEncoding.URL.Encode(sGC);
+
+        SetLength(HeadersPatch, 4);
+        HeadersPatch[0] := TNameValuePair.Create('apikey', sKey);
+        HeadersPatch[1] := TNameValuePair.Create('Authorization', 'Bearer ' + sKey);
+        HeadersPatch[2] := TNameValuePair.Create('Content-Type', 'application/json');
+        HeadersPatch[3] := TNameValuePair.Create('Prefer', 'return=representation');
+
+        try
+          ReqBody := TStringStream.Create(sPatchJSON, TEncoding.UTF8);
+          try
+            Resp := HTTP.Patch(sUrl + 'ot_pos_gc_transaction?gc_number=eq.' + sEncodedGC, ReqBody, nil, HeadersPatch);
+          finally
+            ReqBody.Free;
+          end;
+
+          // Jika belum ada row di Supabase (response '[]'), lakukan upsert INSERT
+          if (Resp.StatusCode = 200) and (Trim(Resp.ContentAsString) = '[]') then
+          begin
+            SetLength(HeadersPost, 4);
+            HeadersPost[0] := TNameValuePair.Create('apikey', sKey);
+            HeadersPost[1] := TNameValuePair.Create('Authorization', 'Bearer ' + sKey);
+            HeadersPost[2] := TNameValuePair.Create('Content-Type', 'application/json');
+            HeadersPost[3] := TNameValuePair.Create('Prefer', 'resolution=merge-duplicates');
+
+            ReqBody := TStringStream.Create(sInsertJSON, TEncoding.UTF8);
+            try
+              Resp := HTTP.Post(sUrl + 'ot_pos_gc_transaction?on_conflict=gc_number', ReqBody, nil, HeadersPost);
+            finally
+              ReqBody.Free;
+            end;
+          end;
+
+          if (Resp.StatusCode = 200) or (Resp.StatusCode = 201) or (Resp.StatusCode = 204) then
+          begin
+            TThread.Queue(nil,
+              procedure
+              var
+                judulNotif, isiNotif: String;
+              begin
+                judulNotif := 'Update Pembayaran GC';
+                isiNotif := 'Update Data Gift Certificate ' + sGC + ' ke Supabase Selesai !';
+                KirimNotif(judulNotif, isiNotif);
+                barLog.EditValue := '[GC-USE] ' + isiNotif;
+              end);
+          end
+          else
+          begin
+            sErrMsg := Format('[GC-USE] Gagal update GC %s (HTTP %d): %s. SyncAgent akan menyusulkan via refgift.',
+              [sGC, Resp.StatusCode, Resp.ContentAsString]);
+            TThread.Queue(nil,
+              procedure
+              begin
+                barLog.EditValue := sErrMsg;
+              end);
+          end;
+        except
+          on E: Exception do
+          begin
+            sErrMsg := '[GC-USE] Koneksi Supabase gagal untuk GC ' + sGC + ' (' + sPayCode + '): ' + E.Message;
+            TThread.Queue(nil,
+              procedure
+              begin
+                barLog.EditValue := sErrMsg;
+              end);
+          end;
+        end;
+      finally
+        HTTP.Free;
+      end;
+    end);
 end;
 
 procedure TfrmMain.LoadStyleList;
@@ -1721,6 +1963,31 @@ begin
              ShowMessage('Form Master Promo PoS has been created');
              frmPosPromoMaster.Show;
              frmPosPromoMaster.Position := poDesktopCenter;
+             Exit;
+        end;
+end;
+
+procedure TfrmMain.POS_MASTER_ROOMClick(Sender: TObject);
+begin
+     //TfrmPosMstrRuangan
+     if (not IsFormOpen('frmPosMstrRuangan')) then
+       begin
+            Application.CreateForm(TfrmPosMstrRuangan, frmPosMstrRuangan);
+            frmPosMstrRuangan.FormStyle := fsMDIChild;
+            frmPosMstrRuangan.Caption := ' Master Ruangan';
+            frmPosMstrRuangan.Show;
+//            frmPosMstrRuangan.Tag := 0;
+            frmPosMstrRuangan.WindowState := wsNormal;
+//            frmPosMstrRuangan.Position := poDesktopCenter;
+
+       end
+     else if (IsFormOpen('frmPosMstrRuangan')) then
+        begin
+             ShowMessage('Form Master Ruangan has been created');
+             frmPosMstrRuangan.Show;
+             frmPosMstrRuangan.Caption := '  Master Ruangan';
+//             frmPosMstrRuangan.Tag := 0;
+//             frmPosMstrRuangan.Position := poDesktopCenter;
              Exit;
         end;
 end;
@@ -2011,6 +2278,26 @@ begin
         end;
 end;
 
+procedure TfrmMain.POS_TR_FLOWClick(Sender: TObject);
+begin
+      if (not IsFormOpen('frmTherapisFlow')) then
+       begin
+            Application.CreateForm(TfrmTherapisFlow, frmTherapisFlow);
+            frmTherapisFlow.FormStyle := fsMDIChild;
+            frmTherapisFlow.Show;
+            frmTherapisFlow.WindowState := wsNormal;
+            frmTherapisFlow.Position := poDesktopCenter;
+
+       end
+     else if (IsFormOpen('frmTherapisFlow')) then
+        begin
+             ShowMessage('Form Therapist Flow has been created');
+             frmTherapisFlow.Show;
+             frmTherapisFlow.Position := poDesktopCenter;
+             Exit;
+        end;
+end;
+
 procedure TfrmMain.POS_TR_STARTClick(Sender: TObject);
 begin
   if (not IsFormOpen('frmTherapisStart')) then
@@ -2056,117 +2343,29 @@ procedure TfrmMain.PutNewMember(var KodeMemberMain: String;
   KodePaymentMain: String; pTambah, pKurang, pSisa, pAwal, nSubtotal: Double);
 var
   Note: TNotification;
-   jsVal, jsData, jsRoot, jsResponse : XSuperObject.ISuperObject;
-   strJSON, idMember, NamaDepan, NamaBelakang, noHape, email: String;
-   jsArray : ISuperArray;
-   jmlhPoint : Double;
-   idApiRec : Integer;
+
+
+
+
+
 begin
-    {get member id}
+    { Member Point Transaction - saved locally and synced to Supabase via SyncAgent }
+    barLog.EditValue := Format('Member: %s, Payment: %s, Point: +%.0f -%.0f Sisa: %.0f', 
+      [KodeMemberMain, KodePaymentMain, pTambah, pKurang, pSisa]);
 
-    try
-           dmDB.vClient.BaseURL := 'https://member.zenfamilyspa.net/api/pointmembers?filters[idmember][$eq]=' + KodeMemberMain;
-           dmDB.vRequest.Execute;
-           jsVal := XSuperObject.SO(dmDB.vResponse.Content);
-        except on E: Exception do
-            begin
-              ShowMessage('There was an error: ' + E.Message);
-              Exit;
-            end;
-        end;
-    jsArray := jsVal.AsObject.A['data'];
-         if (jsArray.Length <= 0) then
-            begin
-                  Note := frmMain.NotifMain.CreateNotification;
-                  try
-                      try
-                          Note.Name := 'There was an error';
-                          Note.Title := 'UPDATE MEMBER Failed';
-                          Note.AlertBody := 'No Member ' + KodeMemberMain + ' Tidak dapat ditemukan';
-                          Note.FireDate := Now;
-                          frmMain.NotifMain.PresentNotification(Note);
-                          except
-                      end;
-                      finally
-                        Note.Free;
-                  end;
-            end
-         else if (jsArray.Length > 0) then
-            begin
-
-                 jsData := jsArray.O[0];
-                 idApiRec := jsData.I['id'];
-                 jsRoot := jsData.O['attributes'];
-                 strJSON := jsRoot.AsJSON(True,True);
-                 idMember := jsRoot.S['idmember'];
-                 jmlhPoint := jsRoot.F['point'];
-            end;
-//    ShowMessage('GET member id passed');
-    {Update member id}
-     try
-           dmDB.vClient.BaseURL := 'https://member.zenfamilyspa.net/api/pointmembers/' + IntToStr(idApiRec);
-
-           jsVal := XSuperObject.SO('{}');
-           jsData := XSuperObject.SO('{}');
-           jsData.F['point'] := pSisa;
-           jsVal.O['data'] := jsData;
-           strJSON := jsVal.AsJSON(True,True);
-//           dmDB.vPost.Method := rmPUT;
-           dmDB.vPUT.Params[1].Value := jsVal.AsJSON(false, false);
-           dmDB.vPUT.Execute;
-        except on E: Exception do
-            begin
-              ShowMessage('There was an error: ' + E.Message);
-              Exit;
-            end;
-     end;
-//     ShowMessage('PUT member passed');
-
-     {update member trans}
-
-     try
-         dmDB.vClient.BaseURL := 'https://member.zenfamilyspa.net/api/memberpayments';
-         jsVal := XSuperObject.SO('{}');
-         jsData := XSuperObject.SO('{}');
-         jsData.S['qrmember'] := KodeMemberMain;
-         jsData.S['idpayment'] := KodePaymentMain;
-         jsData.F['pointawal'] := pAwal;
-         jsData.F['tambahpoint'] := pAwal;
-         jsData.F['kurangpoint'] := pKurang;
-         jsData.F['sisapoint'] := pSisa;
-         jsData.B['aktif'] := true;
-         jsData.F['total'] := nSubtotal;
-         jsData.Date['tanggal'] := Date;
-//         jsData.I['member'] := idApiRec;
-         jsData.I['masteroutlet'] := API_OUTLET_ID;
-         //setup data
-         jsVal.O['data'] := jsData;
-         strJSON := jsVal.AsJSON(True,True);
-         dmDB.vPOST.Params[1].Value := jsVal.AsJSON(false, false);
-         dmDB.vPOST.Execute;
-         jsResponse := XSuperObject.SO(dmDB.vResponse.Content);
-         strJSON := jsResponse.AsJSON(True,True);
-      except on E: Exception do
-          begin
-            ShowMessage('There was an error: ' + E.Message);
-            Exit;
-          end;
-
-      end;
-     barLog.EditValue := strJSON + ' Response ' + dmDB.vResponse.StatusText;
-    {kirim notifikasi}
+    { Kirim notifikasi sistem desktop }
     Note := frmMain.NotifMain.CreateNotification;
     try
         try
             Note.Name := 'UPDATE MEMBER BARU';
             Note.Title := 'UPDATE MEMBER BARU';
-            Note.AlertBody := 'Member ' + KodeMemberMain + ' telah di update di API!';
+            Note.AlertBody := 'Member ' + KodeMemberMain + ' poin berhasil diproses (Sisa: ' + FloatToStr(pSisa) + ')';
             Note.FireDate := Now;
             frmMain.NotifMain.PresentNotification(Note);
-            except
+        except
         end;
-        finally
-          Note.Free;
+    finally
+        Note.Free;
     end;
 end;
 
@@ -2246,6 +2445,11 @@ begin
              ConfigJSON.O['Database'].AsObject.S['pos'] := DBPOSNAME;
              ConfigJSON.O['Database'].AsObject.S['changedb'] := APP_CHANGEDB;
 
+             if not ConfigJSON.Contains('Supabase') then
+               ConfigJSON.O['Supabase'] := SO();
+             ConfigJSON.O['Supabase'].AsObject.S['REST_URL'] := EncryptPass('');
+             ConfigJSON.O['Supabase'].AsObject.S['PublishableKey'] := EncryptPass('');
+
              ConfigJSON.SaveTo(ConfigDir + 'config.json', true, true);
         end
      else if (FileExists(ConfigDir + 'config.json')) then
@@ -2298,8 +2502,27 @@ begin
               DBHRDNAME := ConfigJSON.O['Database'].AsObject.S['hrd'];
               DBPOSNAME := ConfigJSON.O['Database'].AsObject.S['pos'];
               APP_CHANGEDB := ConfigJSON.O['Database'].AsObject.S['changedb'];
+
+              // Supabase settings
+              if ConfigJSON.Contains('Supabase') then
+              begin
+                SUPABASE_URL := Trim(DecryptPass(ConfigJSON.O['Supabase'].S['REST_URL']));
+                if (SUPABASE_URL <> '') and not (SUPABASE_URL[Length(SUPABASE_URL)] in ['/', '\']) then
+                  SUPABASE_URL := SUPABASE_URL + '/';
+                SUPABASE_KEY := Trim(DecryptPass(ConfigJSON.O['Supabase'].S['PublishableKey']));
+              end;
               jsonConfig.Free;
          end;
+    if Assigned(dmDB) and Assigned(dmDB.dbInternal) then
+    begin
+      dmDB.dbInternal.Connected := False;
+      dmDB.dbInternal.Server := LOCAL_DBHOST;
+      dmDB.dbInternal.Database := LOCAL_DBNAME;
+      dmDB.dbInternal.Username := LOCAL_DBUSER;
+      dmDB.dbInternal.Password := LOCAL_DBPASS;
+      dmDB.dbInternal.Port := StrToIntDef(LOCAL_DBPORT, 3306);
+    end;
+
     MainLabelAppName.Caption := APP_NAME;
     frmMain.Caption := APP_NAME;
     APP_VERSION := 'Alpha 1.1.1';
@@ -2712,36 +2935,15 @@ begin
 end;
 
 procedure TfrmMain.CekIDOUTLET;
-var
-   jsVal, jsData, jsRoot : XSuperObject.ISuperObject;
-   strJSON, idMember, NamaDepan, NamaBelakang : String;
-   jsArray : ISuperArray;
 begin
-
-     {get outlet id from api}
-
+    { Set Outlet ID - local & Supabase compatible without external Strapi blocking }
     try
-           dmDB.vClient.BaseURL := 'https://member.zenfamilyspa.net/api/masteroutlets?filters[kodeoutlet][$eq]=' + APP_OUTLETID;
-           dmDB.vRequest.Execute;
-           jsVal := XSuperObject.SO(dmDB.vResponse.Content);
-        except on E: Exception do
-            begin
-              ShowMessage('There was an error: ' + E.Message);
-              Exit;
-            end;
-        end;
-
-    jsArray := jsVal.AsObject.A['data'];
-         if (jsArray.Length <= 0) then
-            begin
-                  API_OUTLET_ID := 77
-            end
-         else if (jsArray.Length > 0) then
-            begin
-                 jsData := jsArray.O[0];
-                 API_OUTLET_ID := jsData.I['id'];
-            end;
-    barOutletID.EditValue := APP_OUTLETID + '#' + inttostr(API_OUTLET_ID);
+      API_OUTLET_ID := StrToIntDef(APP_OUTLETID, 77);
+      barOutletID.EditValue := APP_OUTLETID + '#' + IntToStr(API_OUTLET_ID);
+    except
+      API_OUTLET_ID := 77;
+      barOutletID.EditValue := APP_OUTLETID + '#77';
+    end;
 end;
 
 function TfrmMain.CekInternet: Boolean;
@@ -3069,6 +3271,7 @@ begin
   Screen.Cursor := crHourGlass;
   DisableAero := True;
   LoadConfigApps;
+  tmrWebChat.Enabled := False;
 
   //tmrFormLogin.Enabled := True;
   Screen.Cursor := crDefault;

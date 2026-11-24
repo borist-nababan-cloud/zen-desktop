@@ -3,7 +3,7 @@ object frmConfigSetup: TfrmConfigSetup
   Top = 0
   Caption = 'Application Config Setup'
   ClientHeight = 461
-  ClientWidth = 812
+  ClientWidth = 1169
   Color = clMoneyGreen
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,6 +17,12 @@ object frmConfigSetup: TfrmConfigSetup
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
+  object dxBevel1: TdxBevel
+    Left = 368
+    Top = 60
+    Width = 289
+    Height = 65
+  end
   object Bevel2: TBevel
     Left = 388
     Top = 195
@@ -260,6 +266,27 @@ object frmConfigSetup: TfrmConfigSetup
     Height = 15
     Caption = 'DATABASE PORT'
   end
+  object Label18: TLabel
+    Left = 388
+    Top = 42
+    Width = 91
+    Height = 15
+    Caption = 'EXTERNAL SETUP'
+  end
+  object Label19: TLabel
+    Left = 388
+    Top = 67
+    Width = 76
+    Height = 15
+    Caption = 'BACKEND URL'
+  end
+  object Label20: TLabel
+    Left = 388
+    Top = 96
+    Width = 93
+    Height = 15
+    Caption = 'BACKEND SECRET'
+  end
   object edNameDB: TcxTextEdit
     Left = 176
     Top = 233
@@ -364,6 +391,20 @@ object frmConfigSetup: TfrmConfigSetup
     Transparent = True
     Height = 26
     Width = 300
+  end
+  object edSupabaseUrl: TcxTextEdit
+    Left = 492
+    Top = 64
+    Enabled = False
+    TabOrder = 13
+    Width = 137
+  end
+  object edSupabaseKey: TcxTextEdit
+    Left = 492
+    Top = 93
+    Enabled = False
+    TabOrder = 14
+    Width = 137
   end
   object tmrLoadCOnfig: TTimer
     Enabled = False

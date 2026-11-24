@@ -62,6 +62,13 @@ object frmReportPayroll: TfrmReportPayroll
     Transparent = False
     ExplicitWidth = 891
   end
+  object lblSyncProgress: TLabel
+    Left = 375
+    Top = 73
+    Width = 9
+    Height = 13
+    Caption = '...'
+  end
   object qrpKomisi: TQuickRep
     Left = 504
     Top = 32
@@ -204,7 +211,7 @@ object frmReportPayroll: TfrmReportPayroll
         Width = 113
         Height = 20
         Size.Values = (
-          44.097222222222230000
+          44.097222222222220000
           30.868055555555560000
           156.545138888888900000
           249.149305555555600000)
@@ -233,10 +240,10 @@ object frmReportPayroll: TfrmReportPayroll
         Width = 101
         Height = 20
         Size.Values = (
-          44.097222222222230000
+          44.097222222222220000
           30.868055555555560000
           209.461805555555600000
-          222.690972222222300000)
+          222.690972222222200000)
         XLColumn = 0
         XLNumFormat = nfGeneral
         ActiveInPreview = False
@@ -262,7 +269,7 @@ object frmReportPayroll: TfrmReportPayroll
         Width = 102
         Height = 20
         Size.Values = (
-          44.097222222222230000
+          44.097222222222220000
           370.416666666666700000
           209.461805555555600000
           224.895833333333300000)
@@ -294,7 +301,7 @@ object frmReportPayroll: TfrmReportPayroll
         Width = 107
         Height = 20
         Size.Values = (
-          44.097222222222230000
+          44.097222222222220000
           370.416666666666700000
           156.545138888888900000
           235.920138888888900000)
@@ -326,10 +333,10 @@ object frmReportPayroll: TfrmReportPayroll
         Width = 37
         Height = 20
         Size.Values = (
-          44.097222222222230000
+          44.097222222222220000
           30.868055555555560000
-          262.378472222222300000
-          81.579861111111120000)
+          262.378472222222200000
+          81.579861111111110000)
         XLColumn = 0
         XLNumFormat = nfGeneral
         ActiveInPreview = False
@@ -355,7 +362,7 @@ object frmReportPayroll: TfrmReportPayroll
         Width = 84
         Height = 20
         Size.Values = (
-          44.097222222222230000
+          44.097222222222220000
           370.416666666666700000
           260.173611111111100000
           185.208333333333300000)
@@ -387,8 +394,8 @@ object frmReportPayroll: TfrmReportPayroll
         Width = 80
         Height = 20
         Size.Values = (
-          44.097222222222230000
-          738.628472222222300000
+          44.097222222222220000
+          738.628472222222200000
           209.461805555555600000
           176.388888888888900000)
         XLColumn = 0
@@ -419,8 +426,8 @@ object frmReportPayroll: TfrmReportPayroll
         Width = 12
         Height = 20
         Size.Values = (
-          44.097222222222230000
-          698.940972222222300000
+          44.097222222222220000
+          698.940972222222200000
           209.461805555555600000
           26.458333333333330000)
         XLColumn = 0
@@ -448,10 +455,10 @@ object frmReportPayroll: TfrmReportPayroll
         Width = 20
         Height = 20
         Size.Values = (
-          44.097222222222230000
+          44.097222222222220000
           30.868055555555560000
           103.628472222222200000
-          44.097222222222230000)
+          44.097222222222220000)
         XLColumn = 0
         XLNumFormat = nfGeneral
         ActiveInPreview = False
@@ -477,8 +484,8 @@ object frmReportPayroll: TfrmReportPayroll
         Width = 12
         Height = 20
         Size.Values = (
-          44.097222222222230000
-          330.729166666666600000
+          44.097222222222220000
+          330.729166666666700000
           158.750000000000000000
           26.458333333333330000)
         XLColumn = 0
@@ -506,8 +513,8 @@ object frmReportPayroll: TfrmReportPayroll
         Width = 12
         Height = 20
         Size.Values = (
-          44.097222222222230000
-          330.729166666666600000
+          44.097222222222220000
+          330.729166666666700000
           209.461805555555600000
           26.458333333333330000)
         XLColumn = 0
@@ -535,8 +542,8 @@ object frmReportPayroll: TfrmReportPayroll
         Width = 12
         Height = 20
         Size.Values = (
-          44.097222222222230000
-          330.729166666666600000
+          44.097222222222220000
+          330.729166666666700000
           260.173611111111100000
           26.458333333333330000)
         XLColumn = 0
@@ -588,7 +595,7 @@ object frmReportPayroll: TfrmReportPayroll
       ForceNewPage = False
       Size.Values = (
         30.868055555555560000
-        460.815972222222300000)
+        460.815972222222200000)
       PreCaluculateBandHeight = False
       KeepOnOnePage = False
       BandType = rbDetail
@@ -632,8 +639,8 @@ object frmReportPayroll: TfrmReportPayroll
         Width = 32
         Height = 13
         Size.Values = (
-          28.663194444444450000
-          385.850694444444500000
+          28.663194444444440000
+          385.850694444444400000
           2.204861111111111000
           70.555555555555560000)
         XLColumn = 0
@@ -703,7 +710,7 @@ object frmReportPayroll: TfrmReportPayroll
       ForceNewColumn = False
       ForceNewPage = False
       Size.Values = (
-        61.736111111111120000
+        61.736111111111110000
         941.475694444444400000)
       PreCaluculateBandHeight = False
       KeepOnOnePage = False
@@ -714,8 +721,8 @@ object frmReportPayroll: TfrmReportPayroll
         Width = 83
         Height = 20
         Size.Values = (
-          44.097222222222230000
-          28.663194444444450000
+          44.097222222222220000
+          28.663194444444440000
           15.434027777777780000
           183.003472222222200000)
         XLColumn = 0
@@ -1137,7 +1144,7 @@ object frmReportPayroll: TfrmReportPayroll
     OnClick = btnCetakKomisiSatuanClick
   end
   object qrpSlip: TQuickRep
-    Left = 410
+    Left = 531
     Top = 32
     Width = 378
     Height = 605
@@ -1207,7 +1214,7 @@ object frmReportPayroll: TfrmReportPayroll
       ForceNewPage = False
       Size.Values = (
         21.166666666666670000
-        939.270833333333400000)
+        939.270833333333300000)
       PreCaluculateBandHeight = False
       KeepOnOnePage = False
       BandType = rbPageHeader
@@ -1224,7 +1231,7 @@ object frmReportPayroll: TfrmReportPayroll
       ForceNewPage = False
       Size.Values = (
         1407.583333333333000000
-        939.270833333333400000)
+        939.270833333333300000)
       PreCaluculateBandHeight = False
       KeepOnOnePage = False
       BandType = rbDetail
@@ -1417,7 +1424,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           473.604166666666700000
-          320.145833333333400000
+          320.145833333333300000
           55.562500000000000000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -1451,7 +1458,7 @@ object frmReportPayroll: TfrmReportPayroll
           44.979166666666670000
           31.750000000000000000
           259.291666666666700000
-          82.020833333333340000)
+          82.020833333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
         ActiveInPreview = False
@@ -1511,7 +1518,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           29.104166666666670000
-          320.145833333333400000
+          320.145833333333300000
           44.979166666666670000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -1658,7 +1665,7 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          391.583333333333400000
+          391.583333333333300000
           365.125000000000000000
           137.583333333333300000)
         XLColumn = 0
@@ -1779,7 +1786,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           322.791666666666700000
-          320.145833333333400000
+          320.145833333333300000
           26.458333333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -1837,7 +1844,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           29.104166666666670000
-          407.458333333333400000
+          407.458333333333300000
           116.416666666666700000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -1866,7 +1873,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           322.791666666666700000
-          407.458333333333400000
+          407.458333333333300000
           26.458333333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -1895,7 +1902,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           418.041666666666700000
-          407.458333333333400000
+          407.458333333333300000
           111.125000000000000000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -2109,7 +2116,7 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          566.208333333333400000
+          566.208333333333300000
           497.416666666666700000
           63.500000000000000000)
         XLColumn = 0
@@ -2167,9 +2174,9 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          830.791666666666800000
+          830.791666666666700000
           497.416666666666700000
-          76.729166666666680000)
+          76.729166666666670000)
         XLColumn = 0
         XLNumFormat = nfGeneral
         ActiveInPreview = False
@@ -2201,7 +2208,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           29.104166666666670000
-          534.458333333333400000
+          534.458333333333300000
           124.354166666666700000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -2230,7 +2237,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           322.791666666666700000
-          534.458333333333400000
+          534.458333333333300000
           26.458333333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -2259,7 +2266,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           423.333333333333300000
-          534.458333333333400000
+          534.458333333333300000
           105.833333333333300000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -2291,9 +2298,9 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          566.208333333333400000
-          534.458333333333400000
-          60.854166666666680000)
+          566.208333333333300000
+          534.458333333333300000
+          60.854166666666670000)
         XLColumn = 0
         XLNumFormat = nfGeneral
         ActiveInPreview = False
@@ -2321,7 +2328,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           754.062500000000000000
-          534.458333333333400000
+          534.458333333333300000
           26.458333333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -2349,8 +2356,8 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          836.083333333333400000
-          534.458333333333400000
+          836.083333333333300000
+          534.458333333333300000
           71.437500000000000000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -2440,7 +2447,7 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          367.770833333333400000
+          367.770833333333300000
           579.437500000000000000
           161.395833333333300000)
         XLColumn = 0
@@ -2473,7 +2480,7 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          566.208333333333400000
+          566.208333333333300000
           579.437500000000000000
           129.645833333333300000)
         XLColumn = 0
@@ -2531,9 +2538,9 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          814.916666666666800000
+          814.916666666666700000
           579.437500000000000000
-          92.604166666666680000)
+          92.604166666666670000)
         XLColumn = 0
         XLNumFormat = nfGeneral
         ActiveInPreview = False
@@ -2565,7 +2572,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           29.104166666666670000
-          679.979166666666800000
+          679.979166666666700000
           132.291666666666700000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -2594,7 +2601,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           322.791666666666700000
-          679.979166666666800000
+          679.979166666666700000
           26.458333333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -2622,8 +2629,8 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          637.645833333333400000
-          679.979166666666800000
+          637.645833333333300000
+          679.979166666666700000
           79.375000000000000000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -2656,7 +2663,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           29.104166666666670000
-          724.958333333333400000
+          724.958333333333300000
           158.750000000000000000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -2685,7 +2692,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           322.791666666666700000
-          724.958333333333400000
+          724.958333333333300000
           26.458333333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -2713,8 +2720,8 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          600.604166666666800000
-          724.958333333333400000
+          600.604166666666700000
+          724.958333333333300000
           116.416666666666700000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -2746,8 +2753,8 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          566.208333333333400000
-          320.145833333333400000
+          566.208333333333300000
+          320.145833333333300000
           182.562500000000000000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -2776,7 +2783,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           754.062500000000000000
-          320.145833333333400000
+          320.145833333333300000
           26.458333333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -2804,9 +2811,9 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          814.916666666666800000
-          320.145833333333400000
-          92.604166666666680000)
+          814.916666666666700000
+          320.145833333333300000
+          92.604166666666670000)
         XLColumn = 0
         XLNumFormat = nfGeneral
         ActiveInPreview = False
@@ -2837,7 +2844,7 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          566.208333333333400000
+          566.208333333333300000
           365.125000000000000000
           50.270833333333330000)
         XLColumn = 0
@@ -2895,7 +2902,7 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          844.020833333333500000
+          844.020833333333300000
           365.125000000000000000
           63.500000000000000000)
         XLColumn = 0
@@ -2928,8 +2935,8 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          566.208333333333400000
-          407.458333333333400000
+          566.208333333333300000
+          407.458333333333300000
           127.000000000000000000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -2958,7 +2965,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           754.062500000000000000
-          407.458333333333400000
+          407.458333333333300000
           26.458333333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -2986,8 +2993,8 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          799.041666666666800000
-          407.458333333333400000
+          799.041666666666700000
+          407.458333333333300000
           108.479166666666700000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -3019,7 +3026,7 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          566.208333333333400000
+          566.208333333333300000
           449.791666666666700000
           166.687500000000000000)
         XLColumn = 0
@@ -3077,7 +3084,7 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          854.604166666666800000
+          854.604166666666700000
           449.791666666666700000
           52.916666666666670000)
         XLColumn = 0
@@ -3168,7 +3175,7 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          574.145833333333400000
+          574.145833333333300000
           769.937500000000000000
           142.875000000000000000)
         XLColumn = 0
@@ -3202,8 +3209,8 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           29.104166666666670000
-          814.916666666666800000
-          89.958333333333340000)
+          814.916666666666700000
+          89.958333333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
         ActiveInPreview = False
@@ -3231,7 +3238,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           322.791666666666700000
-          814.916666666666800000
+          814.916666666666700000
           26.458333333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -3259,8 +3266,8 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          613.833333333333400000
-          814.916666666666800000
+          613.833333333333300000
+          814.916666666666700000
           103.187500000000000000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -3293,8 +3300,8 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           29.104166666666670000
-          851.958333333333400000
-          68.791666666666680000)
+          851.958333333333300000
+          68.791666666666670000)
         XLColumn = 0
         XLNumFormat = nfGeneral
         ActiveInPreview = False
@@ -3322,7 +3329,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           322.791666666666700000
-          851.958333333333400000
+          851.958333333333300000
           26.458333333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -3350,8 +3357,8 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          645.583333333333400000
-          851.958333333333400000
+          645.583333333333300000
+          851.958333333333300000
           71.437500000000000000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -3384,8 +3391,8 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           29.104166666666670000
-          899.583333333333400000
-          84.666666666666680000)
+          899.583333333333300000
+          84.666666666666670000)
         XLColumn = 0
         XLNumFormat = nfGeneral
         ActiveInPreview = False
@@ -3413,7 +3420,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           322.791666666666700000
-          899.583333333333400000
+          899.583333333333300000
           26.458333333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -3441,8 +3448,8 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          637.645833333333400000
-          899.583333333333400000
+          637.645833333333300000
+          899.583333333333300000
           79.375000000000000000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -3475,7 +3482,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           29.104166666666670000
-          941.916666666666800000
+          941.916666666666700000
           145.520833333333300000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -3504,7 +3511,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           322.791666666666700000
-          941.916666666666800000
+          941.916666666666700000
           26.458333333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -3533,7 +3540,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           611.187500000000000000
-          941.916666666666800000
+          941.916666666666700000
           105.833333333333300000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -3566,7 +3573,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           29.104166666666670000
-          986.895833333333400000
+          986.895833333333300000
           164.041666666666700000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -3595,7 +3602,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           322.791666666666700000
-          986.895833333333400000
+          986.895833333333300000
           26.458333333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -3623,9 +3630,9 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          632.354166666666800000
-          986.895833333333400000
-          84.666666666666680000)
+          632.354166666666700000
+          986.895833333333300000
+          84.666666666666670000)
         XLColumn = 0
         XLNumFormat = nfGeneral
         ActiveInPreview = False
@@ -3658,7 +3665,7 @@ object frmReportPayroll: TfrmReportPayroll
           44.979166666666670000
           29.104166666666670000
           1026.583333333333000000
-          84.666666666666680000)
+          84.666666666666670000)
         XLColumn = 0
         XLNumFormat = nfGeneral
         ActiveInPreview = False
@@ -3716,7 +3723,7 @@ object frmReportPayroll: TfrmReportPayroll
           44.979166666666670000
           635.000000000000000000
           1026.583333333333000000
-          82.020833333333340000)
+          82.020833333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
         ActiveInPreview = False
@@ -3749,7 +3756,7 @@ object frmReportPayroll: TfrmReportPayroll
           44.979166666666670000
           29.104166666666670000
           1071.562500000000000000
-          97.895833333333340000)
+          97.895833333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
         ActiveInPreview = False
@@ -3805,7 +3812,7 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          613.833333333333400000
+          613.833333333333300000
           1071.562500000000000000
           103.187500000000000000)
         XLColumn = 0
@@ -3987,7 +3994,7 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          608.541666666666800000
+          608.541666666666700000
           1156.229166666667000000
           108.479166666666700000)
         XLColumn = 0
@@ -4021,7 +4028,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           29.104166666666670000
-          624.416666666666800000
+          624.416666666666700000
           198.437500000000000000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -4050,7 +4057,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           322.791666666666700000
-          624.416666666666800000
+          624.416666666666700000
           26.458333333333330000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -4079,7 +4086,7 @@ object frmReportPayroll: TfrmReportPayroll
         Size.Values = (
           44.979166666666670000
           365.125000000000000000
-          624.416666666666800000
+          624.416666666666700000
           164.041666666666700000)
         XLColumn = 0
         XLNumFormat = nfGeneral
@@ -4186,9 +4193,9 @@ object frmReportPayroll: TfrmReportPayroll
         Height = 17
         Size.Values = (
           44.979166666666670000
-          632.354166666666800000
+          632.354166666666700000
           1201.208333333333000000
-          84.666666666666680000)
+          84.666666666666670000)
         XLColumn = 0
         XLNumFormat = nfGeneral
         ActiveInPreview = False
@@ -4218,7 +4225,7 @@ object frmReportPayroll: TfrmReportPayroll
         Width = 94
         Height = 16
         Size.Values = (
-          42.333333333333340000
+          42.333333333333330000
           29.104166666666670000
           1246.187500000000000000
           248.708333333333300000)
@@ -4247,7 +4254,7 @@ object frmReportPayroll: TfrmReportPayroll
         Width = 42
         Height = 16
         Size.Values = (
-          42.333333333333340000
+          42.333333333333330000
           603.250000000000000000
           1246.187500000000000000
           111.125000000000000000)
@@ -37632,6 +37639,15 @@ object frmReportPayroll: TfrmReportPayroll
         Stretch = True
       end
     end
+  end
+  object btnSyncCloud: TcxButton
+    Left = 375
+    Top = 32
+    Width = 75
+    Height = 35
+    Caption = 'Sync Cloud'
+    TabOrder = 15
+    OnClick = btnSyncCloudClick
   end
   object tblDepartemen: TMyTable
     TableName = 'departemen'

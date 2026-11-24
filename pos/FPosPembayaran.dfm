@@ -229,9 +229,9 @@ object frmPosPembayaran: TfrmPosPembayaran
         object Label9: TLabel
           Left = 555
           Top = 25
-          Width = 75
+          Width = 97
           Height = 18
-          Caption = 'Member ID'
+          Caption = 'Phone Number'
         end
         object Label10: TLabel
           Left = 555

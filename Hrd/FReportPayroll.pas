@@ -26,7 +26,7 @@ uses
   dxSkinSharpPlus, dxSkinTheAsphaltWorld, dxSkinVisualStudio2013Blue,
   dxSkinVisualStudio2013Dark, dxSkinVisualStudio2013Light, dxSkinVS2010,
   dxSkinWhiteprint, cxNavigator, Vcl.ComCtrls, dxCore, cxDateUtils, MyAccess,
-  MemDS;
+  MemDS, Vcl.Menus, cxButtons;
 
 type
   TfrmReportPayroll = class(TForm)
@@ -212,6 +212,9 @@ type
     QRLabel81: TQRLabel;
     lblTotalKomisi: TQRLabel;
     QRShape4: TQRShape;
+    btnSyncCloud: TcxButton;
+    lblSyncProgress: TLabel;
+    procedure btnSyncCloudClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Button1Click(Sender: TObject);
@@ -269,7 +272,190 @@ implementation
 
 {$R *.dfm}
 
-uses FdmDB, FMain, FCetakKomisi;
+uses FdmDB, FMain, FCetakKomisi,
+     System.Net.HttpClient, System.Net.URLClient, XSuperObject;
+
+procedure TfrmReportPayroll.btnSyncCloudClick(Sender: TObject);
+var
+  HTTP: THTTPClient;
+  Resp: IHTTPResponse;
+  Headers: TNetHeaders;
+  RequestBody: TStringStream;
+  JSONObj, JSONData: ISuperObject;
+  qryPayroll: TMyQuery;
+  BaseURL, sKodeKaryawan, sPeriode, sKodeOutlet, FN: string;
+  TotalCount, CurrentIdx, SuccessCount, FailCount, I: Integer;
+begin
+  sPeriode := Trim(edPeriode.Text);
+  if sPeriode = '' then
+  begin
+    ShowMessage('Silakan pilih Periode Payroll pada dropdown terlebih dahulu!');
+    Exit;
+  end;
+
+  // 1. Guard check konfigurasi Supabase & Outlet
+  BaseURL := Trim(frmMain.SUPABASE_URL);
+  if (BaseURL = '') or (Trim(frmMain.SUPABASE_KEY) = '') then
+  begin
+    ShowMessage('Konfigurasi Cloud Supabase belum lengkap di config.json!' + #13#10 +
+                'Pastikan SUPABASE_URL dan SUPABASE_KEY telah terkonfigurasi.');
+    lblSyncProgress.Caption := 'Error: Supabase URL / Key belum terisi.';
+    Exit;
+  end;
+
+  if Trim(frmMain.APP_OUTLETID) = '' then
+  begin
+    ShowMessage('ID Outlet belum ditentukan (APP_OUTLETID kosong)!');
+    lblSyncProgress.Caption := 'Error: APP_OUTLETID kosong.';
+    Exit;
+  end;
+
+  // Pastikan trailing slash pada BaseURL
+  if not (BaseURL[Length(BaseURL)] in ['/', '\']) then
+    BaseURL := BaseURL + '/';
+
+  btnSyncCloud.Enabled := False;
+  lblSyncProgress.Caption := 'Menyiapkan data payroll periode ' + sPeriode + '...';
+  Application.ProcessMessages;
+
+  qryPayroll := TMyQuery.Create(Self);
+  HTTP := THTTPClient.Create;
+  try
+    try
+      qryPayroll.Connection := dmDB.dbInternal;
+
+      // Ambil seluruh rincian payroll untuk periode yang dipilih beserta kodeoutlet dari tabel departemen
+      qryPayroll.SQL.Text :=
+        'SELECT p.*, d.kodeoutlet AS dept_kodeoutlet ' +
+        'FROM ben_payroll_details p ' +
+        'LEFT JOIN ben_hrd_karyawan_info k ON p.kodekaryawan = k.kodekaryawan ' +
+        'LEFT JOIN departemen d ON k.departemen = d.id_departemen ' +
+        'WHERE TRIM(p.payrollperiode) = ' + QuotedStr(sPeriode) + ' ' +
+        'ORDER BY p.autonum ASC';
+      qryPayroll.Open;
+
+      TotalCount := qryPayroll.RecordCount;
+      if TotalCount = 0 then
+      begin
+        lblSyncProgress.Caption := 'Tidak ada data di tabel ben_payroll_details untuk periode ' + sPeriode;
+        ShowMessage('Tidak ditemukan data pada tabel "ben_payroll_details" untuk periode: ' + sPeriode + #13#10#13#10 +
+                    'Penyebab:' + #13#10 +
+                    'Data pada grid layar dimuat dari Master Karyawan (ben_hrd_karyawan_info) dengan THP default 0, ' +
+                    'sedangkan sinkronisasi Cloud membutuhkan data rincian kalkulasi gaji dari tabel "ben_payroll_details".' + #13#10#13#10 +
+                    'Solusi:' + #13#10 +
+                    '1. Pastikan penggajian periode ini sudah diproses dan disimpan (Save) di menu "Payroll Admin", ATAU' + #13#10 +
+                    '2. Pilih periode yang sudah pernah diproses penggajiannya (contoh: PYZ.112.2025032120).');
+        Exit;
+      end;
+
+      SetLength(Headers, 4);
+      Headers[0] := TNameValuePair.Create('apikey', frmMain.SUPABASE_KEY);
+      Headers[1] := TNameValuePair.Create('Authorization', 'Bearer ' + frmMain.SUPABASE_KEY);
+      Headers[2] := TNameValuePair.Create('Content-Type', 'application/json');
+      Headers[3] := TNameValuePair.Create('Prefer', 'resolution=merge-duplicates'); // Upsert mode
+
+      HTTP.ConnectionTimeout := 7000;
+      HTTP.ResponseTimeout := 15000;
+
+      CurrentIdx := 0;
+      SuccessCount := 0;
+      FailCount := 0;
+
+      while not qryPayroll.Eof do
+      begin
+        Inc(CurrentIdx);
+        sKodeKaryawan := qryPayroll.FieldByName('kodekaryawan').AsString;
+        sKodeOutlet := Trim(qryPayroll.FieldByName('dept_kodeoutlet').AsString);
+        if sKodeOutlet = '' then
+          sKodeOutlet := Trim(frmMain.APP_OUTLETID);
+
+        lblSyncProgress.Caption := Format('Sinkronisasi [%d/%d]: %s...', [CurrentIdx, TotalCount, sKodeKaryawan]);
+        Application.ProcessMessages;
+
+        try
+          JSONObj := SO();
+          JSONObj.S['kode_outlet'] := sKodeOutlet;
+          JSONObj.I['local_autonum'] := qryPayroll.FieldByName('autonum').AsInteger;
+          JSONObj.S['kodekaryawan'] := sKodeKaryawan;
+          JSONObj.S['payrollperiode'] := sPeriode;
+
+          // Root level nilaithp untuk query dashboard & evaluasi berkecepatan tinggi
+          if not qryPayroll.FieldByName('nilaithp').IsNull then
+            JSONObj.S['nilaithp'] := StringReplace(FloatToStr(qryPayroll.FieldByName('nilaithp').AsFloat), ',', '.', [rfReplaceAll])
+          else
+            JSONObj.Null['nilaithp'] := jNull;
+
+          // Buat nested JSONB untuk seluruh kolom metrik dinamis penggajian & absensi
+          JSONData := SO();
+          for I := 0 to qryPayroll.FieldCount - 1 do
+          begin
+            FN := LowerCase(qryPayroll.Fields[I].FieldName);
+            // Lewati field yang telah dikelola eksplisit di level root atau helper join
+            if (FN <> 'autonum') and (FN <> 'idoutlet') and (FN <> 'kodekaryawan') and (FN <> 'dept_kodeoutlet') then
+            begin
+              if not qryPayroll.Fields[I].IsNull then
+              begin
+                case qryPayroll.Fields[I].DataType of
+                  ftInteger, ftSmallint, ftWord, ftLargeint:
+                    JSONData.I[qryPayroll.Fields[I].FieldName] := qryPayroll.Fields[I].AsInteger;
+                  ftFloat, ftCurrency, ftBCD, ftFMTBcd:
+                    JSONData.S[qryPayroll.Fields[I].FieldName] := StringReplace(FloatToStr(qryPayroll.Fields[I].AsFloat), ',', '.', [rfReplaceAll]);
+                  ftDate, ftDateTime, ftTime, ftTimeStamp:
+                    JSONData.S[qryPayroll.Fields[I].FieldName] := FormatDateTime('yyyy-mm-dd hh:nn:ss', qryPayroll.Fields[I].AsDateTime);
+                  else
+                    JSONData.S[qryPayroll.Fields[I].FieldName] := qryPayroll.Fields[I].AsString;
+                end;
+              end;
+            end;
+          end;
+
+          // Sematkan objek JSONData ke kolom payroll_data (JSONB)
+          JSONObj.O['payroll_data'] := JSONData;
+
+          RequestBody := TStringStream.Create(JSONObj.AsJSON, TEncoding.UTF8);
+          try
+            Resp := HTTP.Post(BaseURL + 'ot_hrd_karyawan_payroll_details?on_conflict=kode_outlet,local_autonum', RequestBody, nil, Headers);
+            if (Resp.StatusCode = 200) or (Resp.StatusCode = 201) then
+              Inc(SuccessCount)
+            else
+              Inc(FailCount);
+          finally
+            RequestBody.Free;
+          end;
+
+        except
+          on E: Exception do
+          begin
+            Inc(FailCount);
+          end;
+        end;
+
+        qryPayroll.Next;
+      end;
+
+      if FailCount = 0 then
+        lblSyncProgress.Caption := Format('Selesai! Seluruh %d data payroll periode %s berhasil disinkronkan.', [SuccessCount, sPeriode])
+      else
+        lblSyncProgress.Caption := Format('Selesai dengan catatan: %d sukses, %d gagal dari %d data.', [SuccessCount, FailCount, TotalCount]);
+
+      ShowMessage(Format('Sinkronisasi Payroll selesai!' + #13#10 +
+                         '- Periode              : %s' + #13#10 +
+                         '- Total Data Karyawan  : %d' + #13#10 +
+                         '- Berhasil Disinkronkan: %d' + #13#10 +
+                         '- Gagal / Terlewat     : %d', [sPeriode, TotalCount, SuccessCount, FailCount]));
+    except
+      on E: Exception do
+      begin
+        lblSyncProgress.Caption := 'Gagal sinkronisasi: ' + E.Message;
+        ShowMessage('Terjadi kesalahan saat sinkronisasi payroll ke Cloud:' + #13#10 + E.Message);
+      end;
+    end;
+  finally
+    qryPayroll.Free;
+    HTTP.Free;
+    btnSyncCloud.Enabled := True;
+  end;
+end;
 
 procedure TfrmReportPayroll.btnExportClick(Sender: TObject);
 begin
@@ -604,6 +790,8 @@ procedure TfrmReportPayroll.FormCreate(Sender: TObject);
 var
   i : Integer;
 begin
+   lblSyncProgress.Caption := '';
+
    qryCari := TMyQuery.Create(Self);
    qryCari.Connection := DMDB.dbInternal;
    qryCari.SQL.Add('select * from temptable');
@@ -622,7 +810,7 @@ begin
    qryFind.Close;
    qryFind.SQL.Clear;
    qryFind.SQL.Add('select payrollperiode from ben_payroll_periode ' +
-      'order by tglstart DESC LIMIT 12');
+      'order by tglstart DESC LIMIT 36');
    qryFind.Open;
    qryFind.First;
    for i := 0 to qryFind.RecordCount - 1 do

@@ -21,7 +21,7 @@ uses
   dxSkinOffice2016Colorful, dxSkinOffice2016Dark, dxSkinSevenClassic,
   dxSkinSharpPlus, dxSkinTheAsphaltWorld, dxSkinVisualStudio2013Blue,
   dxSkinVisualStudio2013Dark, dxSkinVisualStudio2013Light, dxSkinVS2010,
-  dxSkinWhiteprint, cxLabel, XSuperObject, MainSource;
+  dxSkinWhiteprint, cxLabel, XSuperObject, MainSource, dxBevel;
 
 type
   TfrmConfigSetup = class(TForm)
@@ -64,6 +64,12 @@ type
     Label7: TLabel;
     Label8: TLabel;
     Label10: TLabel;
+    Label18: TLabel;
+    Label19: TLabel;
+    edSupabaseUrl: TcxTextEdit;
+    Label20: TLabel;
+    edSupabaseKey: TcxTextEdit;
+    dxBevel1: TdxBevel;
     procedure btnSaveClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -122,6 +128,14 @@ begin
      frmMain.SERVER_DBPASS := EncryptPass(edServerPass.Text);
      frmMain.ConfigJSON.O['ServerDB'].AsObject.S['Password'] := frmMain.SERVER_DBPASS;
 
+     if not frmMain.ConfigJSON.Contains('Supabase') then
+       frmMain.ConfigJSON.O['Supabase'] := SO();
+
+     frmMain.SUPABASE_URL := EncryptPass(edSupabaseUrl.Text);
+     frmMain.ConfigJSON.O['Supabase'].AsObject.S['REST_URL'] := frmMain.SUPABASE_URL;
+     frmMain.SUPABASE_KEY := EncryptPass(edSupabaseKey.Text);
+     frmMain.ConfigJSON.O['Supabase'].AsObject.S['PublishableKey'] := frmMain.SUPABASE_KEY;
+
      frmMain.ConfigJSON.SaveTo(ConfigDir + 'config.json', true, true);
      jsonConfig.Free;
     ShowMessage('First Set Up Complete, ' + #13 +
@@ -174,6 +188,9 @@ begin
               edServerPass.Text := frmMain.SERVER_DBPASS;
               edServerPort.Text := frmMain.SERVER_DBPORT;
               edServerUser.Text := frmMain.SERVER_DBUSER;
+
+              edSupabaseUrl.Text := frmMain.SUPABASE_URL;
+              edSupabaseKey.Text := frmMain.SUPABASE_KEY;
               lblLoader.Visible := False;
               Screen.Cursor := crDefault;
               tmrLoadCOnfig.Enabled := False;

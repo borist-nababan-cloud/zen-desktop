@@ -173,7 +173,9 @@ uses
   FPresensiManual in 'Hrd\FPresensiManual.pas' {frmPresensiManual},
   FPosMainMenu in 'pos\master\FPosMainMenu.pas' {frmPosMainMenu},
   FPeriodeUM in 'Hrd\FPeriodeUM.pas' {frmPeriodeUM},
-  FReportPendapatanHarianApi in 'Report\PosReport\FReportPendapatanHarianApi.pas' {frmReportPendapatanHarianApi};
+  FReportPendapatanHarianApi in 'Report\PosReport\FReportPendapatanHarianApi.pas' {frmReportPendapatanHarianApi},
+  FPosMstrRuangan in 'pos\master\FPosMstrRuangan.pas' {frmPosMstrRuangan},
+  FTherapisFlow in 'pos\master\FTherapisFlow.pas' {frmTherapisFlow};
 
 {$R *.res}
 
@@ -183,6 +185,5 @@ begin
   Application.Title := 'Zen Internal System';
   Application.CreateForm(TdmDB, dmDB);
   Application.CreateForm(TfrmMain, frmMain);
-  Application.CreateForm(TfrmReportPendapatanHarianApi, frmReportPendapatanHarianApi);
   Application.Run;
 end.

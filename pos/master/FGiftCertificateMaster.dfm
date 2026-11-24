@@ -40,7 +40,7 @@ object frmGiftCertificateMaster: TfrmGiftCertificateMaster
   object cxGrid1: TcxGrid
     Left = 8
     Top = 44
-    Width = 553
+    Width = 642
     Height = 477
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
@@ -120,7 +120,7 @@ object frmGiftCertificateMaster: TfrmGiftCertificateMaster
   object Panel1: TPanel
     Left = 4
     Top = 532
-    Width = 557
+    Width = 646
     Height = 57
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 1
@@ -134,7 +134,7 @@ object frmGiftCertificateMaster: TfrmGiftCertificateMaster
       OnClick = btnNewPacketClick
     end
     object btnActivatedPacket: TcxButton
-      Left = 444
+      Left = 432
       Top = 8
       Width = 102
       Height = 37
@@ -158,7 +158,7 @@ object frmGiftCertificateMaster: TfrmGiftCertificateMaster
       OnClick = btnEditPacketClick
     end
     object btnrefresh: TcxButton
-      Left = 336
+      Left = 324
       Top = 8
       Width = 102
       Height = 37
@@ -175,11 +175,20 @@ object frmGiftCertificateMaster: TfrmGiftCertificateMaster
       TabOrder = 4
       OnClick = btnRemovePacketClick
     end
+    object btnSyncCloud: TcxButton
+      Left = 540
+      Top = 8
+      Width = 101
+      Height = 37
+      Caption = 'Sync To Cloud'
+      TabOrder = 5
+      OnClick = btnSyncCloudClick
+    end
   end
   object cxGrid2: TcxGrid
-    Left = 572
+    Left = 656
     Top = 44
-    Width = 589
+    Width = 505
     Height = 477
     Anchors = [akTop, akRight, akBottom]
     TabOrder = 2
@@ -240,14 +249,14 @@ object frmGiftCertificateMaster: TfrmGiftCertificateMaster
     end
   end
   object Panel2: TPanel
-    Left = 572
+    Left = 656
     Top = 532
-    Width = 589
+    Width = 505
     Height = 57
     Anchors = [akRight, akBottom]
     TabOrder = 3
     object cxButton4: TcxButton
-      Left = 11
+      Left = 79
       Top = 8
       Width = 134
       Height = 37

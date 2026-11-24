@@ -69,7 +69,6 @@ object dmDB: TdmDB
   object vClient: TRESTClient
     Accept = 'application/json, text/plain; q=0.9, text/html;q=0.8,'
     AcceptCharset = 'UTF-8, *;q=0.8'
-    BaseURL = 'https://member.zenfamilyspa.net/api/pointmembers'
     Params = <>
     HandleRedirects = True
     RaiseExceptionOn500 = False

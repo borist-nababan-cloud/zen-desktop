@@ -24,7 +24,7 @@ uses
   cxDropDownEdit, cxLookupEdit, cxDBLookupEdit, cxDBExtLookupComboBox,
   cxTextEdit, cxMaskEdit, cxCalc, cxDBLookupComboBox, dxBevel, Vcl.Menus,
   cxButtons, strUtils, WinInet, System.Threading, XSuperJSON, XSuperObject,
-  DateUtils, Printers, MainSource;
+  DateUtils, Printers, MainSource, System.Net.HttpClient, System.Net.URLClient, System.NetEncoding;
 
 type
   TfrmPosPembayaranPay = class(TForm)
@@ -119,6 +119,8 @@ type
     function CreateAutoNumb : String;
     function CekInternet : Boolean;
     function GenerateRandomString(ALength: Integer): string;
+    function GenerateGCQRCode(ALength: Integer = 24): String;
+    function IsValidUUID(const AValue: String): Boolean;
     procedure HitungSisa;
     procedure CetakNota(var kodePayCetak : String);
     procedure CetakRating(var kodePayCetak : String);
@@ -145,150 +147,252 @@ uses FPosPembayaran, FdmDB, FMain, FPrintTrans, FPrintProduk, FPrintRatingCode;
 
 procedure TfrmPosPembayaranPay.btnFindGCClick(Sender: TObject);
 var
-  noGift : String;
-  dbCariGC : TMyConnection;
-  sQryCari : TMyQuery;
-  tglJual : TDate;
-  lamaValid : Integer;
-  hargaGC : Double;
+  noGift, sEncodedGC, sEndpoint, sOrFilter: String;
+  sBuyAt, sExpStr, sOutletUsed, sOutletBuy, sPayBuy, sNamaGC, sUserUid, sGCNumCloud, sQRCodeCloud: String;
+  tglJual, tglExp: TDateTime;
+  lamaValid: Integer;
+  hargaGC: Double;
+  HTTP: THTTPClient;
+  Headers: TNetHeaders;
+  Resp: IHTTPResponse;
+  JSONArr: ISuperArray;
+  JSONGC: ISuperObject;
+  bCloudReachable, bFoundInCloud, bHasUsed, bIsActive, bHasExpDate: Boolean;
+  FS: TFormatSettings;
 begin
-//  noGift := '%' + edNOGC.Text;
-  noGift := edNOGC.Text;
-  qrySearch.Close;
-  qrySearch.SQL.Clear;
-  qrySearch.SQL.Add('select harga_jasa, aktif, terjual, pakai, tgl_jual from gc_sold where gc_number like ' +
-      QuotedStr(noGift) + ';');
-  qrySearch.Open;
-  if (qrySearch.IsEmpty) then
-    begin
-      if (CekInternet = True) then
-        begin
-           dbCariGC := TMyConnection.Create(nil);
-           dbCariGC.Server := frmMain.SERVER_DBHOST;
-           dbCariGC.Database := frmMain.MERGERDBNAME;
-           dbCariGC.Username := frmMain.SERVER_DBUSER;
-           dbCariGC.Password := frmMain.SERVER_DBPASS;
-           dbCariGC.Port := StrToInt(frmMain.SERVER_DBPORT);
-           try
-                dbCariGC.Connected := True;
-             Except
-               on E : Exception do
-               ShowMessage('Sorry Database Not Ready !!');
-             end;
-           if (dbCariGC.Connected = True) then
-             begin
-                sQryCari := TMyQuery.Create(Self);
-                sQryCari.Connection := dbCariGC;
-                sQryCari.SQL.Add('select * from temptable');
-                sQryCari.Active := True;
+  noGift := Trim(edNOGC.Text);
+  if noGift = '' then
+  begin
+    ShowMessage('Masukkan nomor GC terlebih dahulu !');
+    Exit;
+  end;
 
-                sQryCari.Close;
-                sQryCari.SQL.Clear;
-                sQryCari.SQL.Add('select * from gc_detail where gc_number like ' +
-                                   QuotedStr(noGift) + ' AND pakai = ''' + 'N' + '''');
-                sQryCari.Open;
-                if (sQryCari.IsEmpty) then
-                  begin
-                    ShowMessage('Data GC tidak ditemukan');
-                    Exit;
-                  end
-                else if (NOT sQryCari.IsEmpty) then
-                  begin
-                     qryExec.SQL.Clear;
-                     qryExec.SQL.Add('insert into gc_sold(gc_number, id_members, tanggal, expired_date, ' +
-                      'nama_menu, harga_jasa, aktif, payment_jual, terjual, tgl_jual, outlet_jual) values(' +
-                      '''' + sQryCari.Fields[1].AsString + ''',' +
-                      '''' + sQryCari.Fields[2].AsString + ''',' +
-                      '''' + FormatDateTime('yyyy-MM-dd',sQryCari.Fields[3].AsDateTime) + ''',' +
-                      '''' + FormatDateTime('yyyy-MM-dd',sQryCari.Fields[4].AsDateTime) + ''',' +
-                      QuotedStr(sQryCari.Fields[5].AsString) + ',' +
-                      '''' + FloatToStr(sQryCari.Fields[6].AsFloat) + ''',' +
-                      '''' + sQryCari.Fields[7].AsString + ''',' +
-                      '''' + sQryCari.Fields[8].AsString + ''',' +
-                      '''' + sQryCari.Fields[9].AsString + ''',' +
-                      '''' + FormatDateTime('yyyy-MM-dd',sQryCari.Fields[10].AsDateTime) + ''',' +
-                      '''' + sQryCari.Fields[11].AsString + ''');');
-                     qryExec.ExecSQL;
-                     tglJual := sQryCari.Fields[10].AsDateTime;
-                     //lblBeliGC.Caption := FormatDateTime('dd-MMMM-yyyy', tglJual) + ' [' + IntToStr(lamaValid) + ']';
-                     lamaValid := DaysBetween(tglJual, Date);
-                     lblBeliGC.Caption := FormatDateTime('dd-MMMM-yyyy', tglJual) + ' [' + IntToStr(lamaValid) + ']';
-                     if (lamaValid > 120) then
-                         begin
-                             ShowMessage('Lama GC sudah lebih dari 120 Hari');
-                             edValGC.EditValue := 0;
-                             Exit
-                         end;
-                     //edValGC.EditValue := sQryCari.Fields[6].AsFloat;
-                     if (totBJ < sQryCari.Fields[6].AsFloat) then
-                         begin
-                           edValGC.EditValue := totBJ;
-                         end
-                       else if (totBJ > sQryCari.Fields[6].AsFloat) then
-                         begin
-                           edValGC.EditValue := sQryCari.Fields[6].AsFloat;
-                         end;
-                     edNOGC.Text := sQryCari.Fields[1].AsString;
-                     sQryCari.Free;
-                     dbCariGC.Disconnect;
-                     HitungSisa;
-                  end;
-             end
-           else if (dbCariGC.Connected = False) then
-             begin
-               ShowMessage('Koneksi Internet Tidak Ada ! ' + #13 +
-                       'Gagal Mengambil Data GC dari Server');
-               Exit;
-             end;
-           dbCariGC.Free;
-        end
-      else if (CekInternet = False) then
+  FS := TFormatSettings.Create('en-US');
+  FS.DateSeparator := '-';
+  FS.ShortDateFormat := 'yyyy-mm-dd';
+
+  bCloudReachable := False;
+  bFoundInCloud := False;
+
+  // =========================================================================
+  // PHASE 1: CLOUD-FIRST LOOKUP (Supabase ot_pos_gc_transaction)
+  // Mendukung pencarian lintas outlet berdasarkan uid (UUID), gc_number, dan qrcode.
+  // =========================================================================
+  if (Trim(frmMain.SUPABASE_URL) <> '') and (Trim(frmMain.SUPABASE_KEY) <> '') then
+  begin
+    HTTP := THTTPClient.Create;
+    try
+      HTTP.ConnectionTimeout := 5000;
+      HTTP.ResponseTimeout := 8000;
+      SetLength(Headers, 3);
+      Headers[0] := TNameValuePair.Create('apikey', frmMain.SUPABASE_KEY);
+      Headers[1] := TNameValuePair.Create('Authorization', 'Bearer ' + frmMain.SUPABASE_KEY);
+      Headers[2] := TNameValuePair.Create('Accept', 'application/json');
+
+      sEncodedGC := TNetEncoding.URL.Encode(noGift);
+      if IsValidUUID(noGift) then
+        sOrFilter := 'or=(uid.eq.' + sEncodedGC + ',gc_number.eq.' + sEncodedGC + ',qrcode.eq.' + sEncodedGC + ')'
+      else
+        sOrFilter := 'or=(gc_number.eq.' + sEncodedGC + ',qrcode.eq.' + sEncodedGC + ')';
+
+      sEndpoint := frmMain.SUPABASE_URL + 'ot_pos_gc_transaction?' + sOrFilter + '&limit=1';
+
+      try
+        Resp := HTTP.Get(sEndpoint, nil, Headers);
+        if Resp.StatusCode = 200 then
         begin
-           ShowMessage('Koneksi Internet Tidak Ada ! ' + #13 +
-                       'Gagal Mengambil Data GC dari Server');
-           Exit;
+          bCloudReachable := True;
+          JSONArr := SA(Resp.ContentAsString);
+          if Assigned(JSONArr) and (JSONArr.Length > 0) then
+          begin
+            bFoundInCloud := True;
+            JSONGC := JSONArr.O[0];
+
+            sGCNumCloud := Trim(JSONGC.S['gc_number']);
+            if sGCNumCloud = '' then sGCNumCloud := noGift;
+
+            sQRCodeCloud := Trim(JSONGC.S['qrcode']);
+            if sQRCodeCloud = '' then sQRCodeCloud := '(NONE)';
+
+            bHasUsed := JSONGC.B['has_used'];
+            bIsActive := True;
+            if JSONGC.Contains('is_active') then
+              bIsActive := JSONGC.B['is_active'];
+
+            hargaGC := JSONGC.F['value'];
+            sOutletUsed := Trim(JSONGC.S['kode_outlet_used']);
+            sOutletBuy := Trim(JSONGC.S['kode_outlet_buy']);
+            sPayBuy := Trim(JSONGC.S['id_payment_buy']);
+            sNamaGC := Trim(JSONGC.S['nama_gc']);
+            sUserUid := Trim(JSONGC.S['user_uid']);
+            sBuyAt := Trim(JSONGC.S['buy_at']);
+            sExpStr := Trim(JSONGC.S['expired_date']);
+
+            // Guard 1: Status Aktif
+            if not bIsActive then
+            begin
+              try
+                qryExec.SQL.Text := 'UPDATE gc_sold SET aktif = ''N'' WHERE gc_number = :pGC';
+                qryExec.ParamByName('pGC').AsString := sGCNumCloud;
+                qryExec.ExecSQL;
+              except
+              end;
+              ShowMessage('Nomor GC tidak Aktif !');
+              edValGC.EditValue := 0;
+              Exit;
+            end;
+
+            // Guard 2: Sudah Pernah Dipakai (Cross-Outlet Double-Spend Block)
+            if bHasUsed then
+            begin
+              try
+                qryExec.SQL.Text := 'UPDATE gc_sold SET pakai = ''Y'' WHERE gc_number = :pGC';
+                qryExec.ParamByName('pGC').AsString := sGCNumCloud;
+                qryExec.ExecSQL;
+              except
+              end;
+              if sOutletUsed <> '' then
+                ShowMessage('Nomor GC sudah pernah dipakai di Outlet ' + sOutletUsed + ' !')
+              else
+                ShowMessage('Nomor GC sudah pernah dipakai !');
+              edValGC.EditValue := 0;
+              Exit;
+            end;
+
+            // Parse tanggal jual (ambil 10 karakter yyyy-mm-dd dari TIMESTAMPTZ)
+            if (Length(sBuyAt) >= 10) and TryStrToDate(Copy(sBuyAt, 1, 10), tglJual, FS) then
+              // OK
+            else
+              tglJual := Date;
+
+            bHasExpDate := (Length(sExpStr) >= 10) and TryStrToDate(Copy(sExpStr, 1, 10), tglExp, FS);
+            if not bHasExpDate then
+              tglExp := IncDay(tglJual, 120);
+
+            lamaValid := DaysBetween(tglJual, Date);
+            lblBeliGC.Caption := FormatDateTime('dd-MMMM-yyyy', tglJual) + ' [' + IntToStr(lamaValid) + ']';
+
+            // Guard 3: Masa Berlaku (120 hari / expired_date)
+            if (lamaValid > 120) or (bHasExpDate and (Date > tglExp)) then
+            begin
+              ShowMessage('Lama GC sudah lebih dari 120 Hari / Kadaluarsa !');
+              edValGC.EditValue := 0;
+              Exit;
+            end;
+
+            // Sinkronisasi cache lokal gc_sold (termasuk qrcode -> notes bila belum ada di DB cabang ini)
+            qrySearch.Close;
+            qrySearch.SQL.Text := 'SELECT gc_number FROM gc_sold WHERE gc_number = :pGC LIMIT 1';
+            qrySearch.ParamByName('pGC').AsString := sGCNumCloud;
+            qrySearch.Open;
+            if qrySearch.IsEmpty then
+            begin
+              qryExec.SQL.Text :=
+                'INSERT INTO gc_sold (gc_number, id_members, tanggal, expired_date, ' +
+                '  nama_menu, harga_jasa, aktif, payment_jual, terjual, tgl_jual, outlet_jual, notes) ' +
+                'VALUES (:pGC, :pMember, :pTgl, :pExp, :pNama, :pHarga, ''Y'', :pPayBuy, ''Y'', :pTglJual, :pOutletBuy, :pNotes)';
+              qryExec.ParamByName('pGC').AsString := sGCNumCloud;
+              qryExec.ParamByName('pMember').AsString := sUserUid;
+              qryExec.ParamByName('pTgl').AsString := FormatDateTime('yyyy-mm-dd', tglJual);
+              qryExec.ParamByName('pExp').AsString := FormatDateTime('yyyy-mm-dd', tglExp);
+              qryExec.ParamByName('pNama').AsString := sNamaGC;
+              qryExec.ParamByName('pHarga').AsFloat := hargaGC;
+              qryExec.ParamByName('pPayBuy').AsString := sPayBuy;
+              qryExec.ParamByName('pTglJual').AsString := FormatDateTime('yyyy-mm-dd', tglJual);
+              if sOutletBuy <> '' then
+                qryExec.ParamByName('pOutletBuy').AsString := sOutletBuy
+              else
+                qryExec.ParamByName('pOutletBuy').AsString := frmMain.APP_OUTLETID;
+              qryExec.ParamByName('pNotes').AsString := sQRCodeCloud;
+              qryExec.ExecSQL;
+            end;
+
+            // Fix bug totBJ = hargaGC: gunakan <=
+            if (totBJ <= hargaGC) then
+              edValGC.EditValue := totBJ
+            else
+              edValGC.EditValue := hargaGC;
+
+            // Normalisasi edNOGC ke gc_number kanonik agar refgift & UpdatePakaiGC konsisten
+            edNOGC.Text := sGCNumCloud;
+            HitungSisa;
+            Exit;
+          end;
         end;
-    end
-  else if (NOT qrySearch.IsEmpty) then
-    begin
-       //edValGC.EditValue := qrySearch.Fields[0].AsFloat;
-       hargaGC := qrySearch.Fields[0].AsFloat;
-       if (qrySearch.Fields[1].AsString = 'N') then
-         begin
-           ShowMessage('Nomor GC tidak Aktif !');
-           Exit;
-         end;
-       if (qrySearch.Fields[2].AsString = 'N') then
-         begin
-           {btnSelected := MessageDlg('Apakah Anda akan menghapus Data ' + kodemenu + '?',mtConfirmation,mbOKCancel, 0);
-           if (btnSelected = mrCancel) then Exit;}
-           ShowMessage('Nomor GC belum terjual !');
-           Exit;
-         end;
-       if (qrySearch.Fields[3].AsString = 'Y') then
-         begin
-           ShowMessage('Nomor GC sudah pernah dipakai !');
-           Exit;
-         end;
-       tglJual := qrySearch.Fields[4].AsDateTime;
-       lamaValid := DaysBetween(tglJual, Date);
-       lblBeliGC.Caption := FormatDateTime('dd-MMMM-yyyy', tglJual) + ' [' + IntToStr(lamaValid) + ']';
-       if (lamaValid > 120) then
-         begin
-             ShowMessage('Lama GC sudah lebih dari 120 Hari');
-             edValGC.EditValue := 0;
-             Exit
-         end;
-       if (totBJ <= hargaGC) then
-         begin
-           edValGC.EditValue := totBJ;
-         end
-       else if (totBJ > hargaGC) then
-         begin
-           edValGC.EditValue := qrySearch.Fields[0].AsFloat;
-         end;
-       HitungSisa;
+      except
+        // Cloud tidak terjangkau / timeout -> lanjut ke Phase 2 (Local Fallback)
+        bCloudReachable := False;
+      end;
+    finally
+      HTTP.Free;
     end;
+  end;
+
+  // =========================================================================
+  // PHASE 2: LOCAL FALLBACK (gc_sold MySQL lokal: cari by gc_number atau notes)
+  // Dipakai bila internet cabang sedang offline/timeout atau GC baru terjual
+  // di cabang ini saat offline dan belum tersinkron ke Supabase.
+  // =========================================================================
+  if not bFoundInCloud then
+  begin
+    qrySearch.Close;
+    qrySearch.SQL.Text :=
+      'SELECT harga_jasa, aktif, terjual, pakai, tgl_jual, gc_number ' +
+      'FROM gc_sold ' +
+      'WHERE gc_number = :pGC ' +
+      '   OR (notes = :pGC AND notes <> '''' AND notes <> ''(NONE)'') ' +
+      'LIMIT 1';
+    qrySearch.ParamByName('pGC').AsString := noGift;
+    qrySearch.Open;
+
+    if qrySearch.IsEmpty then
+    begin
+      if not bCloudReachable then
+        ShowMessage('Data GC tidak ditemukan di lokal dan koneksi ke Supabase sedang tidak tersedia !')
+      else
+        ShowMessage('Data GC tidak ditemukan !');
+      edValGC.EditValue := 0;
+      Exit;
+    end;
+
+    hargaGC := qrySearch.FieldByName('harga_jasa').AsFloat;
+    if UpperCase(Trim(qrySearch.FieldByName('aktif').AsString)) = 'N' then
+    begin
+      ShowMessage('Nomor GC tidak Aktif !');
+      edValGC.EditValue := 0;
+      Exit;
+    end;
+    if UpperCase(Trim(qrySearch.FieldByName('terjual').AsString)) = 'N' then
+    begin
+      ShowMessage('Nomor GC belum terjual !');
+      edValGC.EditValue := 0;
+      Exit;
+    end;
+    if UpperCase(Trim(qrySearch.FieldByName('pakai').AsString)) = 'Y' then
+    begin
+      ShowMessage('Nomor GC sudah pernah dipakai !');
+      edValGC.EditValue := 0;
+      Exit;
+    end;
+
+    tglJual := qrySearch.FieldByName('tgl_jual').AsDateTime;
+    lamaValid := DaysBetween(tglJual, Date);
+    lblBeliGC.Caption := FormatDateTime('dd-MMMM-yyyy', tglJual) + ' [' + IntToStr(lamaValid) + ']';
+    if (lamaValid > 120) then
+    begin
+      ShowMessage('Lama GC sudah lebih dari 120 Hari');
+      edValGC.EditValue := 0;
+      Exit;
+    end;
+
+    if (totBJ <= hargaGC) then
+      edValGC.EditValue := totBJ
+    else
+      edValGC.EditValue := hargaGC;
+
+    edNOGC.Text := Trim(qrySearch.FieldByName('gc_number').AsString);
+    HitungSisa;
+  end;
 end;
 
 function TfrmPosPembayaranPay.CekInternet: Boolean;
@@ -646,7 +750,7 @@ end;
 
 procedure TfrmPosPembayaranPay.cxButton1Click(Sender: TObject);
 var
-  idPayment, idTrans, kodeMember, keterangan, kodePaket, NomorGC : String;
+  idPayment, idTrans, kodeMember, keterangan, kodePaket, sMenuId, sNamaPaket, NomorGC : String;
   i, panjang: Integer;
   pTambah, pKurang, pSisa, pAwal, nSubtotal : Double;
 
@@ -728,8 +832,10 @@ begin
       }
     qrySearch.Close;
     qrySearch.SQL.Clear;
-    qrySearch.SQL.Add('select produk_jasa_id from trans_detail where ' +
-        'trans_type_id = ''' + 'BG' + ''' AND payment_id = ''' + idPayment + '''');
+    qrySearch.SQL.Add('select produk_jasa_id, produk_jasa_nama from trans_detail where ' +
+        'trans_type_id = :pType AND payment_id = :pPay');
+    qrySearch.ParamByName('pType').AsString := 'BG';
+    qrySearch.ParamByName('pPay').AsString := idPayment;
     qrySearch.Open;
     qrySearch.First;
     if (NOT qrySearch.IsEmpty) then
@@ -738,54 +844,89 @@ begin
            begin
               keterangan := frmMain.USERAPPS+ ' ' + FormatDateTime('yyyy-MM-dd hh:mm:ss', tglServer);
               kodeMember := frmPosPembayaran.lblKodeMember.Caption;
-              kodePaket := qrySearch.Fields[0].AsString;
-              qryExec.SQL.Clear;
-              qryExec.SQL.Add('insert into gc_sold(id_members, gc_number, tanggal, expired_date, ' +
-                  'nama_menu, harga_jasa, aktif, payment_jual, terjual, tgl_jual, outlet_jual) ' +
-                  'select ' + QuotedStr(frmPosPembayaran.lblKodeMember.Caption) + ',gc_number, tanggal, ' +
-                  'expired_date, nama_menu, harga_jasa, ' + QuotedStr('Y') + ',' + QuotedStr(idPayment) +
-                  ',' + QuotedStr('Y') + ',' + QuotedStr(FormatDateTime('yyyy-MM-dd', tglServer)) + ',' +
-                  QuotedStr(frmMain.APP_OUTLETID) + ' from gc_detail where paket_number = ''' +
-                  qrySearch.Fields[0].AsString + ''';');
-              qryExec.SQL.Add('update gc_master set ' +
-                 'terjual = ''' + 'Y' + ''',' +
-                 'notes = ' + QuotedStr(keterangan) +
-                 ' where paket_number = ''' + qrySearch.Fields[0].AsString + ''';');
-              qryExec.SQL.Add('update gc_detail set ' +
-                 'terjual = ''' + 'Y' + ''',' +
-                 'notes = ' + QuotedStr(keterangan) +
-                 ' where paket_number = ''' + qrySearch.Fields[0].AsString + ''';');
-              qryExec.SQL.Add('delete from main_menu ' +
-                 'where menu_id = ''' + qrySearch.Fields[0].AsString + ''';');
+              sMenuId := Trim(qrySearch.FieldByName('produk_jasa_id').AsString);
+              sNamaPaket := Trim(qrySearch.FieldByName('produk_jasa_nama').AsString);
 
+              // Resolusi paket_number asli: main_menu.menu_id bertipe VARCHAR(30) sehingga
+              // paket_number > 30 karakter (misal 32 char) terpotong di produk_jasa_id,
+              // sedangkan produk_jasa_nama menyimpan paket_number secara utuh.
+              kodePaket := sMenuId;
+              qryFind.Close;
+              qryFind.SQL.Text := 'SELECT paket_number FROM gc_detail WHERE paket_number = :pPaket LIMIT 1';
+              qryFind.ParamByName('pPaket').AsString := sMenuId;
+              qryFind.Open;
+              if qryFind.IsEmpty and (sNamaPaket <> '') then
+              begin
+                qryFind.Close;
+                qryFind.SQL.Text := 'SELECT paket_number FROM gc_detail WHERE paket_number = :pPaket LIMIT 1';
+                qryFind.ParamByName('pPaket').AsString := sNamaPaket;
+                qryFind.Open;
+                if not qryFind.IsEmpty then
+                  kodePaket := Trim(qryFind.FieldByName('paket_number').AsString);
+              end;
+              if qryFind.IsEmpty and (sMenuId <> '') then
+              begin
+                qryFind.Close;
+                qryFind.SQL.Text := 'SELECT paket_number FROM gc_detail WHERE paket_number LIKE :pPrefix AND terjual = ''N'' LIMIT 1';
+                qryFind.ParamByName('pPrefix').AsString := sMenuId + '%';
+                qryFind.Open;
+                if not qryFind.IsEmpty then
+                  kodePaket := Trim(qryFind.FieldByName('paket_number').AsString);
+              end;
+
+              // Loop per voucher di gc_detail agar setiap GC mendapat kode QR acak 24 karakter unik di kolom notes
+              qryCari.Close;
+              qryCari.SQL.Text :=
+                  'SELECT gc_number, tanggal, expired_date, nama_menu, harga_jasa ' +
+                  'FROM gc_detail WHERE paket_number = :pPaket';
+              qryCari.ParamByName('pPaket').AsString := kodePaket;
+              qryCari.Open;
+              qryCari.First;
+              while not qryCari.Eof do
+              begin
+                qryExec.SQL.Text :=
+                    'INSERT INTO gc_sold (id_members, gc_number, tanggal, expired_date, ' +
+                    '  nama_menu, harga_jasa, aktif, payment_jual, terjual, tgl_jual, outlet_jual, notes) ' +
+                    'VALUES (:pMember, :pGC, :pTgl, :pExp, :pNama, :pHarga, ''Y'', :pPay, ''Y'', :pTglJual, :pOutlet, :pNotes)';
+                qryExec.ParamByName('pMember').AsString := kodeMember;
+                qryExec.ParamByName('pGC').AsString := qryCari.FieldByName('gc_number').AsString;
+                qryExec.ParamByName('pTgl').AsString := FormatDateTime('yyyy-mm-dd', qryCari.FieldByName('tanggal').AsDateTime);
+                // expired_date selalu 120 hari dari tanggal beli (tglServer), bukan dari stok cetak gc_detail
+                qryExec.ParamByName('pExp').AsString := FormatDateTime('yyyy-mm-dd', IncDay(tglServer, 120));
+                qryExec.ParamByName('pNama').AsString := qryCari.FieldByName('nama_menu').AsString;
+                qryExec.ParamByName('pHarga').AsFloat := qryCari.FieldByName('harga_jasa').AsFloat;
+                qryExec.ParamByName('pPay').AsString := idPayment;
+                qryExec.ParamByName('pTglJual').AsString := FormatDateTime('yyyy-mm-dd', tglServer);
+                qryExec.ParamByName('pOutlet').AsString := frmMain.APP_OUTLETID;
+                qryExec.ParamByName('pNotes').AsString := GenerateGCQRCode(24);
+                qryExec.ExecSQL;
+                qryCari.Next;
+              end;
+
+              qryExec.SQL.Text :=
+                  'UPDATE gc_master SET terjual = ''Y'', notes = :pNotes WHERE paket_number = :pPaket';
+              qryExec.ParamByName('pNotes').AsString := keterangan;
+              qryExec.ParamByName('pPaket').AsString := kodePaket;
               qryExec.ExecSQL;
+
+              qryExec.SQL.Text :=
+                  'UPDATE gc_detail SET terjual = ''Y'', notes = :pNotes WHERE paket_number = :pPaket';
+              qryExec.ParamByName('pNotes').AsString := keterangan;
+              qryExec.ParamByName('pPaket').AsString := kodePaket;
+              qryExec.ExecSQL;
+
+              qryExec.SQL.Text := 'DELETE FROM main_menu WHERE menu_id = :pMenuId';
+              qryExec.ParamByName('pMenuId').AsString := sMenuId;
+              qryExec.ExecSQL;
+
               qrySearch.Next;
            end;
-         TTask.Run(
-            procedure
-              begin
-                 TThread.Synchronize(nil,
-                    procedure
-                    begin
-                       frmMain.UpdateBeliGC(kodePaket, idPayment , kodeMember);
-                    end);
-              end
-           );
+         frmMain.UpdateBeliGC(kodePaket, idPayment, kodeMember);
       end;
     if (edValGC.EditValue > 0) then
       begin
         NomorGC := edNOGC.Text;
-        //ShowMessage('Payment By GC ' + NomorGC);
-        TTask.Run(
-            procedure
-              begin
-                 TThread.Synchronize(nil,
-                    procedure
-                    begin
-                       frmMain.UpdatePakaiGC(idPayment, NomorGC);
-                    end);
-              end
-           );
+        frmMain.UpdatePakaiGC(idPayment, NomorGC);
       end;
 
     CetakNota(idPayment);
@@ -1044,6 +1185,50 @@ begin
     // Random(High(ValidChars) + 1) generates a random index within the bounds of ValidChars.
     Result := Result + ValidChars[Random(High(ValidChars) + 1)];
   end;
+end;
+
+function TfrmPosPembayaranPay.GenerateGCQRCode(ALength: Integer): String;
+const
+  // 32 karakter alfanumerik kapital tanpa karakter ambigu (0/O, 1/I) -> nol modulo bias (256 mod 32 = 0)
+  ValidChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+var
+  G1, G2: TGUID;
+  Bytes: array[0..31] of Byte;
+  I: Integer;
+begin
+  Result := '';
+  if ALength < 15 then ALength := 15;
+  if ALength > 32 then ALength := 32;
+  G1 := TGUID.NewGuid;
+  G2 := TGUID.NewGuid;
+  Move(G1, Bytes[0], 16);
+  Move(G2, Bytes[16], 16);
+  for I := 0 to ALength - 1 do
+    Result := Result + ValidChars[(Bytes[I] mod Length(ValidChars)) + 1];
+end;
+
+function TfrmPosPembayaranPay.IsValidUUID(const AValue: String): Boolean;
+var
+  S: String;
+  I: Integer;
+  C: Char;
+begin
+  Result := False;
+  S := Trim(AValue);
+  if Length(S) <> 36 then Exit;
+  for I := 1 to 36 do
+  begin
+    C := S[I];
+    if (I = 9) or (I = 14) or (I = 19) or (I = 24) then
+    begin
+      if C <> '-' then Exit;
+    end
+    else
+    begin
+      if not CharInSet(C, ['0'..'9', 'a'..'f', 'A'..'F']) then Exit;
+    end;
+  end;
+  Result := True;
 end;
 
 procedure TfrmPosPembayaranPay.HitungSisa;

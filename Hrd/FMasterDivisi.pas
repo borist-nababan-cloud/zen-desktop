@@ -83,16 +83,17 @@ begin
               QuotedStr(edNama.Text) + ');');
           strSql := 'insert into departemen values(' +
               QuotedStr(edKode.Text) + ',' +
-              QuotedStr(edNama.Text) + ');';
+              QuotedStr(edNama.Text) + ',' +
+              QuotedStr('') + ');';
 
-          qryExec.SQL.Add('insert into ben_hist_sync values(' +
-          '''' + '' + ''',' +
-          '''' + FormatDateTime('yyyy-MM-dd hh:mm:ss', Now) + ''',' +
-          QuotedStr(frmMain.USERAPPS) + ',' +
-          '''' + frmMain.APP_OUTLETID + ''',' +
-          QuotedStr(strSql) + ',' +
-          '''' + 'N' + ''');');
-          qryExec.ExecSQL;
+//          qryExec.SQL.Add('insert into ben_hist_sync values(' +
+//          '''' + '' + ''',' +
+//          '''' + FormatDateTime('yyyy-MM-dd hh:mm:ss', Now) + ''',' +
+//          QuotedStr(frmMain.USERAPPS) + ',' +
+//          '''' + frmMain.APP_OUTLETID + ''',' +
+//          QuotedStr(strSql) + ',' +
+//          '''' + 'N' + ''');');
+//          qryExec.ExecSQL;
           ShowMessage('Data Divisi Tersimpan !');
           tblDepartemen.Refresh;
           edKode.Clear;

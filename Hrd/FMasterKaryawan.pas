@@ -24,7 +24,7 @@ uses
   dxSkinSevenClassic, dxSkinSharpPlus, dxSkinTheAsphaltWorld,
   dxSkinVisualStudio2013Blue, dxSkinVisualStudio2013Dark,
   dxSkinVisualStudio2013Light, dxSkinVS2010, dxSkinWhiteprint, cxNavigator,
-  MyAccess, MemDS;
+  MyAccess, MemDS, Vcl.Menus, cxButtons;
 
 type
   TfrmMasterKaryawan = class(TForm)
@@ -67,6 +67,8 @@ type
     gtbKaryawanisadmin: TcxGridDBColumn;
     btnKontrak: TButton;
     btnRefresh: TButton;
+    btnSyncCloud: TcxButton;
+    lblSyncProgress: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnNewClick(Sender: TObject);
@@ -75,6 +77,7 @@ type
     procedure ckFilterPropertiesChange(Sender: TObject);
     procedure btnKontrakClick(Sender: TObject);
     procedure btnRefreshClick(Sender: TObject);
+    procedure btnSyncCloudClick(Sender: TObject);
   private
     { Private declarations }
     qryStaff1, qryStaff2, qryStaff3, qryExec : TMyQuery;
@@ -120,7 +123,8 @@ uses FdmDB, FMasterKaryawanAdd, FMain, FKontrakKerjaUpdate,
      FPayrollCashIn, FIjinKeluar, FIjinTidakMasuk, FSakitInput,
      FRekapHarianBali, FPayrollAdminBali, FPayrollCashInBali, FRekapHarianNew,
      FRekapHarianBaru, FIjinSakitInput, FIjinPulangInput, FIjinTidakMasukInput,
-     FTherapistReport, FRekapHarianOld;
+     FTherapistReport, FRekapHarianOld,
+     System.Net.HttpClient, System.Net.URLClient, XSuperObject;
 
 procedure TfrmMasterKaryawan.InputIjinTM;
 var
@@ -881,6 +885,272 @@ begin
   end;
 end;
 
+procedure TfrmMasterKaryawan.btnSyncCloudClick(Sender: TObject);
+var
+  HTTP: THTTPClient;
+  Resp: IHTTPResponse;
+  Headers: TNetHeaders;
+  RequestBody: TStringStream;
+  JSONObj: ISuperObject;
+  JSONArray: ISuperArray;
+  qryInfo, qryDetails: TMyQuery;
+  BaseURL, sKodeKaryawan, sNamaKaryawan, sKodeOutlet, Endpoint: string;
+  TotalCount, CurrentIdx, SuccessCount, FailCount: Integer;
+begin
+  // 1. Guard check konfigurasi Supabase & Outlet
+  BaseURL := Trim(frmMain.SUPABASE_URL);
+  if (BaseURL = '') or (Trim(frmMain.SUPABASE_KEY) = '') then
+  begin
+    ShowMessage('Konfigurasi Cloud Supabase belum lengkap di config.json!' + #13#10 +
+                'Pastikan SUPABASE_URL dan SUPABASE_KEY telah terkonfigurasi.');
+    lblSyncProgress.Caption := 'Error: Supabase URL / Key belum terisi.';
+    Exit;
+  end;
+
+  if Trim(frmMain.APP_OUTLETID) = '' then
+  begin
+    ShowMessage('ID Outlet belum ditentukan (APP_OUTLETID kosong)!');
+    lblSyncProgress.Caption := 'Error: APP_OUTLETID kosong.';
+    Exit;
+  end;
+
+  // Pastikan trailing slash pada BaseURL
+  if not (BaseURL[Length(BaseURL)] in ['/', '\']) then
+    BaseURL := BaseURL + '/';
+
+  btnSyncCloud.Enabled := False;
+  lblSyncProgress.Caption := 'Menyiapkan data karyawan aktif...';
+  Application.ProcessMessages;
+
+  qryInfo := TMyQuery.Create(Self);
+  qryDetails := TMyQuery.Create(Self);
+  HTTP := THTTPClient.Create;
+  try
+    try
+      qryInfo.Connection := dmDB.dbInternal;
+      qryDetails.Connection := dmDB.dbInternal;
+
+      // Ambil seluruh data karyawan yang berstatus aktif beserta kodeoutlet dari tabel departemen
+      qryInfo.SQL.Text :=
+        'SELECT k.*, d.kodeoutlet AS dept_kodeoutlet ' +
+        'FROM ben_hrd_karyawan_info k ' +
+        'LEFT JOIN departemen d ON k.departemen = d.id_departemen ' +
+        'WHERE k.active = ''Y'' ' +
+        'ORDER BY k.idkaryawan ASC';
+      qryInfo.Open;
+
+      TotalCount := qryInfo.RecordCount;
+      if TotalCount = 0 then
+      begin
+        lblSyncProgress.Caption := 'Tidak ada data karyawan aktif untuk disinkronkan.';
+        ShowMessage('Tidak ditemukan data karyawan berstatus aktif (active = "Y").');
+        Exit;
+      end;
+
+      // 2. Tahap Inisialisasi: Reset seluruh karyawan outlet ini di Cloud Supabase ke active = 'N'
+      lblSyncProgress.Caption := 'Mereset status aktif karyawan di Cloud Supabase (outlet ' + frmMain.APP_OUTLETID + ')...';
+      Application.ProcessMessages;
+
+      JSONObj := SO();
+      JSONObj.S['active'] := 'N';
+      RequestBody := TStringStream.Create(JSONObj.AsJSON, TEncoding.UTF8);
+      try
+        Endpoint := BaseURL + 'ot_hrd_karyawan_info?kode_outlet=eq.' + frmMain.APP_OUTLETID;
+        Resp := HTTP.Patch(Endpoint, RequestBody, nil, [
+          TNameValuePair.Create('apikey', frmMain.SUPABASE_KEY),
+          TNameValuePair.Create('Authorization', 'Bearer ' + frmMain.SUPABASE_KEY),
+          TNameValuePair.Create('Content-Type', 'application/json')
+        ]);
+
+        if (Resp.StatusCode <> 200) and (Resp.StatusCode <> 204) then
+        begin
+          lblSyncProgress.Caption := Format('Gagal reset Cloud: HTTP %d', [Resp.StatusCode]);
+          ShowMessage(Format('Gagal mereset status aktif karyawan di Cloud Supabase!' + #13#10 +
+                             'Kode Outlet : %s' + #13#10 +
+                             'Status HTTP : %d (%s)' + #13#10 +
+                             'Pesan Server: %s', [frmMain.APP_OUTLETID, Resp.StatusCode, Resp.StatusText, Resp.ContentAsString]));
+          Exit;
+        end;
+      finally
+        RequestBody.Free;
+      end;
+
+      SetLength(Headers, 4);
+      Headers[0] := TNameValuePair.Create('apikey', frmMain.SUPABASE_KEY);
+      Headers[1] := TNameValuePair.Create('Authorization', 'Bearer ' + frmMain.SUPABASE_KEY);
+      Headers[2] := TNameValuePair.Create('Content-Type', 'application/json');
+      Headers[3] := TNameValuePair.Create('Prefer', 'resolution=merge-duplicates'); // Upsert mode
+
+      HTTP.ConnectionTimeout := 7000;
+      HTTP.ResponseTimeout := 12000;
+
+      CurrentIdx := 0;
+      SuccessCount := 0;
+      FailCount := 0;
+
+      while not qryInfo.Eof do
+      begin
+        Inc(CurrentIdx);
+        sKodeKaryawan := qryInfo.FieldByName('kodekaryawan').AsString;
+        sNamaKaryawan := qryInfo.FieldByName('namakaryawan').AsString;
+        sKodeOutlet := Trim(qryInfo.FieldByName('dept_kodeoutlet').AsString);
+        if sKodeOutlet = '' then
+          sKodeOutlet := Trim(frmMain.APP_OUTLETID);
+
+        lblSyncProgress.Caption := Format('Sinkronisasi [%d/%d]: %s - %s...', [CurrentIdx, TotalCount, sKodeKaryawan, sNamaKaryawan]);
+        Application.ProcessMessages;
+
+        try
+          // A. Upsert ke ot_hrd_karyawan_info (Key: kodekaryawan)
+          JSONObj := SO();
+          JSONObj.S['kode_outlet'] := sKodeOutlet;
+          JSONObj.S['kodekaryawan'] := sKodeKaryawan;
+          JSONObj.S['idkaryawan'] := qryInfo.FieldByName('idkaryawan').AsString;
+          JSONObj.S['namakaryawan'] := sNamaKaryawan;
+          JSONObj.S['departemen'] := qryInfo.FieldByName('departemen').AsString;
+          JSONObj.S['jadwaltetap'] := qryInfo.FieldByName('jadwaltetap').AsString;
+          JSONObj.I['kodejadwal'] := qryInfo.FieldByName('kodejadwal').AsInteger;
+          JSONObj.S['kodekontrak'] := qryInfo.FieldByName('kodekontrak').AsString;
+          JSONObj.S['active'] := 'Y';
+
+          if not qryInfo.FieldByName('isadmin').IsNull then
+            JSONObj.S['isadmin'] := Trim(qryInfo.FieldByName('isadmin').AsString)
+          else
+            JSONObj.Null['isadmin'] := jNull;
+
+          if not qryInfo.FieldByName('tglmasukkerja').IsNull then
+            JSONObj.S['tglmasukkerja'] := FormatDateTime('yyyy-mm-dd', qryInfo.FieldByName('tglmasukkerja').AsDateTime)
+          else
+            JSONObj.Null['tglmasukkerja'] := jNull;
+
+          if not qryInfo.FieldByName('tglhabiskontrak').IsNull then
+            JSONObj.S['tglhabiskontrak'] := FormatDateTime('yyyy-mm-dd', qryInfo.FieldByName('tglhabiskontrak').AsDateTime)
+          else
+            JSONObj.Null['tglhabiskontrak'] := jNull;
+
+          JSONObj.S['namabank'] := qryInfo.FieldByName('namabank').AsString;
+          JSONObj.S['norek'] := qryInfo.FieldByName('norek').AsString;
+          JSONObj.S['namarek'] := qryInfo.FieldByName('namarek').AsString;
+
+          RequestBody := TStringStream.Create(JSONObj.AsJSON, TEncoding.UTF8);
+          try
+            Resp := HTTP.Post(BaseURL + 'ot_hrd_karyawan_info?on_conflict=kodekaryawan', RequestBody, nil, Headers);
+            if (Resp.StatusCode = 200) or (Resp.StatusCode = 201) then
+              Inc(SuccessCount)
+            else
+              Inc(FailCount);
+          finally
+            RequestBody.Free;
+          end;
+
+          // B. Sinkronisasi Data Detail dari ben_hrd_karyawan_details
+          qryDetails.Close;
+          qryDetails.SQL.Text := 'SELECT * FROM ben_hrd_karyawan_details WHERE kodekaryawan = :kdk';
+          qryDetails.ParamByName('kdk').AsString := sKodeKaryawan;
+          qryDetails.Open;
+
+          // Fallback pencarian dengan idkaryawan jika kodekaryawan kosong di detail
+          if qryDetails.IsEmpty then
+          begin
+            qryDetails.Close;
+            qryDetails.SQL.Text := 'SELECT * FROM ben_hrd_karyawan_details WHERE idkaryawan = :idk';
+            qryDetails.ParamByName('idk').AsString := qryInfo.FieldByName('idkaryawan').AsString;
+            qryDetails.Open;
+          end;
+
+          if not qryDetails.IsEmpty then
+          begin
+            Endpoint := BaseURL + 'ot_hrd_karyawan_details?kodekaryawan=eq.' + sKodeKaryawan;
+            Resp := HTTP.Get(Endpoint, nil, [
+              TNameValuePair.Create('apikey', frmMain.SUPABASE_KEY),
+              TNameValuePair.Create('Authorization', 'Bearer ' + frmMain.SUPABASE_KEY),
+              TNameValuePair.Create('Content-Type', 'application/json')
+            ]);
+
+            JSONObj := SO();
+            JSONObj.S['kode_outlet'] := sKodeOutlet;
+            JSONObj.S['kodekaryawan'] := sKodeKaryawan;
+            JSONObj.S['idkaryawan'] := qryDetails.FieldByName('idkaryawan').AsString;
+            JSONObj.S['namakaryawan'] := qryDetails.FieldByName('namakaryawan').AsString;
+            JSONObj.S['sex'] := qryDetails.FieldByName('sex').AsString;
+            JSONObj.S['active'] := 'Y';
+            JSONObj.S['noidentitas'] := qryDetails.FieldByName('noidentitas').AsString;
+            JSONObj.S['alamatktp'] := qryDetails.FieldByName('alamatktp').AsString;
+            JSONObj.S['alamattinggal'] := qryDetails.FieldByName('alamattinggal').AsString;
+            JSONObj.S['telpfixline'] := qryDetails.FieldByName('telpfixline').AsString;
+            JSONObj.S['telpponsel'] := qryDetails.FieldByName('telpponsel').AsString;
+            JSONObj.S['tempatlahir'] := qryDetails.FieldByName('tempatlahir').AsString;
+
+            if not qryDetails.FieldByName('tgllahir').IsNull then
+              JSONObj.S['tgllahir'] := FormatDateTime('yyyy-mm-dd', qryDetails.FieldByName('tgllahir').AsDateTime)
+            else
+              JSONObj.Null['tgllahir'] := jNull;
+
+            JSONObj.S['agamaid'] := qryDetails.FieldByName('agamaid').AsString;
+            JSONObj.S['goldarah'] := qryDetails.FieldByName('goldarah').AsString;
+            JSONObj.S['alamatemail'] := qryDetails.FieldByName('alamatemail').AsString;
+
+            RequestBody := TStringStream.Create(JSONObj.AsJSON, TEncoding.UTF8);
+            try
+              if Resp.StatusCode = 200 then
+              begin
+                JSONArray := SA(Resp.ContentAsString);
+                if (not Assigned(JSONArray)) or (JSONArray.Length = 0) then
+                begin
+                  HTTP.Post(BaseURL + 'ot_hrd_karyawan_details', RequestBody, nil, [
+                    TNameValuePair.Create('apikey', frmMain.SUPABASE_KEY),
+                    TNameValuePair.Create('Authorization', 'Bearer ' + frmMain.SUPABASE_KEY),
+                    TNameValuePair.Create('Content-Type', 'application/json')
+                  ]);
+                end
+                else
+                begin
+                  HTTP.Patch(Endpoint, RequestBody, nil, [
+                    TNameValuePair.Create('apikey', frmMain.SUPABASE_KEY),
+                    TNameValuePair.Create('Authorization', 'Bearer ' + frmMain.SUPABASE_KEY),
+                    TNameValuePair.Create('Content-Type', 'application/json')
+                  ]);
+                end;
+              end;
+            finally
+              RequestBody.Free;
+            end;
+          end;
+
+        except
+          on E: Exception do
+          begin
+            Inc(FailCount);
+          end;
+        end;
+
+        qryInfo.Next;
+      end;
+
+      if FailCount = 0 then
+        lblSyncProgress.Caption := Format('Selesai! Seluruh %d karyawan aktif berhasil disinkronkan ke Cloud.', [SuccessCount])
+      else
+        lblSyncProgress.Caption := Format('Selesai dengan catatan: %d sukses, %d gagal dari %d karyawan.', [SuccessCount, FailCount, TotalCount]);
+
+      ShowMessage(Format('Sinkronisasi selesai!' + #13#10 +
+                         '- Total Karyawan Aktif : %d' + #13#10 +
+                         '- Berhasil Disinkronkan : %d' + #13#10 +
+                         '- Gagal / Terlewat      : %d', [TotalCount, SuccessCount, FailCount]));
+    except
+      on E: Exception do
+      begin
+        lblSyncProgress.Caption := 'Gagal sinkronisasi: ' + E.Message;
+        ShowMessage('Terjadi kesalahan saat sinkronisasi ke Cloud:' + #13#10 + E.Message);
+      end;
+    end;
+  finally
+    qryDetails.Free;
+    qryInfo.Free;
+    HTTP.Free;
+    btnSyncCloud.Enabled := True;
+  end;
+end;
+
 procedure TfrmMasterKaryawan.ckFilterPropertiesChange(Sender: TObject);
 begin
   if (ckFilter.Checked = True) then
@@ -914,6 +1184,8 @@ end;
 
 procedure TfrmMasterKaryawan.FormCreate(Sender: TObject);
 begin
+  lblSyncProgress.Caption := '';
+
   qryStaff1 := TMyQuery.Create(Self);
   qryStaff1.Connection := DMDB.dbInternal;
   qryStaff1.SQL.Add('select * from temptable');

@@ -1364,52 +1364,66 @@ begin
     qryCari := TMyQuery.Create(Self);
     qryCari.Connection := dmDB.dbInternal;
     qryCari.SQL.Add('select * from temptable');
-    qryCari.Active := true;
 
     qrySearch := TMyQuery.Create(Self);
     qrySearch.Connection := dmDB.dbInternal;
     qrySearch.SQL.Add('select * from temptable');
-    qrySearch.Active := true;
 
     qryFind := TMyQuery.Create(Self);
     qryFind.Connection := dmDB.dbInternal;
     qryFind.SQL.Add('select * from temptable');
-    qryFind.Active := true;
 
     qryPayment := TMyQuery.Create(Self);
     qryPayment.Connection := dmDB.dbInternal;
     qryPayment.SQL.Add('select * from temptable');
-    qryPayment.Active := true;
 
-    if (frmReportPendapatanHarianApi.Tag = 0) then
-      begin
-        qryCari.Close;
-        qryCari.SQL.Clear;
-        qryCari.SQL.Add('select CURRENT_TIMESTAMP as datetimeserver');
-        qryCari.Open;
-        edServerTime.Date := qryCari.Fields[0].AsDateTime;
-        HariIni := StartOfTheDay(qryCari.Fields[0].AsDateTime);
+    edServerTime.Date := Now;
+    tglCari := Now;
+    lblTanggal.Caption := FormatDateTime('dd-MMMM-yyyy', Now);
 
-        if (HoursBetween(HariIni,qryCari.Fields[0].AsDateTime) > 1) then
-          begin
-             tglCari := HariIni;
-             lblTanggal.Caption := FormatDateTime('dd-MMMM-yyyy', tglCari);
-          end
-        else if (HoursBetween(HariIni,qryCari.Fields[0].AsDateTime) <= 1) then
-          begin
-             tglCari := IncDay(HariIni, -1);
-             lblTanggal.Caption := FormatDateTime('dd-MMMM-yyyy', tglCari);
-          end;
-      end
-    else if (frmReportPendapatanHarianApi.Tag = 1) then
+    if (not Assigned(dmDB)) or (not dmDB.dbInternal.Connected) then
+       Exit;
+
+    try
+      qryCari.Active := true;
+      qrySearch.Active := true;
+      qryFind.Active := true;
+      qryPayment.Active := true;
+
+      if (frmReportPendapatanHarianApi.Tag = 0) then
+        begin
+          qryCari.Close;
+          qryCari.SQL.Clear;
+          qryCari.SQL.Add('select CURRENT_TIMESTAMP as datetimeserver');
+          qryCari.Open;
+          edServerTime.Date := qryCari.Fields[0].AsDateTime;
+          HariIni := StartOfTheDay(qryCari.Fields[0].AsDateTime);
+
+          if (HoursBetween(HariIni,qryCari.Fields[0].AsDateTime) > 1) then
+            begin
+               tglCari := HariIni;
+               lblTanggal.Caption := FormatDateTime('dd-MMMM-yyyy', tglCari);
+            end
+          else if (HoursBetween(HariIni,qryCari.Fields[0].AsDateTime) <= 1) then
+            begin
+               tglCari := IncDay(HariIni, -1);
+               lblTanggal.Caption := FormatDateTime('dd-MMMM-yyyy', tglCari);
+            end;
+        end
+      else if (frmReportPendapatanHarianApi.Tag = 1) then
+        begin
+           edServerTime.Date := Now;
+           edServerTime.Properties.ReadOnly := False;
+           HariIni := Now;
+           tglCari := edServerTime.Date;
+        end;
+    except
+      on E: Exception do
       begin
-         edServerTime.Date := Now;
-         edServerTime.Properties.ReadOnly := False;
-         HariIni := Now;
-         tglCari := edServerTime.Date;
+        edServerTime.Date := Now;
+        lblTanggal.Caption := FormatDateTime('dd-MMMM-yyyy', Now);
       end;
-
-
+    end;
 end;
 
 end.

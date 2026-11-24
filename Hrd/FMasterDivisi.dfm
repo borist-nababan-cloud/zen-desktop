@@ -1,7 +1,7 @@
 object frmMasterDivisi: TfrmMasterDivisi
   Left = 0
   Top = 0
-  Caption = 'frmMasterDivisi'
+  Caption = 'Master Divisi'
   ClientHeight = 379
   ClientWidth = 767
   Color = clMoneyGreen
@@ -115,6 +115,7 @@ object frmMasterDivisi: TfrmMasterDivisi
     Top = 336
     Width = 89
     Height = 35
+    Anchors = [akLeft, akBottom]
     Caption = 'Edit'
     TabOrder = 3
     OnClick = Button1Click
@@ -124,6 +125,7 @@ object frmMasterDivisi: TfrmMasterDivisi
     Top = 336
     Width = 89
     Height = 35
+    Anchors = [akLeft, akBottom]
     Caption = 'New'
     TabOrder = 4
     OnClick = Button2Click

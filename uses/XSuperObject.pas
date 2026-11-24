@@ -1064,7 +1064,10 @@ end;
 
 procedure TBaseJSON<T, Typ>.SetArray(V: Typ; const Value: ISuperArray);
 begin
-  Member<TJSONArray, IJSONArray>(V, Value.Self )
+  if Assigned(Value) then
+    Member<TJSONArray, IJSONArray>(V, Value.Self)
+  else
+    Null[V] := jNull;
 end;
 
 procedure TBaseJSON<T, Typ>.SetBoolean(V: Typ; const Value: Boolean);
@@ -1098,7 +1101,10 @@ end;
 
 procedure TBaseJSON<T, Typ>.SetObject(V: Typ; const Value: ISuperObject);
 begin
-  Member<TJSONObject, IJSONObject>(V, Value.Self )
+  if Assigned(Value) then
+    Member<TJSONObject, IJSONObject>(V, Value.Self)
+  else
+    Null[V] := jNull;
 end;
 
 procedure TBaseJSON<T, Typ>.SetString(V: Typ; const Value: String);

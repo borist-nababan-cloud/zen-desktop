@@ -36,6 +36,7 @@ object frmMain: TfrmMain
     TabOrder = 0
     TabStop = False
     object pgMaster: TdxRibbonTab
+      Active = True
       Caption = 'MASTER'
       Groups = <
         item
@@ -94,7 +95,6 @@ object frmMain: TfrmMain
       Index = 3
     end
     object pgReportPoS: TdxRibbonTab
-      Active = True
       Caption = 'REPORT PoS'
       Groups = <
         item
@@ -34777,10 +34777,6 @@ object frmMain: TfrmMain
         item
           Visible = True
           ItemName = 'HRD_MASTER_KONTRAK'
-        end
-        item
-          Visible = True
-          ItemName = 'HRD_MASTER_VARIABLE_REPORT'
         end>
       OneOnRow = False
       Row = 0
@@ -34791,7 +34787,7 @@ object frmMain: TfrmMain
     object BarHrdPresensi: TdxBar
       Caption = 'HRD PRESENSI'
       CaptionButtons = <>
-      DockedLeft = 339
+      DockedLeft = 236
       DockedTop = 0
       FloatLeft = 906
       FloatTop = 8
@@ -35036,6 +35032,10 @@ object frmMain: TfrmMain
         end
         item
           Visible = True
+          ItemName = 'POS_TR_FLOW'
+        end
+        item
+          Visible = True
           ItemName = 'POS_TIPS_RCPT'
         end
         item
@@ -35163,7 +35163,7 @@ object frmMain: TfrmMain
     object BarHrdpayroll: TdxBar
       Caption = 'HRD PAYROLL'
       CaptionButtons = <>
-      DockedLeft = 881
+      DockedLeft = 778
       DockedTop = 0
       FloatLeft = 1217
       FloatTop = 10
@@ -35173,6 +35173,10 @@ object frmMain: TfrmMain
         item
           Visible = True
           ItemName = 'HRD_MASTER_PERIODE'
+        end
+        item
+          Visible = True
+          ItemName = 'HRD_MASTER_VARIABLE_REPORT'
         end
         item
           Visible = True
@@ -39470,6 +39474,10 @@ object frmMain: TfrmMain
         item
           Visible = True
           ItemName = 'PROD_MASTER_SUPPLIER'
+        end
+        item
+          Visible = True
+          ItemName = 'POS_MASTER_ROOM'
         end>
     end
     object PROD_MASTER_BARANG: TdxBarButton
@@ -39509,6 +39517,20 @@ object frmMain: TfrmMain
       Category = 0
       Hint = 'Lap. Harian Bali'
       Visible = ivAlways
+    end
+    object POS_MASTER_ROOM: TdxBarButton
+      Caption = 'Room'
+      Category = 0
+      Hint = 'Room'
+      Visible = ivAlways
+      OnClick = POS_MASTER_ROOMClick
+    end
+    object POS_TR_FLOW: TdxBarLargeButton
+      Caption = 'Therapis Flow'
+      Category = 0
+      Hint = 'Therapis Flow'
+      Visible = ivAlways
+      OnClick = POS_TR_FLOWClick
     end
   end
   object mainSkinControl: TdxSkinController
@@ -39758,5 +39780,12 @@ object frmMain: TfrmMain
     ConvertPreamble = True
     Left = 897
     Top = 254
+  end
+  object tmrWebChat: TTimer
+    Enabled = False
+    Interval = 15000
+    OnTimer = tmrWebChatTimer
+    Left = 852
+    Top = 176
   end
 end

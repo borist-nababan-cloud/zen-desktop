@@ -40,6 +40,14 @@ object frmMasterKaryawan: TfrmMasterKaryawan
     Transparent = False
     ExplicitWidth = 921
   end
+  object lblSyncProgress: TLabel
+    Left = 544
+    Top = 514
+    Width = 9
+    Height = 13
+    Anchors = [akLeft, akBottom]
+    Caption = '...'
+  end
   object cxGrid1: TcxGrid
     Left = 8
     Top = 64
@@ -238,6 +246,16 @@ object frmMasterKaryawan: TfrmMasterKaryawan
     Caption = 'Refresh'
     TabOrder = 6
     OnClick = btnRefreshClick
+  end
+  object btnSyncCloud: TcxButton
+    Left = 443
+    Top = 502
+    Width = 86
+    Height = 39
+    Anchors = [akLeft, akBottom]
+    Caption = 'Sync Cloud'
+    TabOrder = 7
+    OnClick = btnSyncCloudClick
   end
   object tblKaryawan: TMyTable
     TableName = 'ben_hrd_karyawan_info'

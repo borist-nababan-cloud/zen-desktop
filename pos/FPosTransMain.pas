@@ -166,7 +166,7 @@ begin
       begin
         Parent := Form;
         Style  := csDropDownList;
-        //für Eingabemöglichkeit in Combo verwende
+        //fï¿½r Eingabemï¿½glichkeit in Combo verwende
         //For input possibility in combo uses
         //Style := csDropDown;
         Items.Assign(AList);
@@ -844,11 +844,20 @@ begin
    qryCariPacket.Free;
    qryTrans1.Free;
 
+   try
+     frmMain.tmrWebChat.Enabled := False;
+   except
+   end;
    Action := caFree;
 end;
 
 procedure TfrmPosTransMain.FormCreate(Sender: TObject);
 begin
+    try
+      frmMain.tmrWebChat.Interval := 15000;
+      frmMain.tmrWebChat.Enabled := True;
+    except
+    end;
     qryExec := TMyQuery.Create(Self);
     qryExec.Connection := DMDB.dbInternal;
     qryExec.SQL.Add('select * from temptable');

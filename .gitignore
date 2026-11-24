@@ -38,10 +38,18 @@ docs/
 .env
 *.sql
 docs/
+.antigravity/
+*.bak
+*_backup_*.pas
+config.json
 
 
 *.env
 .env
 *.sql
 docs/
+.antigravity/
+*.bak
+*_backup_*.pas
+config.json
 
