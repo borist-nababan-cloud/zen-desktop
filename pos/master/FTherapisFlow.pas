@@ -108,9 +108,11 @@ procedure TfrmTherapisFlow.ArrangePanels;
 const
   MARGIN_SIDE = 8;
   GAP_V = 8;
-  MIN_PANEL_HEIGHT = 100;
+  GAP_H = 8;
+  MIN_PANEL_HEIGHT = 120;
+  MIN_PANEL_WIDTH = 200;
 var
-  TopStart, BottomTop, AvailHeight, HalfHeight, PanelWidth: Integer;
+  TopStart, BottomTop, PanelHeight, AvailWidth, HalfWidth: Integer;
 begin
   TopStart := Label1.Top + Label1.Height + GAP_V;
 
@@ -119,17 +121,19 @@ begin
   if (rbType.Top - GAP_V) < BottomTop then
     BottomTop := rbType.Top - GAP_V;
 
-  AvailHeight := BottomTop - TopStart - GAP_V;
-  if AvailHeight < (MIN_PANEL_HEIGHT * 2) then
-    AvailHeight := MIN_PANEL_HEIGHT * 2;
+  PanelHeight := BottomTop - TopStart;
+  if PanelHeight < MIN_PANEL_HEIGHT then
+    PanelHeight := MIN_PANEL_HEIGHT;
 
-  HalfHeight := AvailHeight div 2;
-  PanelWidth := ClientWidth - (MARGIN_SIDE * 2);
-  if PanelWidth < 200 then
-    PanelWidth := 200;
+  // Split 50/50 Kiri (panelRF) & Kanan (pnlBM) dengan tinggi penuh seragam
+  AvailWidth := ClientWidth - (MARGIN_SIDE * 2) - GAP_H;
+  if AvailWidth < (MIN_PANEL_WIDTH * 2) then
+    AvailWidth := MIN_PANEL_WIDTH * 2;
 
-  panelRF.SetBounds(MARGIN_SIDE, TopStart, PanelWidth, HalfHeight);
-  pnlBM.SetBounds(MARGIN_SIDE, TopStart + HalfHeight + GAP_V, PanelWidth, AvailHeight - HalfHeight);
+  HalfWidth := AvailWidth div 2;
+
+  panelRF.SetBounds(MARGIN_SIDE, TopStart, HalfWidth, PanelHeight);
+  pnlBM.SetBounds(MARGIN_SIDE + HalfWidth + GAP_H, TopStart, AvailWidth - HalfWidth, PanelHeight);
 end;
 
 function TfrmTherapisFlow.GetBaseRESTUrl: String;

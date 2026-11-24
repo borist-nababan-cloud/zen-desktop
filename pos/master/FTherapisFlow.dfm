@@ -41,12 +41,12 @@ object frmTherapisFlow: TfrmTherapisFlow
   object panelRF: TPanel
     Left = 8
     Top = 40
-    Width = 1120
-    Height = 220
+    Width = 549
+    Height = 458
     TabOrder = 0
     DesignSize = (
-      1120
-      220)
+      549
+      458)
     object Label2: TLabel
       Left = 12
       Top = 6
@@ -63,10 +63,12 @@ object frmTherapisFlow: TfrmTherapisFlow
     object cxGrid2: TcxGrid
       Left = 8
       Top = 36
-      Width = 1100
-      Height = 172
+      Width = 529
+      Height = 410
       Anchors = [akLeft, akTop, akRight, akBottom]
       TabOrder = 0
+      ExplicitWidth = 1100
+      ExplicitHeight = 172
       object gtvRF: TcxGridTableView
         Navigator.Buttons.CustomButtons = <>
         DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoGroupsAlwaysExpanded]
@@ -119,14 +121,14 @@ object frmTherapisFlow: TfrmTherapisFlow
     end
   end
   object pnlBM: TPanel
-    Left = 8
-    Top = 272
-    Width = 1120
-    Height = 220
+    Left = 572
+    Top = 40
+    Width = 556
+    Height = 458
     TabOrder = 1
     DesignSize = (
-      1120
-      220)
+      556
+      458)
     object Label3: TLabel
       Left = 16
       Top = 10
@@ -143,10 +145,12 @@ object frmTherapisFlow: TfrmTherapisFlow
     object cxGrid1: TcxGrid
       Left = 8
       Top = 40
-      Width = 1100
-      Height = 173
+      Width = 536
+      Height = 411
       Anchors = [akLeft, akTop, akRight, akBottom]
       TabOrder = 0
+      ExplicitWidth = 1100
+      ExplicitHeight = 173
       object gtvBM: TcxGridTableView
         Navigator.Buttons.CustomButtons = <>
         DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoGroupsAlwaysExpanded]
